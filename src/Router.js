@@ -3,7 +3,8 @@ import App from "./App";
 import Join from "./login/Join";
 import Login from "./login/Login";
 import Start from "./Start";
-import GameMenu from "./game/GameMenu";
+import Game from "./game/Game";
+import Play from "./game/Play";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -23,7 +24,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/game",
-        element: <GameMenu />,
+        element: <Game />,
+      },
+      {
+        path: "/play",
+        element: <Play />,
       },
     ],
   },

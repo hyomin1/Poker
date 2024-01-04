@@ -2,7 +2,7 @@ import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 
@@ -88,17 +88,16 @@ function Login() {
     setValue,
   } = useForm();
 
+  const navigate = useNavigate();
+
   const onValid = async (data) => {
     const { userId, password } = data;
+    navigate("/game", { state: { userData: userId } });
 
     try {
-      const res = await axios.post(`${BASE_URL}/login`, null, {
-        params: {
-          userId,
-          password,
-        },
-      });
+      const res = await axios.post(`${BASE_URL}/login`, data);
       console.log("로그인 성공", res.data);
+      navigate("/game", { state: { userData: res.data } });
     } catch (error) {
       console.log("로그인 에러", error);
     }

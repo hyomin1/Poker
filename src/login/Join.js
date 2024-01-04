@@ -87,18 +87,17 @@ function Join() {
       const { userId, userName, password } = data;
 
       try {
-        const res = await axios.post(`${BASE_URL}/join`, null, {
-          params: {
-            userId,
-            password,
-            userName,
-          },
+        const res = await axios.post(`${BASE_URL}/join`, {
+          userId,
+          userName,
+          password,
         });
         console.log("회원가입 성공", res.data);
         navigate("/login");
       } catch (error) {
         console.log("회원가입 에러", error);
       }
+      //setValue로 필드초기화하기, 순서 봐보고
     }
   };
   return (
