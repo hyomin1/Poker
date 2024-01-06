@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
+import { client } from "../client";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -92,12 +93,14 @@ function Login() {
 
   const onValid = async (data) => {
     const { userId, password } = data;
-    navigate("/game", { state: { userData: userId } });
 
     try {
-      const res = await axios.post(`${BASE_URL}/login`, data);
+      const res = await axios.post(`${BASE_URL}/login`, data, {
+        withCredentials: true,
+      });
       console.log("로그인 성공", res.data);
       navigate("/game", { state: { userData: res.data } });
+      client.activate();
     } catch (error) {
       console.log("로그인 에러", error);
     }

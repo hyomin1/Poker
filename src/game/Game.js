@@ -5,6 +5,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
+import { client } from "../client";
+import { Cookies, useCookies } from "react-cookie";
 
 const GameContainer = styled.div`
   background-color: #353b48;
@@ -85,6 +87,10 @@ const inputVar = {
 function GameMenu() {
   const navigate = useNavigate();
 
+  client.onConnect = async function (frame) {
+    console.log("웹소켓 연결 완료");
+  };
+
   const {
     state: { userData },
   } = useLocation();
@@ -93,26 +99,30 @@ function GameMenu() {
   const [isPlay, isSetPlay] = useState(false);
 
   const handleMoneyChange = (e) => {
-    setBb(e.target.value);
+    setBb(parseInt(e.target.value, 10));
   };
 
-  const playGame = () => {
+  const playGame = (cancel) => {
     isSetPlay((prev) => !prev);
+    if (cancel) {
+      setBb(0);
+    }
   };
 
   const buyIn = async () => {
-    // try {
-    //   const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
-    //     params: {
-    //       bb,
-    //     },
-    //   });
-    //   console.log(res.data);
-    //   navigate("/play", { state: { boardData: res.data } });
-    // } catch (error) {
-    //   console.log("바이인 에러", error);
-    // }
-    navigate("/play");
+    try {
+      const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
+        params: {
+          bb,
+        },
+        withCredentials: true,
+      });
+      console.log("게임정보", res.data);
+      navigate("/play", { state: { boardData: res.data } });
+    } catch (error) {
+      console.log("바이인 에러", error);
+    }
+    //navigate("/play");
   };
   return (
     <GameContainer>
@@ -125,7 +135,7 @@ function GameMenu() {
           <IoPersonCircle />
         </ProfileIcon>
 
-        <ProfileUser>{userData}</ProfileUser>
+        <ProfileUser>{userData.userName}</ProfileUser>
       </ProfileBox>
 
       <PlayBox>
@@ -143,13 +153,13 @@ function GameMenu() {
                 type="range"
                 id="money"
                 min="0"
-                max="10000"
+                max="100"
                 value={bb}
                 onChange={handleMoneyChange}
               />
               <MoenyStatus>{bb}</MoenyStatus>
               <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
-              <MoneyBtn onClick={playGame}>취소</MoneyBtn>
+              <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
             </InputBox>
           ) : null}
         </AnimatePresence>
