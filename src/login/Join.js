@@ -100,6 +100,12 @@ function Join() {
       //setValue로 필드초기화하기, 순서 봐보고
     }
   };
+
+  const onClickBackBtn = (e) => {
+    e.preventDefault();
+    navigate("/login");
+  };
+
   return (
     <LoginContainer>
       <AnimatePresence>
@@ -143,9 +149,7 @@ function Join() {
 
           <BtnDiv>
             <JoinBtn>회원가입</JoinBtn>
-            <JoinBtn>
-              <Link to={"/login"}>뒤로가기</Link>
-            </JoinBtn>
+            <JoinBtn onClick={onClickBackBtn}>뒤로가기</JoinBtn>
           </BtnDiv>
         </JoinForm>
       </AnimatePresence>

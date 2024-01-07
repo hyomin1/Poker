@@ -95,18 +95,27 @@ function Login() {
     const { userId, password } = data;
 
     try {
-      const res = await axios.post(`${BASE_URL}/login`, data, {
+      const res = await axios.post(`${BASE_URL}/login`, null, {
         withCredentials: true,
+        params: {
+          username: userId,
+          password,
+        },
       });
       console.log("로그인 성공", res.data);
       navigate("/game", { state: { userData: res.data } });
-      client.activate();
+      //client.activate();
     } catch (error) {
       console.log("로그인 에러", error);
     }
 
     setValue("userId", "");
     setValue("password", "");
+  };
+
+  const onClickJoinBtn = (e) => {
+    e.preventDefault();
+    navigate("/join");
   };
 
   return (
@@ -134,9 +143,7 @@ function Login() {
           <LoginSpan>{errors.password?.message}</LoginSpan>
           <BtnDiv>
             <LoginBtn>로그인</LoginBtn>
-            <LoginBtn>
-              <Link to={"/join"}>회원가입</Link>
-            </LoginBtn>
+            <LoginBtn onClick={onClickJoinBtn}>회원가입</LoginBtn>
           </BtnDiv>
         </LoginForm>
       </AnimatePresence>
