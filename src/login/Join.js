@@ -32,6 +32,11 @@ const JoinInput = styled.input`
   border: 2px solid gray;
   font-size: 15px;
   font-weight: bold;
+  border: 2px solid #e1b12c;
+  &::placeholder {
+    color: #2f3640;
+    font-weight: bold;
+  }
 `;
 const JoinSpan = styled.span`
   color: red;
@@ -44,6 +49,13 @@ const JoinBtn = styled.button`
   height: 30px;
   font-weight: bold;
   font-size: 16px;
+  background-color: #fbc531;
+  border-radius: 10px;
+  border: 2px solid #e1b12c;
+  color: #dcdde1;
+  &:hover {
+    background-color: #e1b12c;
+  }
 `;
 const BtnDiv = styled.div`
   display: flex;

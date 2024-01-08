@@ -1,70 +1,122 @@
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import { IoPersonCircle } from "react-icons/io5";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
 import { client } from "../client";
-import { Cookies, useCookies } from "react-cookie";
 
 const GameContainer = styled.div`
-  background-color: #353b48;
+  background-color: #2c3e50;
   height: 100vh;
   width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 `;
+
 const TitleBox = styled.div`
-  height: 15%;
+  height: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const Title = styled.span`
-  color: yellow;
+  color: #e74c3c;
   font-weight: bold;
   font-size: 48px;
 `;
 
 const ProfileBox = styled.div`
-  height: 15%;
+  height: 10%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-right: 150px;
+  margin: 0 20px;
 `;
 
 const ProfileIcon = styled.div`
   svg {
     width: 45px;
     height: 45px;
+    color: #f5f6fa;
   }
-  margin-right: 10px;
 `;
 
 const ProfileUser = styled.span`
   font-weight: bold;
   font-size: 24px;
+  color: #ecf0f1;
 `;
 
 const PlayBox = styled.div`
-  height: 70%;
+  height: 50%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: space-around;
 `;
 
 const PlayBtn = styled.button`
-  height: 35px;
-  margin: 0px 50px;
+  height: 40px;
+  width: 150px;
+  background-color: #27ae60;
+  border: 2px solid #2ecc71;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  &:hover {
+    background-color: #2ecc71;
+  }
 `;
-const InputBox = styled(motion.div)``;
 
-const MoneyInput = styled.input``;
+const InputBox = styled(motion.div)`
+  background-color: rgba(44, 62, 80, 0.9); /* 투명한 배경 색상 */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ecf0f1;
+  position: fixed;
+`;
 
-const MoenyStatus = styled.p``;
+// 나머지 코드는 그대로 유지
 
-const MoneyBtn = styled.button``;
+const MoneyInput = styled.input`
+  width: 80%;
+  margin: 10px 0;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  border: none;
+  border-bottom: 2px solid #3498db;
+  padding: 5px;
+  font-size: 16px;
+`;
+
+const MoneyStatus = styled.p`
+  font-size: 18px;
+  margin: 10px 0;
+`;
+
+const MoneyBtn = styled.button`
+  width: 120px;
+  height: 35px;
+  background-color: #2980b9;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  margin: 10px 0;
+  cursor: pointer;
+  &:hover {
+    background-color: #2574a9;
+  }
+`;
 
 const inputVar = {
   start: {
@@ -115,14 +167,12 @@ function GameMenu() {
         params: {
           bb,
         },
-        withCredentials: true,
       });
       console.log("게임정보", res.data);
       navigate("/play", { state: { boardData: res.data } });
     } catch (error) {
       console.log("바이인 에러", error);
     }
-    //navigate("/play");
   };
   return (
     <GameContainer>
@@ -135,7 +185,9 @@ function GameMenu() {
           <IoPersonCircle />
         </ProfileIcon>
 
-        <ProfileUser>{userData.userName}</ProfileUser>
+        <ProfileUser>
+          {userData.userName ? userData.userName : "player"}
+        </ProfileUser>
       </ProfileBox>
 
       <PlayBox>
@@ -157,7 +209,7 @@ function GameMenu() {
                 value={bb}
                 onChange={handleMoneyChange}
               />
-              <MoenyStatus>{bb}</MoenyStatus>
+              <MoneyStatus>{bb}</MoneyStatus>
               <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
               <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
             </InputBox>

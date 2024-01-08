@@ -6,7 +6,7 @@ import { BsPersonFill } from "react-icons/bs";
 import Player from "./Player";
 
 const PlayContainer = styled.div`
-  background-color: #353b48;
+  background-color: #2c3e50;
   width: 100vw;
   height: 100vh;
   display: flex;

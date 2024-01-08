@@ -1,8 +1,7 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 import { client } from "../client";
@@ -18,14 +17,7 @@ const LoginContainer = styled.div`
   background-size: cover;
   background-position: center;
 `;
-const StartBtn = styled(motion.span)`
-  color: yellow;
-  font-weight: bold;
-  font-size: 60px;
-  &:hover {
-    font-size: 70px;
-  }
-`;
+
 const LoginForm = styled(motion.form)`
   display: flex;
   flex-direction: column;
@@ -41,6 +33,11 @@ const LoginInput = styled.input`
   border: 2px solid gray;
   font-size: 15px;
   font-weight: bold;
+  border: 2px solid #e1b12c;
+  &::placeholder {
+    color: #2f3640;
+    font-weight: bold;
+  }
 `;
 
 const LoginSpan = styled.span`
@@ -62,6 +59,13 @@ const LoginBtn = styled.button`
   height: 30px;
   font-weight: bold;
   font-size: 16px;
+  background-color: #fbc531;
+  border-radius: 10px;
+  border: 2px solid #e1b12c;
+  color: #dcdde1;
+  &:hover {
+    background-color: #e1b12c;
+  }
 `;
 
 const loginVar = {
@@ -80,12 +84,10 @@ const loginVar = {
 };
 
 function Login() {
-  const [start, setStart] = useState(false);
-  const goStart = () => setStart((prev) => !prev);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
     setValue,
   } = useForm();
 
@@ -96,7 +98,6 @@ function Login() {
 
     try {
       const res = await axios.post(`${BASE_URL}/login`, null, {
-        withCredentials: true,
         params: {
           username: userId,
           password,
@@ -104,7 +105,12 @@ function Login() {
       });
       console.log("로그인 성공", res.data);
       navigate("/game", { state: { userData: res.data } });
-      //client.activate();
+
+      client.connectHeaders = {
+        userId,
+        password,
+      };
+      client.activate();
     } catch (error) {
       console.log("로그인 에러", error);
     }
@@ -119,7 +125,7 @@ function Login() {
   };
 
   return (
-    <LoginContainer isStart={start}>
+    <LoginContainer>
       <AnimatePresence>
         <LoginForm
           variants={loginVar}
@@ -131,14 +137,14 @@ function Login() {
             {...register("userId", {
               required: "아이디를 입력해주세요",
             })}
-            placeholder="Id"
+            placeholder="아이디"
           />
           <LoginSpan>{errors.userId?.message}</LoginSpan>
           <LoginInput
             {...register("password", {
               required: "비밀번호를 입력해주세요",
             })}
-            placeholder="Password"
+            placeholder="비밀번호"
           />
           <LoginSpan>{errors.password?.message}</LoginSpan>
           <BtnDiv>
