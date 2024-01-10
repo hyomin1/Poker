@@ -103,17 +103,17 @@ function Login() {
           password,
         },
       });
+
       console.log("로그인 성공", res.data);
+      const subId = res.headers["subscribe-id"];
       client.connectHeaders = {
         userId,
         password,
       };
       navigate("/game", { state: { userData: res.data } });
       client.activate();
-      const subscription = client.subscribe(
-        `/queue/${res.data.id}`,
-        function (message) {}
-      ); //로그인 시 개인 큐 구독
+      client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
+      client.subscribe(`/queue/error/${subId}`, function (message) {});
     } catch (error) {
       console.log("로그인 에러", error);
     }
