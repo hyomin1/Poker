@@ -104,13 +104,16 @@ function Login() {
         },
       });
       console.log("로그인 성공", res.data);
-      navigate("/game", { state: { userData: res.data } });
-
       client.connectHeaders = {
         userId,
         password,
       };
+      navigate("/game", { state: { userData: res.data } });
       client.activate();
+      const subscription = client.subscribe(
+        `/queue/${res.data.id}`,
+        function (message) {}
+      ); //로그인 시 개인 큐 구독
     } catch (error) {
       console.log("로그인 에러", error);
     }

@@ -169,7 +169,11 @@ function GameMenu() {
         },
       });
       console.log("게임정보", res.data);
-      navigate("/play", { state: { boardData: res.data } });
+      const subscription = client.subscribe(
+        `/topic/${res.data.id}`,
+        function (message) {}
+      ); //게임 입장시 단체 큐 구독
+      navigate("/gameRoom", { state: { boardData: res.data } });
     } catch (error) {
       console.log("바이인 에러", error);
     }
