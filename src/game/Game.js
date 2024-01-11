@@ -169,11 +169,22 @@ function GameMenu() {
         },
       });
       console.log("게임정보", res.data);
-      const subscription = client.subscribe(
-        `/topic/${res.data.id}`,
-        function (message) {}
-      ); //게임 입장시 단체 큐 구독
-      navigate("/gameRoom", { state: { boardData: res.data } });
+      if (client && client.connected) {
+        const subscription = client.subscribe(
+          `/topic/${res.data.id}`,
+          function (message) {}
+        ); //게임 입장시 단체 큐 구독
+      } else {
+        client.connectHeaders = {
+          userId: userData.userId,
+          password: userData.password,
+        };
+        client.activate();
+      }
+
+      navigate("/gameRoom", {
+        state: { boardData: res.data, userData: userData },
+      });
     } catch (error) {
       console.log("바이인 에러", error);
     }

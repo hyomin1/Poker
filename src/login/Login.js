@@ -110,7 +110,7 @@ function Login() {
         userId,
         password,
       };
-      navigate("/game", { state: { userData: res.data } });
+      navigate("/game", { state: { userData: data } });
       client.activate();
       client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
       client.subscribe(`/queue/error/${subId}`, function (message) {});
