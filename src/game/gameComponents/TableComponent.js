@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Player from "./Player";
 
@@ -7,9 +7,9 @@ const TableContainer = styled.div`
   height: 100vh;
   display: grid;
   grid-template-areas:
-    "playerCount player23 ."
-    "player5 table player6"
-    ". player14 .";
+    "playerCount top ."
+    "left table right"
+    ". bottom .";
 
   grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누어 간격 조정 */
   grid-template-rows: repeat(3, 1fr); /* 3개의 행으로 나누어 간격 조정 */
@@ -60,19 +60,42 @@ const PlayerContainer = styled.div`
   align-items: center;
   justify-content: space-around;
   ${(props) => {
-    if (props.count === "14") {
-      return "grid-area : player14;";
-    } else if (props.count === "23") {
-      return "grid-area : player23;";
-    } else if (props.count === "5") {
-      return "grid-area : player5;";
-    } else if (props.count === "6") {
-      return "grid-area : player6;";
+    if (props.position === "bottom") {
+      return "grid-area : bottom;";
+    } else if (props.position === "top") {
+      return "grid-area : top;";
+    } else if (props.position === "left") {
+      return "grid-area : left;";
+    } else if (props.position === "right") {
+      return "grid-area : right;";
     }
   }}
 `;
+const SubPlayerContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+`;
 
-function TableComponent({ boardData }) {
+const EmptyBox = styled.div``;
+
+function TableComponent({ boardData, myPlayer }) {
+  const [others, setOthers] = useState([]);
+  const numOfOtherPlayers = 5;
+
+  useEffect(() => {
+    const updatedOthers = Array.from(
+      { length: numOfOtherPlayers },
+      (_, i) => (myPlayer.position + i + 1) % 6
+    );
+    setOthers(updatedOthers);
+  }, [boardData.totalPlayer, myPlayer.position]); //postion 배치
+
+  const playerArray = others.map((position) =>
+    boardData.players.find((player) => player.position === position)
+  );
+  console.log("다른플레이어정보", playerArray);
+  //console.log(others[0], myPlayer.position);
   return (
     <TableContainer>
       <PlayerCount>{boardData.totalPlayer}/6</PlayerCount>
@@ -88,21 +111,42 @@ function TableComponent({ boardData }) {
         </CardContainer>
       </Table>
 
-      <PlayerContainer count="14">
-        <Player />
-        {boardData.totalPlayer >= 4 ? <Player /> : null}
-      </PlayerContainer>
-      <PlayerContainer count="23">
-        {boardData.totalPlayer >= 2 ? <Player /> : null}
-        {boardData.totalPlayer >= 3 ? <Player /> : null}
-      </PlayerContainer>
-
-      <PlayerContainer count="5">
-        {boardData.totalPlayer >= 5 ? <Player /> : null}
+      <PlayerContainer position="bottom">
+        <SubPlayerContainer>
+          {boardData.totalPlayer >= 2 && playerArray[0] ? (
+            <Player player1={playerArray[0]} />
+          ) : (
+            <EmptyBox></EmptyBox>
+          )}
+          <Player myPlayer={myPlayer} />
+        </SubPlayerContainer>
       </PlayerContainer>
 
-      <PlayerContainer count="6">
-        {boardData.totalPlayer >= 6 ? <Player /> : null}
+      <PlayerContainer position="top">
+        <SubPlayerContainer>
+          {boardData.totalPlayer >= 2 && playerArray[2] ? (
+            <Player player3={playerArray[2]} />
+          ) : (
+            <EmptyBox></EmptyBox>
+          )}
+          {boardData.totalPlayer >= 2 && playerArray[3] ? (
+            <Player player4={playerArray[3]} />
+          ) : (
+            <EmptyBox></EmptyBox>
+          )}
+        </SubPlayerContainer>
+      </PlayerContainer>
+
+      <PlayerContainer position="left">
+        {boardData.totalPlayer >= 2 && playerArray[1] ? (
+          <Player player2={playerArray[1]} />
+        ) : null}
+      </PlayerContainer>
+
+      <PlayerContainer position="right">
+        {boardData.totalPlayer >= 2 && playerArray[4] ? (
+          <Player player5={playerArray[4]} />
+        ) : null}
       </PlayerContainer>
     </TableContainer>
   );

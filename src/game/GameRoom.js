@@ -17,7 +17,7 @@ const GameContainer = styled.div`
 
 function GameRoom() {
   const {
-    state: { boardData, userData },
+    state: { boardData, userData, userId },
   } = useLocation();
 
   const [gameStart, setGameStart] = useState("");
@@ -28,6 +28,11 @@ function GameRoom() {
       body: boardData, //JSON.stringify(boardData)
     });
   };
+  const userIdInt = parseInt(userId, 10); //userId String값이어서 Int형으로 형변환
+  const myPlayer = boardData.players.find(
+    (player) => player.userId === userIdInt
+  );
+  console.log("내 정보", myPlayer);
 
   const handleGameStart = (message) => {
     console.log("콜백 메시지", message);
@@ -65,11 +70,11 @@ function GameRoom() {
 
   return (
     <GameContainer>
-      <button onClick={onClickBtn}>웹소켓 테스트 버튼</button>
+      {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> */}
       {gameStart === "GAME_START" ? (
-        <Playing boardData={boardData} />
+        <Playing myPlayer={myPlayer} boardData={boardData} />
       ) : (
-        <Waiting boardData={boardData} />
+        <Waiting myPlayer={myPlayer} boardData={boardData} />
       )}
     </GameContainer>
   );

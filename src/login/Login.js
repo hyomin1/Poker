@@ -105,12 +105,12 @@ function Login() {
       });
 
       console.log("로그인 성공", res.data);
-      const subId = res.headers["subscribe-id"];
+      const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
       client.connectHeaders = {
         userId,
         password,
       };
-      navigate("/game", { state: { userData: data } });
+      navigate("/game", { state: { userData: data, userId: subId } });
       client.activate();
       client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
       client.subscribe(`/queue/error/${subId}`, function (message) {});

@@ -19,10 +19,29 @@ const Card = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
+const PlayerName = styled.span`
+  color: yellow;
+  margin-right: 10px;
+`;
+function renderPlayer(player) {
+  return (
+    <React.Fragment>
+      <PlayerName>{player.playerName}</PlayerName>
+    </React.Fragment>
+  );
+}
 
-function Player() {
+function Player({ myPlayer, player1, player2, player3, player4, player5 }) {
+  console.log("plaeyr체크", player4);
   return (
     <PlayContainer>
+      {myPlayer && renderPlayer(myPlayer)}
+      {player1 && renderPlayer(player1)}
+      {player2 && renderPlayer(player2)}
+      {player3 && renderPlayer(player3)}
+      {player4 && renderPlayer(player4)}
+      {player5 && renderPlayer(player5)}
+
       <BsEmojiSunglasses />
       <Card />
       <Card />

@@ -144,7 +144,7 @@ function GameMenu() {
   };
 
   const {
-    state: { userData },
+    state: { userData, userId },
   } = useLocation();
 
   const [bb, setBb] = useState(0);
@@ -183,7 +183,7 @@ function GameMenu() {
       }
 
       navigate("/gameRoom", {
-        state: { boardData: res.data, userData: userData },
+        state: { boardData: res.data, userData: userData, userId: userId },
       });
     } catch (error) {
       console.log("바이인 에러", error);
