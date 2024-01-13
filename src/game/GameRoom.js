@@ -1,6 +1,8 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
+import { BASE_URL } from "../api";
 import { client } from "../client";
 import Playing from "./Playing";
 import Waiting from "./Waiting";
@@ -22,6 +24,8 @@ function GameRoom() {
 
   const [gameStart, setGameStart] = useState("");
 
+  const [board, setBoard] = useState(boardData);
+
   const onClickBtn = () => {
     client.publish({
       destination: "/pub/board/test",
@@ -29,16 +33,19 @@ function GameRoom() {
     });
   };
   const userIdInt = parseInt(userId, 10); //userId String값이어서 Int형으로 형변환
-  const myPlayer = boardData.players.find(
-    (player) => player.userId === userIdInt
-  );
-  console.log("내 정보", myPlayer);
+  const myPlayer = board.players.find((player) => player.userId === userIdInt);
+  //console.log("내 정보", myPlayer);
 
   const handleGameStart = (message) => {
-    console.log("콜백 메시지", message);
     //웹소켓 콜백함수 정의
-    const gameStart = JSON.parse(message.body); //웹소켓에서 오는 데이터 파싱
-    setGameStart(gameStart.messageType); // GAME_START 저장
+    const webSocketBoard = JSON.parse(message.body); //웹소켓에서 오는 데이터 파싱
+
+    setGameStart(webSocketBoard.messageType); // GAME_START 저장
+    setBoard(webSocketBoard.data);
+    console.log("web", webSocketBoard.data);
+    if (webSocketBoard.messageType === "PLAYER_JOIN") {
+      alert("플레이어가 입장하였습니다.");
+    }
   };
 
   useEffect(() => {
@@ -58,6 +65,23 @@ function GameRoom() {
       }, 100);
     }
 
+    // const updatedBoard = async () => { //새로고침시 최신 board 받아오는 것 필요
+    //   try {
+    //     const bb = myPlayer.bb;
+    //     const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
+    //       params: {
+    //         bb,
+    //       },
+    //     });
+    //     console.log("새로고침", res.data);
+    //     setBoard(res.data);
+    //   } catch (error) {
+    //     console.log("새로고침시 최신 보드 받기 에러", error);
+    //   }
+    // };
+
+    // updatedBoard();
+
     // return () => {
     //   if (sub1) {
     //     sub1.unsubscribe();
@@ -71,10 +95,10 @@ function GameRoom() {
   return (
     <GameContainer>
       {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> */}
-      {gameStart === "GAME_START" ? (
-        <Playing myPlayer={myPlayer} boardData={boardData} />
+      {gameStart === "GAME_START" || boardData.phaseStatus === 1 ? (
+        <Playing myPlayer={myPlayer} board={board} />
       ) : (
-        <Waiting myPlayer={myPlayer} boardData={boardData} />
+        <Waiting myPlayer={myPlayer} board={board} />
       )}
     </GameContainer>
   );

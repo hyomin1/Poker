@@ -79,7 +79,7 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-function TableComponent({ boardData, myPlayer }) {
+function TableComponent({ board, myPlayer }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
 
@@ -89,16 +89,16 @@ function TableComponent({ boardData, myPlayer }) {
       (_, i) => (myPlayer.position + i + 1) % 6
     );
     setOthers(updatedOthers);
-  }, [boardData.totalPlayer, myPlayer.position]); //postion 배치
+  }, [board.totalPlayer, myPlayer.position]); //postion 배치
 
   const playerArray = others.map((position) =>
-    boardData.players.find((player) => player.position === position)
+    board.players.find((player) => player.position === position)
   );
-  console.log("다른플레이어정보", playerArray);
-  //console.log(others[0], myPlayer.position);
+  //console.log("다른플레이어정보", playerArray);
+
   return (
     <TableContainer>
-      <PlayerCount>{boardData.totalPlayer}/6</PlayerCount>
+      <PlayerCount>{board.totalPlayer}/6</PlayerCount>
       {/* <button onClick={onClickBtn}>test</button> */}
 
       <Table>
@@ -113,7 +113,7 @@ function TableComponent({ boardData, myPlayer }) {
 
       <PlayerContainer position="bottom">
         <SubPlayerContainer>
-          {boardData.totalPlayer >= 2 && playerArray[0] ? (
+          {board.totalPlayer >= 2 && playerArray[0] ? (
             <Player player1={playerArray[0]} />
           ) : (
             <EmptyBox></EmptyBox>
@@ -124,12 +124,12 @@ function TableComponent({ boardData, myPlayer }) {
 
       <PlayerContainer position="top">
         <SubPlayerContainer>
-          {boardData.totalPlayer >= 2 && playerArray[2] ? (
+          {board.totalPlayer >= 2 && playerArray[2] ? (
             <Player player3={playerArray[2]} />
           ) : (
             <EmptyBox></EmptyBox>
           )}
-          {boardData.totalPlayer >= 2 && playerArray[3] ? (
+          {board.totalPlayer >= 2 && playerArray[3] ? (
             <Player player4={playerArray[3]} />
           ) : (
             <EmptyBox></EmptyBox>
@@ -138,13 +138,13 @@ function TableComponent({ boardData, myPlayer }) {
       </PlayerContainer>
 
       <PlayerContainer position="left">
-        {boardData.totalPlayer >= 2 && playerArray[1] ? (
+        {board.totalPlayer >= 2 && playerArray[1] ? (
           <Player player2={playerArray[1]} />
         ) : null}
       </PlayerContainer>
 
       <PlayerContainer position="right">
-        {boardData.totalPlayer >= 2 && playerArray[4] ? (
+        {board.totalPlayer >= 2 && playerArray[4] ? (
           <Player player5={playerArray[4]} />
         ) : null}
       </PlayerContainer>
