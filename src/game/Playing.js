@@ -5,7 +5,7 @@ import TableComponent from "./gameComponents/TableComponent";
 
 const PlayingContainer = styled.div``;
 
-function Playing({ board, myPlayer }) {
+function Playing({ board, myPlayer, setBoard, client }) {
   // useEffect(() => {
   //   client.subscribe(`/topic/chat/${boardData.id}`, function (message) {
   //     console.log(message.body);
@@ -14,7 +14,13 @@ function Playing({ board, myPlayer }) {
 
   return (
     <PlayingContainer>
-      <TableComponent myPlayer={myPlayer} board={board} />;
+      <TableComponent
+        myPlayer={myPlayer}
+        board={board}
+        setBoard={setBoard}
+        client={client}
+      />
+      ;
     </PlayingContainer>
   );
 }

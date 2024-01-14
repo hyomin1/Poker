@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
+import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
@@ -93,8 +94,12 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const [cookies, setCookie, removeCookie] = useCookies(["JSESSIONID"]);
+
   const onValid = async (data) => {
     const { userId, password } = data;
+
+    removeCookie("JSESSIONID", { path: "/" });
 
     try {
       const res = await axios.post(`${BASE_URL}/login`, null, {

@@ -79,7 +79,7 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-function TableComponent({ board, myPlayer }) {
+function TableComponent({ board, myPlayer, setBoard, client }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
 
@@ -114,23 +114,43 @@ function TableComponent({ board, myPlayer }) {
       <PlayerContainer position="bottom">
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[0] ? (
-            <Player player1={playerArray[0]} />
+            <Player
+              setBoard={setBoard}
+              boardData={board}
+              player1={playerArray[0]}
+              cleint={client}
+            />
           ) : (
             <EmptyBox></EmptyBox>
           )}
-          <Player myPlayer={myPlayer} />
+          <Player
+            setBoard={setBoard}
+            boardData={board}
+            myPlayer={myPlayer}
+            client={client}
+          />
         </SubPlayerContainer>
       </PlayerContainer>
 
       <PlayerContainer position="top">
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[2] ? (
-            <Player player3={playerArray[2]} />
+            <Player
+              setBoard={setBoard}
+              boardData={board}
+              player3={playerArray[2]}
+              cleint={client}
+            />
           ) : (
             <EmptyBox></EmptyBox>
           )}
           {board.totalPlayer >= 2 && playerArray[3] ? (
-            <Player player4={playerArray[3]} />
+            <Player
+              setBoard={setBoard}
+              boardData={board}
+              player4={playerArray[3]}
+              cleint={client}
+            />
           ) : (
             <EmptyBox></EmptyBox>
           )}
@@ -139,13 +159,23 @@ function TableComponent({ board, myPlayer }) {
 
       <PlayerContainer position="left">
         {board.totalPlayer >= 2 && playerArray[1] ? (
-          <Player player2={playerArray[1]} />
+          <Player
+            setBoard={setBoard}
+            boardData={board}
+            player2={playerArray[1]}
+            cleint={client}
+          />
         ) : null}
       </PlayerContainer>
 
       <PlayerContainer position="right">
         {board.totalPlayer >= 2 && playerArray[4] ? (
-          <Player player5={playerArray[4]} />
+          <Player
+            setBoard={setBoard}
+            boardData={board}
+            player5={playerArray[4]}
+            cleint={client}
+          />
         ) : null}
       </PlayerContainer>
     </TableContainer>

@@ -42,9 +42,8 @@ function GameRoom() {
 
     setGameStart(webSocketBoard.messageType); // GAME_START 저장
     setBoard(webSocketBoard.data);
-    console.log("web", webSocketBoard.data);
+    console.log("web", webSocketBoard.messageType, webSocketBoard.data);
     if (webSocketBoard.messageType === "PLAYER_JOIN") {
-      alert("플레이어가 입장하였습니다.");
     }
   };
 
@@ -92,11 +91,27 @@ function GameRoom() {
     // };
   }, []);
 
+  const [test, setTest] = useState(false);
+  const testStart = async () => {
+    try {
+      const res = axios.post(`${BASE_URL}/api/board/start/${board.id}`);
+      //setBoard(res.data);
+      console.log(res.data);
+
+      setTest(true);
+    } catch (error) {}
+  };
   return (
     <GameContainer>
-      {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> */}
-      {gameStart === "GAME_START" || boardData.phaseStatus === 1 ? (
-        <Playing myPlayer={myPlayer} board={board} />
+      {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> gameStart === "GAME_START" || board.phaseStatus !== 0 */}
+      <button onClick={testStart}>게임시작</button>
+      {test ? (
+        <Playing
+          myPlayer={myPlayer}
+          setBoard={setBoard}
+          board={board}
+          client={client}
+        />
       ) : (
         <Waiting myPlayer={myPlayer} board={board} />
       )}
