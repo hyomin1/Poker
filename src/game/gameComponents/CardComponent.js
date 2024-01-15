@@ -42,8 +42,8 @@ const Card1 = styled.div`
   width: 80px;
   height: 120px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.card1num)}_of_${getCardShape(
-      props.card1shape
+    `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
+      props.$card1shape
     )}.png")`};
   background-size: cover;
   background-repeat: no-repeat;
@@ -53,8 +53,8 @@ const Card2 = styled.div`
   width: 80px;
   height: 120px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.card2num)}_of_${getCardShape(
-      props.card2shape
+    `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
+      props.$card2shape
     )}.png")`};
   background-size: cover;
   background-repeat: no-repeat;
@@ -82,8 +82,8 @@ function CardComponent({ board, player, myPlayer }) {
     <CardContainer>
       {board && myPlayer === player ? (
         <>
-          <Card1 card1shape={card1Shape} card1num={card1Num} />
-          <Card2 card2shape={card2Shape} card2num={card2Num} />
+          <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+          <Card2 $card2shape={card2Shape} $card2num={card2Num} />
         </>
       ) : (
         <>

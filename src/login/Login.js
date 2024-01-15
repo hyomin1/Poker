@@ -94,12 +94,10 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const [cookies, setCookie, removeCookie] = useCookies(["JSESSIONID"]);
-
   const onValid = async (data) => {
     const { userId, password } = data;
 
-    removeCookie("JSESSIONID", { path: "/" });
+    //removeCookie("JSESSIONID", { path: "/" });
 
     try {
       const res = await axios.post(`${BASE_URL}/login`, null, {
@@ -115,6 +113,7 @@ function Login() {
         userId,
         password,
       };
+
       navigate("/game", { state: { userData: data, userId: subId } });
       client.activate();
       client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독

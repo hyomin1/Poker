@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { IoPersonCircle } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";

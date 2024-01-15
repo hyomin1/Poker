@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+
 import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
@@ -22,33 +23,36 @@ function GameRoom() {
     state: { boardData, userData, userId },
   } = useLocation();
 
-  const [gameStart, setGameStart] = useState("");
+  const [message, setMessage] = useState("");
 
   const [board, setBoard] = useState(boardData);
 
-  const onClickBtn = () => {
-    client.publish({
-      destination: "/pub/board/test",
-      body: boardData, //JSON.stringify(boardData)
-    });
-  };
   const userIdInt = parseInt(userId, 10); //userId String값이어서 Int형으로 형변환
-  const myPlayer = board.players.find((player) => player.userId === userIdInt);
-  //console.log("내 정보", myPlayer);
+  //const myPlayer = board.players.find((player) => player.userId === userIdInt);
+  const [myPlayer, setMyPlayer] = useState(null);
+
+  useEffect(() => {
+    const updatedMyPlayer = board.players.find(
+      (player) => player.userId === userIdInt
+    );
+    setMyPlayer(updatedMyPlayer);
+  }, [board, userIdInt]);
 
   const handleGameStart = (message) => {
     //웹소켓 콜백함수 정의
     const webSocketBoard = JSON.parse(message.body); //웹소켓에서 오는 데이터 파싱
 
-    setGameStart(webSocketBoard.messageType); // GAME_START 저장
-    setBoard(webSocketBoard.data);
+    setMessage(webSocketBoard.messageType); // GAME_START 저장
+    setBoard(webSocketBoard.data); //갱신되는 boardData 저장
     console.log("web", webSocketBoard.messageType, webSocketBoard.data);
     if (webSocketBoard.messageType === "PLAYER_JOIN") {
+      console.log("플레이어 입장");
     }
   };
 
   useEffect(() => {
     //let sub1, sub2;
+
     if (client && client.connected) {
       client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
     } else {
@@ -63,15 +67,12 @@ function GameRoom() {
         client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
       }, 100);
     }
+    // console.log(board.id);
 
-    // const updatedBoard = async () => { //새로고침시 최신 board 받아오는 것 필요
+    // const updatedBoard = async () => {
+    //   //새로고침시 최신 board 받아오는 것 필요
     //   try {
-    //     const bb = myPlayer.bb;
-    //     const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
-    //       params: {
-    //         bb,
-    //       },
-    //     });
+    //     const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
     //     console.log("새로고침", res.data);
     //     setBoard(res.data);
     //   } catch (error) {
@@ -80,24 +81,13 @@ function GameRoom() {
     // };
 
     // updatedBoard();
-
-    // return () => {
-    //   if (sub1) {
-    //     sub1.unsubscribe();
-    //   }
-    //   if (sub2) {
-    //     sub2.unsubscribe();
-    //   }
-    // };
   }, []);
 
   const [test, setTest] = useState(false);
   const testStart = async () => {
+    //테스트용 게임 시작
     try {
       const res = axios.post(`${BASE_URL}/api/board/start/${board.id}`);
-      //setBoard(res.data);
-      console.log(res.data);
-
       setTest(true);
     } catch (error) {}
   };
@@ -105,15 +95,16 @@ function GameRoom() {
     <GameContainer>
       {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> gameStart === "GAME_START" || board.phaseStatus !== 0 */}
       <button onClick={testStart}>게임시작</button>
-      {test ? (
+      {message === "GAME_START" ? (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}
           board={board}
           client={client}
+          message={message}
         />
       ) : (
-        <Waiting myPlayer={myPlayer} board={board} />
+        <Waiting myPlayer={myPlayer} board={board} message={message} />
       )}
     </GameContainer>
   );

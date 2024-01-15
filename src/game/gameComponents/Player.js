@@ -59,7 +59,7 @@ function Player({
   player4,
   player5,
   boardData,
-  //setBoard,
+  message,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
   const [time, setTime] = useState(0);
@@ -80,12 +80,29 @@ function Player({
     return () => clearInterval(intervalId);
   }, []);
   const progressValue = (time / 20) * 100;
+  console.log("message", message);
+
+  const publishBoardAction = (updatedBoard, playerId) => {
+    //websokcet 통신 함수
+    client.publish({
+      destination: "/pub/board/action",
+      body: JSON.stringify(updatedBoard),
+      headers: { PlayerId: playerId },
+    });
+  };
+  const updateBoard = (update) => {
+    //board 업데이트 함수
+    setBoard((prev) => {
+      const updatedBoard = update(prev);
+      publishBoardAction(updatedBoard, myPlayer.id);
+      return updatedBoard;
+    });
+  };
 
   // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
-      setIsBet((prev) => !prev);
-      setBoard((prev) => {
+      updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           play.id === player.id
             ? {
@@ -95,25 +112,16 @@ function Player({
               }
             : play
         );
-        const updatedBoard = {
+        return {
           ...prev,
           players: updatedPlayers,
         };
-
-        client.publish({
-          destination: "/pub/board/action",
-          body: JSON.stringify(updatedBoard),
-          headers: { PlayerId: player.id },
-        });
-
-        return updatedBoard;
       });
     }
   };
   const fold = (bettingSize, player) => {
     if (bettingSize !== 0) {
-      setIsBet((prev) => !prev);
-      setBoard((prev) => {
+      updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           play.id === player.id
             ? {
@@ -122,99 +130,84 @@ function Player({
               }
             : play
         );
-        const updatedBoard = {
+        return {
           ...prev,
           players: updatedPlayers,
         };
-
-        client.publish({
-          destination: "/pub/board/action",
-          body: JSON.stringify(updatedBoard),
-          headers: { PlayerId: player.id },
-        });
-
-        return updatedBoard;
       });
     }
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
-      setIsBet((prev) => !prev);
-      client.publish({
-        destination: "/pub/board/action",
-        body: JSON.stringify(board),
-        headers: { PlayerId: player.id },
+      publishBoardAction(board, player.id);
+    }
+  };
+  const raise = (money, phaseCallSize, bettingSize, player) => {
+    if (money - phaseCallSize > bettingSize * 2) {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                status: amount === player.money ? 2 : play.status,
+                money: play.money - amount,
+                phaseCallSize: player.phaseCallSize + amount,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.postion,
+          bettingSize: amount,
+        };
       });
     }
   };
-  const raise = (money, phaseCallSize, bettingSize) => {
-    if (money - phaseCallSize > bettingSize * 2) {
-      setIsBet((prev) => !prev);
-      setIsRaise(true);
-    }
+  const raiseBet = (player) => {
+    // updateBoard((prev) => {
+    //   const updatedPlayers = prev.players.map((play) =>
+    //     play.id === player.id
+    //       ? {
+    //           ...play,
+    //           status: amount === player.money ? 2 : play.status,
+    //           money: play.money - amount,
+    //           phaseCallSize: player.phaseCallSize + amount,
+    //         }
+    //       : play
+    //   );
+    //   return {
+    //     ...prev,
+    //     players: updatedPlayers,
+    //     bettingPos: player.postion,
+    //     bettingSize: amount,
+    //   };
+    // });
   };
   const allIn = (bettingSize, phaseCallSize, money, player) => {
     if (
       bettingSize - phaseCallSize > money ||
       money * 2 < bettingSize - phaseCallSize
     ) {
-      setIsBet((prev) => !prev);
-      setBoard((prev) => {
+      updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           play.id === player.id
             ? {
                 ...play,
                 status: 2,
+                money: play.money - play.money,
               }
             : play
         );
-        const updatedBoard = {
+        return {
           ...prev,
           players: updatedPlayers,
         };
-
-        client.publish({
-          destination: "/pub/board/action",
-          body: JSON.stringify(updatedBoard),
-          headers: { PlayerId: player.id },
-        });
-
-        return updatedBoard;
       });
     }
   };
   const onHandleAmount = (e) => {
     setAmount(parseInt(e.target.value, 10));
-  };
-
-  const raiseBet = (player) => {
-    console.log("player", player);
-    setBoard((prev) => {
-      const updatedPlayers = prev.players.map((play) =>
-        play.id === player.id
-          ? {
-              ...play,
-              status: amount === player.money ? 2 : play.status,
-              money: play.money - amount,
-              phaseCallSize: player.phaseCallSize + amount,
-            }
-          : play
-      );
-      const updatedBoard = {
-        ...prev,
-        players: updatedPlayers,
-        bettingPos: player.position,
-        bettingSize: amount,
-      };
-
-      client.publish({
-        destination: "/pub/board/action",
-        body: JSON.stringify(updatedBoard),
-        headers: { PlayerId: player.id },
-      });
-
-      return updatedBoard;
-    });
   };
 
   const bettingMethod = (
@@ -227,30 +220,36 @@ function Player({
     if (phaseStatus !== 0 && bettingSize === phaseCallSize) {
       return (
         <div>
-          {!isBet ? (
+          {message === "GAME_START" || message === "NEXT_ACTION" ? (
             <div>
               <button onClick={() => check(bettingSize, phaseCallSize, player)}>
                 체크
               </button>
-              <button onClick={() => raise(money, phaseCallSize, bettingSize)}>
-                레이즈
-              </button>
+              <div>
+                <input
+                  onChange={onHandleAmount}
+                  min={board.blind}
+                  max={player.money}
+                  value={amount}
+                  type="range"
+                />
+                <span style={{ color: "red" }}>{amount}</span>
+                <button
+                  onClick={() =>
+                    raise(money, phaseCallSize, bettingSize, player)
+                  }
+                >
+                  레이즈
+                </button>
+              </div>
             </div>
           ) : null}
 
-          {isBet && isRaise && (
+          {/* {isBet && isRaise && (
             <div>
-              <input
-                onChange={onHandleAmount}
-                min={board.blind}
-                max={player.money}
-                value={amount}
-                type="range"
-              />
-              <span style={{ color: "red" }}>{amount}</span>
               <button onClick={() => raiseBet(player)}>배팅</button>
             </div>
-          )}
+          )} */}
         </div>
       );
     } else if (
@@ -259,7 +258,7 @@ function Player({
     ) {
       return (
         <div>
-          {!isBet ? (
+          {message === "NEXT_ACTION" ? (
             <div>
               <button onClick={() => fold(bettingSize, player)}>폴드</button>
               <button
@@ -274,7 +273,7 @@ function Player({
     } else {
       return (
         <div>
-          {phaseStatus !== 0 && !isBet ? (
+          {phaseStatus !== 0 && message === "NEXT_ACTION" ? (
             <div>
               <button onClick={() => fold(bettingSize, player)}>폴드</button>
               <button
@@ -282,24 +281,31 @@ function Player({
               >
                 콜
               </button>
-              <button onClick={() => raise(money, phaseCallSize, bettingSize)}>
-                레이즈
-              </button>
+              <div>
+                <input
+                  onChange={onHandleAmount}
+                  min={board.blind}
+                  max={player.money}
+                  value={amount}
+                  type="range"
+                />
+                <button
+                  onClick={() =>
+                    raise(money, phaseCallSize, bettingSize, player)
+                  }
+                >
+                  레이즈
+                </button>
+              </div>
             </div>
           ) : null}
-          {isBet && isRaise && (
+          {/* {isRaise && (
             <div>
-              <input
-                onChange={onHandleAmount}
-                min={board.blind}
-                max={player.money}
-                value={amount}
-                type="range"
-              />
+           
               <span style={{ color: "red" }}>{amount}</span>
               <button onClick={() => raiseBet(player)}>배팅</button>
             </div>
-          )}
+          )} */}
         </div>
       );
     }
@@ -308,6 +314,7 @@ function Player({
   useEffect(() => {
     setBoard(boardData);
   }, [boardData]);
+
   const renderPlayer1 = (player) => {
     if (!player) {
       return null; // player가 존재하지 않으면 렌더링하지 않음

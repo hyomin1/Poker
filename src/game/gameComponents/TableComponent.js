@@ -79,17 +79,19 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-function TableComponent({ board, myPlayer, setBoard, client }) {
+function TableComponent({ board, myPlayer, client, message }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
 
   useEffect(() => {
-    const updatedOthers = Array.from(
-      { length: numOfOtherPlayers },
-      (_, i) => (myPlayer.position + i + 1) % 6
-    );
-    setOthers(updatedOthers);
-  }, [board.totalPlayer, myPlayer.position]); //postion 배치
+    if (myPlayer) {
+      const updatedOthers = Array.from(
+        { length: numOfOtherPlayers },
+        (_, i) => (myPlayer.position + i + 1) % 6
+      );
+      setOthers(updatedOthers);
+    }
+  }, [board.totalPlayer, myPlayer]); //postion 배치
 
   const playerArray = others.map((position) =>
     board.players.find((player) => player.position === position)
@@ -99,7 +101,6 @@ function TableComponent({ board, myPlayer, setBoard, client }) {
   return (
     <TableContainer>
       <PlayerCount>{board.totalPlayer}/6</PlayerCount>
-      {/* <button onClick={onClickBtn}>test</button> */}
 
       <Table>
         <CardContainer>
@@ -115,20 +116,14 @@ function TableComponent({ board, myPlayer, setBoard, client }) {
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[0] ? (
             <Player
-              setBoard={setBoard}
               boardData={board}
               player1={playerArray[0]}
-              cleint={client}
+              message={message}
             />
           ) : (
             <EmptyBox></EmptyBox>
           )}
-          <Player
-            setBoard={setBoard}
-            boardData={board}
-            myPlayer={myPlayer}
-            client={client}
-          />
+          <Player boardData={board} myPlayer={myPlayer} message={message} />
         </SubPlayerContainer>
       </PlayerContainer>
 
@@ -136,20 +131,18 @@ function TableComponent({ board, myPlayer, setBoard, client }) {
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[2] ? (
             <Player
-              setBoard={setBoard}
               boardData={board}
               player3={playerArray[2]}
-              cleint={client}
+              message={message}
             />
           ) : (
             <EmptyBox></EmptyBox>
           )}
           {board.totalPlayer >= 2 && playerArray[3] ? (
             <Player
-              setBoard={setBoard}
               boardData={board}
               player4={playerArray[3]}
-              cleint={client}
+              message={message}
             />
           ) : (
             <EmptyBox></EmptyBox>
@@ -160,10 +153,9 @@ function TableComponent({ board, myPlayer, setBoard, client }) {
       <PlayerContainer position="left">
         {board.totalPlayer >= 2 && playerArray[1] ? (
           <Player
-            setBoard={setBoard}
             boardData={board}
             player2={playerArray[1]}
-            cleint={client}
+            message={message}
           />
         ) : null}
       </PlayerContainer>
@@ -171,10 +163,9 @@ function TableComponent({ board, myPlayer, setBoard, client }) {
       <PlayerContainer position="right">
         {board.totalPlayer >= 2 && playerArray[4] ? (
           <Player
-            setBoard={setBoard}
             boardData={board}
             player5={playerArray[4]}
-            cleint={client}
+            message={message}
           />
         ) : null}
       </PlayerContainer>

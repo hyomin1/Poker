@@ -17,7 +17,7 @@ const SpinnerOverlay = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-function Waiting({ board, myPlayer }) {
+function Waiting({ board, myPlayer, message }) {
   return (
     <WaitingContainer>
       <SpinnerOverlay>
@@ -26,7 +26,7 @@ function Waiting({ board, myPlayer }) {
           플레이어 대기중
         </Button>
       </SpinnerOverlay>
-      <TableComponent myPlayer={myPlayer} board={board} />
+      <TableComponent myPlayer={myPlayer} board={board} message={message} />
     </WaitingContainer>
   );
 }
