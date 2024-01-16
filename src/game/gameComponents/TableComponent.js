@@ -1,5 +1,7 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
+import { BASE_URL } from "../../api";
 import Player from "./Player";
 
 const TableContainer = styled.div`
@@ -54,6 +56,74 @@ const Card = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
+const getCardShape = (shape) => {
+  switch (shape) {
+    case 0:
+      return "spades";
+    case 1:
+      return "diamonds";
+    case 2:
+      return "hearts";
+    case 3:
+      return "clubs";
+    default:
+      return "";
+  }
+};
+const getCardNum = (num) => {
+  if (num >= 0 && num <= 8) {
+    return num + 2;
+  } else {
+    switch (num) {
+      case 9:
+        return "jack";
+      case 10:
+        return "queen";
+      case 11:
+        return "king";
+      case 12:
+        return "ace";
+      default:
+        return "";
+    }
+  }
+};
+
+const Card1 = styled.div`
+  width: 100px;
+  height: 150px;
+  background-image: ${(props) =>
+    `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
+      props.$card1shape
+    )}.png")`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+`;
+const Card2 = styled.div`
+  width: 100px;
+  height: 150px;
+  background-image: ${(props) =>
+    `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
+      props.$card2shape
+    )}.png")`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+`;
+const Card3 = styled.div`
+  width: 100px;
+  height: 150px;
+  background-image: ${(props) =>
+    `url("/images/${getCardNum(props.$card3num)}_of_${getCardShape(
+      props.$card3shape
+    )}.png")`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+`;
+const Card4 = styled.div``;
+const Card5 = styled.div``;
 const PlayerContainer = styled.div`
   border: 1px solid green;
   display: flex;
@@ -79,9 +149,20 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-function TableComponent({ board, myPlayer, client, message }) {
+function TableComponent({ board, myPlayer, message }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
+
+  const card1Shape = Math.floor(board.communityCard1 / 13);
+  const card2Shape = Math.floor(board.communityCard2 / 13);
+  const card3Shape = Math.floor(board.communityCard3 / 13);
+  const card4Shape = Math.floor(board.communityCard4 / 13);
+  const card5Shape = Math.floor(board.communityCard5 / 13);
+  const card1Num = board.communityCard1 % 13;
+  const card2Num = board.communityCard2 % 13;
+  const card3Num = board.communityCard3 % 13;
+  const card4Num = board.communityCard4 % 13;
+  const card5Num = board.communityCard5 % 13;
 
   useEffect(() => {
     if (myPlayer) {
@@ -97,16 +178,37 @@ function TableComponent({ board, myPlayer, client, message }) {
     board.players.find((player) => player.position === position)
   );
   //console.log("다른플레이어정보", playerArray);
+  const testStart = async () => {
+    //테스트용 게임 시작
+    try {
+      const res = axios.post(`${BASE_URL}/api/board/start/${board.id}`);
+    } catch (error) {}
+  };
 
   return (
     <TableContainer>
-      <PlayerCount>{board.totalPlayer}/6</PlayerCount>
+      <PlayerCount>
+        {board.totalPlayer}/6
+        <button onClick={testStart}>게임시작</button>
+      </PlayerCount>
 
       <Table>
         <CardContainer>
-          <Card />
-          <Card />
-          <Card />
+          {message === "NEXT_PHASE_START" ? (
+            <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+          ) : (
+            <Card />
+          )}
+          {message === "NEXT_PHASE_START" ? (
+            <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+          ) : (
+            <Card />
+          )}
+          {message === "NEXT_PHASE_START" ? (
+            <Card3 $card3shape={card3Shape} $card3num={card3Num} />
+          ) : (
+            <Card />
+          )}
           <Card />
           <Card />
         </CardContainer>

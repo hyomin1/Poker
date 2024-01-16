@@ -4,6 +4,8 @@ import { BsEmojiSunglasses } from "react-icons/bs";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import CardComponent from "./CardComponent";
 import { client } from "../../client";
+import axios from "axios";
+import { BASE_URL } from "../../api";
 const PlayContainer = styled.div`
   display: flex;
   svg {
@@ -16,16 +18,10 @@ const PlayContainer = styled.div`
 const Timer = styled.div`
   margin-bottom: 10px;
 `;
-const Card = styled.div`
-  width: 80px;
-  height: 120px;
-  background-image: url("/images/cardBack.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  margin: 0 10px;
-`;
+
 const PlayerInfo = styled.div`
   display: flex;
+  justify-content: center;
 `;
 
 const PlayerProfileInfo = styled.div`
@@ -40,15 +36,51 @@ const PlayerName = styled.span`
   font-size: 20px;
   margin-bottom: 20px;
 `;
-const CardContainer = styled.div`
-  display: flex;
-`;
-const Button = styled.button`
+
+const PositionButton = styled.button`
   background-color: white;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
+`;
+const BettingButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  flex-direction: ${(props) => (props.batch === "raise" ? "column" : "row")};
+`;
+
+const BettingButton = styled.button`
+  background-color: #353b48;
+  color: white;
+  width: 150px;
+  height: 45px;
+  font-weight: bold;
+  font-size: 20px;
+  ${(props) => {
+    if (props.status === "fold") {
+      return "color : #f5f6fa;";
+    } else if (props.status === "check") {
+      return "color : #4cd137;";
+    } else if (props.status === "raise") {
+      return "color :#fbc531; ";
+    } else if (props.status === "call") {
+      return "color :#00a8ff;";
+    } else if (props.status === "allin") {
+      return "color:#e84118;";
+    }
+  }}
+`;
+const RaiseContainer = styled.div`
+  display: flex;
+`;
+const RaiseInputContainer = styled.div`
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 function Player({
@@ -63,12 +95,11 @@ function Player({
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
   const [time, setTime] = useState(0);
-  const [isBet, setIsBet] = useState(false);
-  const [isRaise, setIsRaise] = useState(false);
   const [board, setBoard] = useState(boardData);
   const [amount, setAmount] = useState(board.blind);
 
   useEffect(() => {
+    // 20초 타이머
     const intervalId = setInterval(() => {
       setTime((prevNow) => (prevNow < 20 ? prevNow + 1 : prevNow));
     }, 1000);
@@ -79,6 +110,47 @@ function Player({
 
     return () => clearInterval(intervalId);
   }, []);
+  const timeOut = async (player) => {
+    console.log("시간초과", player);
+    setBoard((prev) => {
+      const updatedPlayers = prev.players.map((play) =>
+        player && play.id === player.id
+          ? {
+              ...play,
+              status: 0,
+            }
+          : play
+      );
+      return {
+        ...prev,
+        players: updatedPlayers,
+      };
+    });
+    // const res = await axios.delete(`${BASE_URL}/api/board/exit`, board);
+    // console.log("타임아웃", res.data);
+    return;
+  };
+
+  useEffect(() => {
+    if (
+      board &&
+      time === 20 &&
+      (message === "GAME_START" ||
+        message === "NEXT_ACTION" ||
+        message === "NEXT_PHASE_START")
+    ) {
+      const foldPlayer = players.find(
+        (player) => player && player.position === board.actionPos
+      );
+      timeOut(foldPlayer);
+
+      return () => {};
+    }
+  }, [time, board, players, message]);
+  useEffect(() => {
+    setBoard(boardData);
+  }, [boardData]);
+
   const progressValue = (time / 20) * 100;
   console.log("message", message);
 
@@ -98,13 +170,14 @@ function Player({
       return updatedBoard;
     });
   };
+  console.log(time);
 
   // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
+          player && play.id === player.id
             ? {
                 ...play,
                 money: bettingSize - phaseCallSize,
@@ -123,7 +196,7 @@ function Player({
     if (bettingSize !== 0) {
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
+          player && play.id === player.id
             ? {
                 ...play,
                 status: 0,
@@ -146,7 +219,7 @@ function Player({
     if (money - phaseCallSize > bettingSize * 2) {
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
+          player && play.id === player.id
             ? {
                 ...play,
                 status: amount === player.money ? 2 : play.status,
@@ -164,26 +237,7 @@ function Player({
       });
     }
   };
-  const raiseBet = (player) => {
-    // updateBoard((prev) => {
-    //   const updatedPlayers = prev.players.map((play) =>
-    //     play.id === player.id
-    //       ? {
-    //           ...play,
-    //           status: amount === player.money ? 2 : play.status,
-    //           money: play.money - amount,
-    //           phaseCallSize: player.phaseCallSize + amount,
-    //         }
-    //       : play
-    //   );
-    //   return {
-    //     ...prev,
-    //     players: updatedPlayers,
-    //     bettingPos: player.postion,
-    //     bettingSize: amount,
-    //   };
-    // });
-  };
+
   const allIn = (bettingSize, phaseCallSize, money, player) => {
     if (
       bettingSize - phaseCallSize > money ||
@@ -191,7 +245,7 @@ function Player({
     ) {
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
+          player && play.id === player.id
             ? {
                 ...play,
                 status: 2,
@@ -219,101 +273,121 @@ function Player({
   ) => {
     if (phaseStatus !== 0 && bettingSize === phaseCallSize) {
       return (
-        <div>
-          {message === "GAME_START" || message === "NEXT_ACTION" ? (
-            <div>
-              <button onClick={() => check(bettingSize, phaseCallSize, player)}>
-                체크
-              </button>
-              <div>
-                <input
-                  onChange={onHandleAmount}
-                  min={board.blind}
-                  max={player.money}
-                  value={amount}
-                  type="range"
-                />
-                <span style={{ color: "red" }}>{amount}</span>
-                <button
+        <>
+          {message === "GAME_START" ||
+          message === "NEXT_ACTION" ||
+          message === "NEXT_PHASE_START" ? (
+            <BettingButtonContainer batch="raise">
+              <div style={{ display: "flex" }}>
+                <RaiseInputContainer />
+                <RaiseInputContainer>
+                  <span style={{ color: "red" }}>{amount}</span>
+                  <input
+                    onChange={onHandleAmount}
+                    min={board.blind}
+                    max={player.money}
+                    value={amount}
+                    type="range"
+                    step={1000}
+                  />
+                </RaiseInputContainer>
+              </div>
+              <RaiseContainer>
+                <BettingButton
+                  status="check"
+                  onClick={() => check(bettingSize, phaseCallSize, player)}
+                >
+                  체크
+                </BettingButton>
+
+                <BettingButton
+                  status={amount === player.money ? "allin" : "raise"}
                   onClick={() =>
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
-                  레이즈
-                </button>
-              </div>
-            </div>
+                  {amount === player.money ? "올인" : "레이즈"}
+                </BettingButton>
+              </RaiseContainer>
+            </BettingButtonContainer>
           ) : null}
-
-          {/* {isBet && isRaise && (
-            <div>
-              <button onClick={() => raiseBet(player)}>배팅</button>
-            </div>
-          )} */}
-        </div>
+        </>
       );
     } else if (
       phaseCallSize < bettingSize &&
       money <= bettingSize - phaseCallSize
     ) {
       return (
-        <div>
-          {message === "NEXT_ACTION" ? (
-            <div>
-              <button onClick={() => fold(bettingSize, player)}>폴드</button>
-              <button
+        <>
+          {message === "NEXT_ACTION" || message === "NEXT_PHASE_START" ? (
+            <BettingButtonContainer>
+              <BettingButton
+                status="fold"
+                onClick={() => fold(bettingSize, player)}
+              >
+                폴드
+              </BettingButton>
+              <BettingButton
+                status="allin"
                 onClick={() => allIn(bettingSize, phaseCallSize, money, player)}
               >
                 올인
-              </button>
-            </div>
+              </BettingButton>
+            </BettingButtonContainer>
           ) : null}
-        </div>
+        </>
       );
     } else {
       return (
-        <div>
-          {phaseStatus !== 0 && message === "NEXT_ACTION" ? (
-            <div>
-              <button onClick={() => fold(bettingSize, player)}>폴드</button>
-              <button
-                onClick={() => call(bettingSize, phaseCallSize, money, player)}
-              >
-                콜
-              </button>
-              <div>
-                <input
-                  onChange={onHandleAmount}
-                  min={board.blind}
-                  max={player.money}
-                  value={amount}
-                  type="range"
-                />
-                <button
+        <>
+          {(phaseStatus !== 0 && message === "NEXT_ACTION") ||
+          message === "NEXT_PHASE_START" ? (
+            <BettingButtonContainer batch="raise">
+              <div style={{ display: "flex" }}>
+                <RaiseInputContainer />
+                <RaiseInputContainer />
+                <RaiseInputContainer>
+                  <span style={{ color: "red" }}>{amount}</span>
+                  <input
+                    onChange={onHandleAmount}
+                    min={board.blind}
+                    max={player.money}
+                    value={amount}
+                    type="range"
+                  />
+                </RaiseInputContainer>
+              </div>
+              <RaiseContainer>
+                <BettingButton
+                  status="fold"
+                  onClick={() => fold(bettingSize, player)}
+                >
+                  폴드
+                </BettingButton>
+                <BettingButton
+                  status="call"
+                  onClick={() =>
+                    call(bettingSize, phaseCallSize, money, player)
+                  }
+                >
+                  콜
+                </BettingButton>
+
+                <BettingButton
+                  status="raise"
                   onClick={() =>
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
                   레이즈
-                </button>
-              </div>
-            </div>
+                </BettingButton>
+              </RaiseContainer>
+            </BettingButtonContainer>
           ) : null}
-          {/* {isRaise && (
-            <div>
-           
-              <span style={{ color: "red" }}>{amount}</span>
-              <button onClick={() => raiseBet(player)}>배팅</button>
-            </div>
-          )} */}
-        </div>
+        </>
       );
     }
   };
-
-  useEffect(() => {
-    setBoard(boardData);
-  }, [boardData]);
 
   const renderPlayer1 = (player) => {
     if (!player) {
@@ -329,18 +403,11 @@ function Player({
               <Timer>
                 <ProgressBar now={progressValue} label={`${time}초`} animated />
               </Timer>
-              {bettingMethod(
-                board.bettingSize,
-                player.phaseCallSize,
-                player.money,
-                player,
-                board.phaseStatus
-              )}
             </>
           )}
 
         <PlayerInfo>
-          {player.position === 3 && <Button></Button>}
+          {player.position === 3 && <PositionButton />}
           <PlayerProfileInfo>
             <PlayerName>{player.playerName}</PlayerName>
             <BsEmojiSunglasses />
@@ -350,6 +417,16 @@ function Player({
             <CardComponent board={board} player={player} myPlayer={myPlayer} />
           ) : null}
         </PlayerInfo>
+        {board &&
+          board.actionPos === player.position &&
+          myPlayer === player &&
+          bettingMethod(
+            board.bettingSize,
+            player.phaseCallSize,
+            player.money,
+            player,
+            board.phaseStatus
+          )}
       </React.Fragment>
     );
   };

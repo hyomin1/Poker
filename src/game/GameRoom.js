@@ -83,19 +83,9 @@ function GameRoom() {
     // updatedBoard();
   }, []);
 
-  const [test, setTest] = useState(false);
-  const testStart = async () => {
-    //테스트용 게임 시작
-    try {
-      const res = axios.post(`${BASE_URL}/api/board/start/${board.id}`);
-      setTest(true);
-    } catch (error) {}
-  };
   return (
     <GameContainer>
-      {/* <button onClick={onClickBtn}>웹소켓 테스트 버튼</button> gameStart === "GAME_START" || board.phaseStatus !== 0 */}
-      <button onClick={testStart}>게임시작</button>
-      {message === "GAME_START" ? (
+      {message || message === "GAME_START" ? (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}
