@@ -95,81 +95,13 @@ function Player({
   message,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
-  const [time, setTime] = useState(0);
+  //const [time, setTime] = useState(0);
   const [board, setBoard] = useState(boardData);
   const [amount, setAmount] = useState(board.blind);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (
-      message === "GAME_START" ||
-      message === "NEXT_ACTION" ||
-      message === "NEXT_PHASE_START"
-    ) {
-      const intervalId = setInterval(() => {
-        setTime((prevNow) => (prevNow < 40 ? prevNow + 1 : prevNow));
-      }, 1000);
-      if (time === 40) {
-        clearInterval(intervalId);
-      }
-
-      return () => {
-        clearInterval(intervalId);
-      };
-    }
-  }, [message, time]);
-  console.log(message, time);
-  const progressValue = (time / 40) * 100;
-
-  useEffect(() => {
-    if (
-      board &&
-      time === 40 &&
-      (message === "GAME_START" ||
-        message === "NEXT_ACTION" ||
-        message === "NEXT_PHASE_START")
-    ) {
-      const foldPlayer = board.players.find(
-        (player) => player.position === board.actionPos
-      );
-      console.log("타임아웃플레이어", foldPlayer, board.actionPos); //check용
-
-      timeOut(foldPlayer);
-
-      return () => {};
-    }
-  }, [time, board, message]);
-
-  const timeOut = async (player) => {
-    //console.log("확인", player);
-    setTime(0);
-    updateBoard((prev) => {
-      const updatedPlayers = prev.players.map((play) =>
-        play.id === player.id
-          ? {
-              ...play,
-              status: 0,
-            }
-          : play
-      );
-      return {
-        ...prev,
-        players: updatedPlayers,
-      };
-    }, player.id);
-    if (player === myPlayer) {
-      try {
-        const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
-        //console.log("타임아웃");
-        setBoard(res.data);
-        //client.deactivate()
-        navigate("/login");
-      } catch (error) {
-        console.log("타임 아웃 에러", error);
-      }
-    }
-  };
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     setBoard(boardData);
@@ -288,14 +220,79 @@ function Player({
   const onHandleAmount = (e) => {
     setAmount(parseInt(e.target.value, 10));
   };
+  const actionTime = 10;
+  const [time, setTime] = useState(actionTime);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    const intervalId2 = setInterval(() => {
+      setTime((prev) => (prev > 0 ? prev - 1 : actionTime));
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearInterval(intervalId2);
+    };
+  }, []);
+
+  const timeOut = async (player) => {
+    updateBoard((prev) => {
+      const updatedPlayers = prev.players.map((play) =>
+        play.id === player.id
+          ? {
+              ...play,
+              status: 0,
+            }
+          : play
+      );
+      return {
+        ...prev,
+        players: updatedPlayers,
+      };
+    });
+    try {
+      const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
+      //console.log("퇴장데이터", res.data);
+      //setBoard(res.data);
+      //client.deactivate();
+      navigate("/login");
+    } catch (error) {
+      console.log("플레이어 퇴장 에러", error);
+    }
+  };
+  const [isTimeOut, setIsTimeOut] = useState(true);
 
   const bettingMethod = (
     bettingSize,
     phaseCallSize,
     money,
     player,
-    phaseStatus
+    phaseStatus,
+    boardLastActionTime
   ) => {
+    const lastActionTime = new Date(boardLastActionTime).getTime() / 1000;
+
+    const remainTime = Math.floor(
+      lastActionTime + actionTime - currentTime.getTime() / 1000
+    );
+
+    if (
+      (message === "GAME_START" ||
+        message === "NEXT_ACTION" ||
+        message === "NEXT_PHASE_START" ||
+        message === "PLAYER_EXIT") &&
+      remainTime < 0 &&
+      isTimeOut
+    ) {
+      setIsTimeOut((prev) => !prev);
+      console.log("타임 아웃", remainTime);
+      timeOut(player);
+      //여기서 로직 시작 , action exit,
+      //어떻게 한번만 딱 하고 할지
+    }
+
     if (phaseStatus !== 0 && bettingSize === phaseCallSize) {
       return (
         <>
@@ -437,7 +434,7 @@ function Player({
             message === "NEXT_PHASE_START") && (
             <>
               <Timer>
-                <ProgressBar now={progressValue} label={`${time}초`} animated />
+                <ProgressBar label={`${time}초`} animated />
               </Timer>
             </>
           )}
@@ -461,7 +458,8 @@ function Player({
             player.phaseCallSize,
             player.money,
             player,
-            board.phaseStatus
+            board.phaseStatus,
+            board.lastActionTime
           )}
       </React.Fragment>
     );

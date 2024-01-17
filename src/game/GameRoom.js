@@ -1,4 +1,5 @@
 import axios from "axios";
+import { m } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
@@ -87,7 +88,8 @@ function GameRoom() {
     <GameContainer>
       {message === "NEXT_ACTION" ||
       message === "GAME_START" ||
-      message === "NEXT_PHASE_START" ? (
+      message === "NEXT_PHASE_START" ||
+      message === "PLAYER_EXIT" ? (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}
