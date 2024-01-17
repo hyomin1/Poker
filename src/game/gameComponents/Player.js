@@ -195,7 +195,7 @@ function Player({
   // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
-      setTime(0);
+      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -215,7 +215,7 @@ function Player({
   };
   const fold = (bettingSize, player) => {
     if (bettingSize !== 0) {
-      setTime(0);
+      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -234,13 +234,13 @@ function Player({
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
-      setTime(0);
+      //setTime(0);
       publishBoardAction(board, player.id);
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
     if (money - phaseCallSize > bettingSize * 2) {
-      setTime(0);
+      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -267,7 +267,7 @@ function Player({
       bettingSize - phaseCallSize > money ||
       money * 2 < bettingSize - phaseCallSize
     ) {
-      setTime(0);
+      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
