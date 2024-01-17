@@ -108,25 +108,24 @@ function Player({
       message === "NEXT_PHASE_START"
     ) {
       const intervalId = setInterval(() => {
-        setTime((prevNow) => (prevNow < 10 ? prevNow + 1 : prevNow));
+        setTime((prevNow) => (prevNow < 20 ? prevNow + 1 : prevNow));
       }, 1000);
-      setTimeout(() => {
+      if (time === 20) {
         clearInterval(intervalId);
-      }, 10000);
+      }
+
       return () => {
         clearInterval(intervalId);
       };
     }
-
-    // }
-  }, [message]);
+  }, [message, time]);
   console.log(message, time);
   const progressValue = (time / 20) * 100;
 
   useEffect(() => {
     if (
       board &&
-      time === 9 &&
+      time === 20 &&
       (message === "GAME_START" ||
         message === "NEXT_ACTION" ||
         message === "NEXT_PHASE_START")
@@ -135,12 +134,8 @@ function Player({
         (player) => player.position === board.actionPos
       );
       console.log("타임아웃플레이어", foldPlayer, board.actionPos); //check용
-      if (foldPlayer) {
-        timeOut(foldPlayer);
-        setTime(0);
-      }
 
-      //setTime(0); // 타임아웃 되면 다시 0으로 세팅
+      timeOut(foldPlayer);
 
       return () => {};
     }
@@ -148,7 +143,7 @@ function Player({
 
   const timeOut = async (player) => {
     //console.log("확인", player);
-
+    setTime(0);
     updateBoard((prev) => {
       const updatedPlayers = prev.players.map((play) =>
         play.id === player.id
@@ -166,12 +161,12 @@ function Player({
     if (player === myPlayer) {
       try {
         const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
-        console.log("타임아웃");
+        //console.log("타임아웃");
         setBoard(res.data);
-        setTime(0);
+        //client.deactivate()
         navigate("/login");
       } catch (error) {
-        console.log("타임 아웃 에러", error.response);
+        console.log("타임 아웃 에러", error);
       }
     }
   };
@@ -200,6 +195,7 @@ function Player({
   // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
+      setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -219,6 +215,7 @@ function Player({
   };
   const fold = (bettingSize, player) => {
     if (bettingSize !== 0) {
+      setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -237,11 +234,13 @@ function Player({
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
+      setTime(0);
       publishBoardAction(board, player.id);
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
     if (money - phaseCallSize > bettingSize * 2) {
+      setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -268,6 +267,7 @@ function Player({
       bettingSize - phaseCallSize > money ||
       money * 2 < bettingSize - phaseCallSize
     ) {
+      setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
