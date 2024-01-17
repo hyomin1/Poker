@@ -85,7 +85,9 @@ function GameRoom() {
 
   return (
     <GameContainer>
-      {message || message === "GAME_START" ? (
+      {message === "NEXT_ACTION" ||
+      message === "GAME_START" ||
+      message === "NEXT_PHASE_START" ? (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}

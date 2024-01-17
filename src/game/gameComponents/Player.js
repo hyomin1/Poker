@@ -108,9 +108,9 @@ function Player({
       message === "NEXT_PHASE_START"
     ) {
       const intervalId = setInterval(() => {
-        setTime((prevNow) => (prevNow < 20 ? prevNow + 1 : prevNow));
+        setTime((prevNow) => (prevNow < 40 ? prevNow + 1 : prevNow));
       }, 1000);
-      if (time === 20) {
+      if (time === 40) {
         clearInterval(intervalId);
       }
 
@@ -120,12 +120,12 @@ function Player({
     }
   }, [message, time]);
   console.log(message, time);
-  const progressValue = (time / 20) * 100;
+  const progressValue = (time / 40) * 100;
 
   useEffect(() => {
     if (
       board &&
-      time === 20 &&
+      time === 40 &&
       (message === "GAME_START" ||
         message === "NEXT_ACTION" ||
         message === "NEXT_PHASE_START")
