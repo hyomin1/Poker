@@ -6,6 +6,7 @@ import CardComponent from "./CardComponent";
 import { client } from "../../client";
 import axios from "axios";
 import { BASE_URL } from "../../api";
+import { useNavigate } from "react-router-dom";
 const PlayContainer = styled.div`
   display: flex;
   svg {
@@ -98,26 +99,59 @@ function Player({
   const [board, setBoard] = useState(boardData);
   const [amount, setAmount] = useState(board.blind);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // 20초 타이머
-    const intervalId = setInterval(() => {
-      setTime((prevNow) => (prevNow < 20 ? prevNow + 1 : prevNow));
-    }, 1000);
+    if (
+      message === "GAME_START" ||
+      message === "NEXT_ACTION" ||
+      message === "NEXT_PHASE_START"
+    ) {
+      const intervalId = setInterval(() => {
+        setTime((prevNow) => (prevNow < 10 ? prevNow + 1 : prevNow));
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(intervalId);
+      }, 10000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
 
-    setTimeout(() => {
-      clearInterval(intervalId);
-    }, 20000);
+    // }
+  }, [message]);
+  console.log(message, time);
+  const progressValue = (time / 20) * 100;
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+  useEffect(() => {
+    if (
+      board &&
+      time === 9 &&
+      (message === "GAME_START" ||
+        message === "NEXT_ACTION" ||
+        message === "NEXT_PHASE_START")
+    ) {
+      const foldPlayer = board.players.find(
+        (player) => player.position === board.actionPos
+      );
+      console.log("타임아웃플레이어", foldPlayer, board.actionPos); //check용
+      if (foldPlayer) {
+        timeOut(foldPlayer);
+        setTime(0);
+      }
+
+      //setTime(0); // 타임아웃 되면 다시 0으로 세팅
+
+      return () => {};
+    }
+  }, [time, board, message]);
+
   const timeOut = async (player) => {
-    setTime(0);
+    //console.log("확인", player);
 
-    setBoard((prev) => {
+    updateBoard((prev) => {
       const updatedPlayers = prev.players.map((play) =>
-        player && play.id === player.id
+        play.id === player.id
           ? {
               ...play,
               status: 0,
@@ -128,36 +162,23 @@ function Player({
         ...prev,
         players: updatedPlayers,
       };
-    });
-    //const res = await axios.delete(`${BASE_URL}/api/board/exit`, board);
-    //console.log("타임아웃", res.data);
-  };
-
-  useEffect(() => {
-    if (
-      board &&
-      time === 20 &&
-      (message === "GAME_START" ||
-        message === "NEXT_ACTION" ||
-        message === "NEXT_PHASE_START")
-    ) {
-      const foldPlayer = board.players.find(
-        (player) => player.position === board.actionPos
-      );
-      console.log("타임아웃플레이어", foldPlayer); //check용
-      timeOut(foldPlayer);
-      //setTime(0); // 타임아웃 되면 다시 0으로 세팅
-
-      return () => {};
+    }, player.id);
+    if (player === myPlayer) {
+      try {
+        const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
+        console.log("타임아웃");
+        setBoard(res.data);
+        setTime(0);
+        navigate("/login");
+      } catch (error) {
+        console.log("타임 아웃 에러", error.response);
+      }
     }
-  }, [time, board, message]);
+  };
 
   useEffect(() => {
     setBoard(boardData);
   }, [boardData]); //최신 보드 데이터 저장
-
-  const progressValue = (time / 20) * 100;
-  console.log("message", message);
 
   const publishBoardAction = (updatedBoard, playerId) => {
     //websokcet 통신 함수
@@ -167,11 +188,11 @@ function Player({
       headers: { PlayerId: playerId },
     });
   };
-  const updateBoard = (update) => {
+  const updateBoard = (update, playerId) => {
     //board 업데이트 함수
     setBoard((prev) => {
       const updatedBoard = update(prev);
-      publishBoardAction(updatedBoard, myPlayer.id);
+      publishBoardAction(updatedBoard, playerId);
       return updatedBoard;
     });
   };
@@ -193,7 +214,7 @@ function Player({
           ...prev,
           players: updatedPlayers,
         };
-      });
+      }, player.id);
     }
   };
   const fold = (bettingSize, player) => {
@@ -211,7 +232,7 @@ function Player({
           ...prev,
           players: updatedPlayers,
         };
-      });
+      }, player.id);
     }
   };
   const check = (bettingSize, phaseCallSize, player) => {
@@ -238,7 +259,7 @@ function Player({
           bettingPos: player.postion,
           bettingSize: amount,
         };
-      });
+      }, player.id);
     }
   };
 
@@ -261,7 +282,7 @@ function Player({
           ...prev,
           players: updatedPlayers,
         };
-      });
+      }, player.id);
     }
   };
   const onHandleAmount = (e) => {
@@ -280,7 +301,8 @@ function Player({
         <>
           {message === "GAME_START" ||
           message === "NEXT_ACTION" ||
-          message === "NEXT_PHASE_START" ? (
+          message === "NEXT_PHASE_START" ||
+          message === "PLAYER_EXIT" ? (
             <BettingButtonContainer batch="raise">
               <div style={{ display: "flex" }}>
                 <RaiseInputContainer />
@@ -326,7 +348,8 @@ function Player({
         <>
           {message === "GAME_START" ||
           message === "NEXT_ACTION" ||
-          message === "NEXT_PHASE_START" ? (
+          message === "NEXT_PHASE_START" ||
+          message === "PLAYER_EXIT" ? (
             <BettingButtonContainer>
               <BettingButton
                 status="fold"
@@ -350,7 +373,8 @@ function Player({
           {phaseStatus !== 0 &&
           (message === "GAME_START" ||
             message === "NEXT_ACTION" ||
-            message === "NEXT_PHASE_START") ? (
+            message === "NEXT_PHASE_START" ||
+            message === "PLAYER_EXIT") ? (
             <BettingButtonContainer batch="raise">
               <div style={{ display: "flex" }}>
                 <RaiseInputContainer />
