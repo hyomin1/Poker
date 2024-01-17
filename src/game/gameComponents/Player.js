@@ -139,17 +139,20 @@ function Player({
         message === "NEXT_ACTION" ||
         message === "NEXT_PHASE_START")
     ) {
-      const foldPlayer = players.find(
-        (player) => player && player.position === board.actionPos
+      const foldPlayer = board.players.find(
+        (player) => player.position === board.actionPos
       );
-      timeOut(foldPlayer);
+      console.log(foldPlayer); //check용
+      //timeOut(foldPlayer);
+      //setTime(0); // 타임아웃 되면 다시 0으로 세팅
 
       return () => {};
     }
-  }, [time, board, players, message]);
+  }, [time, board, message]);
+
   useEffect(() => {
     setBoard(boardData);
-  }, [boardData]);
+  }, [boardData]); //최신 보드 데이터 저장
 
   const progressValue = (time / 20) * 100;
   console.log("message", message);
@@ -398,7 +401,10 @@ function Player({
       <React.Fragment key={player.id}>
         {board &&
           board.actionPos === player.position &&
-          myPlayer === player && (
+          myPlayer === player &&
+          (message === "GAME_START" ||
+            message === "NEXT_ACTION" ||
+            message === "NEXT_PHASE_START") && (
             <>
               <Timer>
                 <ProgressBar now={progressValue} label={`${time}초`} animated />
