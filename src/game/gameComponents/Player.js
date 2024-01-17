@@ -108,10 +108,13 @@ function Player({
       clearInterval(intervalId);
     }, 20000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
   const timeOut = async (player) => {
-    console.log("시간초과", player);
+    setTime(0);
+
     setBoard((prev) => {
       const updatedPlayers = prev.players.map((play) =>
         player && play.id === player.id
@@ -126,9 +129,8 @@ function Player({
         players: updatedPlayers,
       };
     });
-    // const res = await axios.delete(`${BASE_URL}/api/board/exit`, board);
-    // console.log("타임아웃", res.data);
-    return;
+    //const res = await axios.delete(`${BASE_URL}/api/board/exit`, board);
+    //console.log("타임아웃", res.data);
   };
 
   useEffect(() => {
@@ -142,8 +144,8 @@ function Player({
       const foldPlayer = board.players.find(
         (player) => player.position === board.actionPos
       );
-      console.log(foldPlayer); //check용
-      //timeOut(foldPlayer);
+      console.log("타임아웃플레이어", foldPlayer); //check용
+      timeOut(foldPlayer);
       //setTime(0); // 타임아웃 되면 다시 0으로 세팅
 
       return () => {};
@@ -173,7 +175,6 @@ function Player({
       return updatedBoard;
     });
   };
-  console.log(time);
 
   // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
@@ -317,12 +318,15 @@ function Player({
         </>
       );
     } else if (
+      phaseStatus !== 0 &&
       phaseCallSize < bettingSize &&
       money <= bettingSize - phaseCallSize
     ) {
       return (
         <>
-          {message === "NEXT_ACTION" || message === "NEXT_PHASE_START" ? (
+          {message === "GAME_START" ||
+          message === "NEXT_ACTION" ||
+          message === "NEXT_PHASE_START" ? (
             <BettingButtonContainer>
               <BettingButton
                 status="fold"
@@ -343,8 +347,10 @@ function Player({
     } else {
       return (
         <>
-          {(phaseStatus !== 0 && message === "NEXT_ACTION") ||
-          message === "NEXT_PHASE_START" ? (
+          {phaseStatus !== 0 &&
+          (message === "GAME_START" ||
+            message === "NEXT_ACTION" ||
+            message === "NEXT_PHASE_START") ? (
             <BettingButtonContainer batch="raise">
               <div style={{ display: "flex" }}>
                 <RaiseInputContainer />
