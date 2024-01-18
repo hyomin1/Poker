@@ -52,11 +52,46 @@ const BettingButtonContainer = styled.div`
   margin-top: 25px;
   flex-direction: ${(props) => (props.batch === "raise" ? "column" : "row")};
 `;
+const AddInformBetting = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+`;
+const AmountWrapper = styled.div`
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  background-color: #353b48;
+  border: 1px solid black;
+`;
+const Amount = styled.span`
+  color: #e1b12c;
+  font-weight: bold;
+  font-size: 24px;
+  width: 90%;
+  height: 50%;
+  text-align: center;
+`;
+const PercentWrapper = styled(AmountWrapper)`
+  width: 45%;
+`;
+
+const PercentBtn = styled.button`
+  background-color: #353b48;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  width: 33%;
+  height: 80%;
+`;
 
 const BettingButton = styled.button`
   background-color: #353b48;
   color: white;
-  width: 150px;
+  width: 190px;
   height: 45px;
   font-weight: bold;
   font-size: 20px;
@@ -78,10 +113,14 @@ const RaiseContainer = styled.div`
   display: flex;
 `;
 const RaiseInputContainer = styled.div`
-  width: 150px;
+  width: 35%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #353b48;
+  height: 100%;
+  justify-content: center;
+  border: 1px solid black;
 `;
 
 function Player({
@@ -95,7 +134,7 @@ function Player({
   message,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
-  //const [time, setTime] = useState(0);
+
   const [board, setBoard] = useState(boardData);
   const [amount, setAmount] = useState(board.blind);
 
@@ -124,10 +163,8 @@ function Player({
     });
   };
 
-  // console.log("배팅체크", board);
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
-      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -147,7 +184,6 @@ function Player({
   };
   const fold = (bettingSize, player) => {
     if (bettingSize !== 0) {
-      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -166,13 +202,11 @@ function Player({
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
-      //setTime(0);
       publishBoardAction(board, player.id);
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
     if (money - phaseCallSize > bettingSize * 2) {
-      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -199,7 +233,6 @@ function Player({
       bettingSize - phaseCallSize > money ||
       money * 2 < bettingSize - phaseCallSize
     ) {
-      //setTime(0);
       updateBoard((prev) => {
         const updatedPlayers = prev.players.map((play) =>
           player && play.id === player.id
@@ -220,20 +253,14 @@ function Player({
   const onHandleAmount = (e) => {
     setAmount(parseInt(e.target.value, 10));
   };
-  const actionTime = 10;
-  const [time, setTime] = useState(actionTime);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    const intervalId2 = setInterval(() => {
-      setTime((prev) => (prev > 0 ? prev - 1 : actionTime));
-    }, 1000);
-
     return () => {
       clearInterval(intervalId);
-      clearInterval(intervalId2);
     };
   }, []);
 
@@ -252,17 +279,33 @@ function Player({
         players: updatedPlayers,
       };
     });
-    try {
-      const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
-      //console.log("퇴장데이터", res.data);
-      //setBoard(res.data);
-      //client.deactivate();
-      navigate("/login");
-    } catch (error) {
-      console.log("플레이어 퇴장 에러", error);
-    }
+    setTimeout(async () => {
+      try {
+        const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
+        //console.log("퇴장데이터", res.data);
+        //setBoard(res.data);
+        client.deactivate();
+        navigate("/login");
+      } catch (error) {
+        console.log("플레이어 퇴장 에러", error);
+      }
+    }, 1000);
   };
   const [isTimeOut, setIsTimeOut] = useState(true);
+
+  const actionTime = 20;
+
+  const remainTimeView = Math.floor(
+    new Date(board.lastActionTime).getTime() / 1000 +
+      actionTime -
+      currentTime.getTime() / 1000
+  );
+
+  const progressValue = (remainTimeView / actionTime) * 100;
+
+  const quarterClick = () => {};
+  const halfClick = () => {};
+  const fullClick = () => {};
 
   const bettingMethod = (
     bettingSize,
@@ -274,20 +317,20 @@ function Player({
   ) => {
     const lastActionTime = new Date(boardLastActionTime).getTime() / 1000;
 
-    const remainTime = Math.floor(
-      lastActionTime + actionTime - currentTime.getTime() / 1000
-    );
+    // const remainTime = Math.floor(
+    //   lastActionTime + actionTime - currentTime.getTime() / 1000
+    // );
 
     if (
       (message === "GAME_START" ||
         message === "NEXT_ACTION" ||
         message === "NEXT_PHASE_START" ||
         message === "PLAYER_EXIT") &&
-      remainTime < 0 &&
+      remainTimeView < 0 &&
       isTimeOut
     ) {
       setIsTimeOut((prev) => !prev);
-      console.log("타임 아웃", remainTime);
+      console.log("타임 아웃", remainTimeView);
       timeOut(player);
       //여기서 로직 시작 , action exit,
       //어떻게 한번만 딱 하고 할지
@@ -301,10 +344,16 @@ function Player({
           message === "NEXT_PHASE_START" ||
           message === "PLAYER_EXIT" ? (
             <BettingButtonContainer batch="raise">
-              <div style={{ display: "flex" }}>
-                <RaiseInputContainer />
+              <AddInformBetting>
+                <PercentWrapper>
+                  <PercentBtn onClick={quarterClick}>25%</PercentBtn>
+                  <PercentBtn onClick={halfClick}>50%</PercentBtn>
+                  <PercentBtn onClick={fullClick}>100%</PercentBtn>
+                </PercentWrapper>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                </AmountWrapper>
                 <RaiseInputContainer>
-                  <span style={{ color: "red" }}>{amount}</span>
                   <input
                     onChange={onHandleAmount}
                     min={board.blind}
@@ -312,9 +361,17 @@ function Player({
                     value={amount}
                     type="range"
                     step={1000}
+                    style={{
+                      width: "80%",
+                      height: "20px",
+                      cursor: "pointer",
+                      appearance: "none",
+                      borderRadius: "5px",
+                      outline: "none",
+                    }}
                   />
                 </RaiseInputContainer>
-              </div>
+              </AddInformBetting>
               <RaiseContainer>
                 <BettingButton
                   status="check"
@@ -373,20 +430,34 @@ function Player({
             message === "NEXT_PHASE_START" ||
             message === "PLAYER_EXIT") ? (
             <BettingButtonContainer batch="raise">
-              <div style={{ display: "flex" }}>
-                <RaiseInputContainer />
-                <RaiseInputContainer />
+              <AddInformBetting>
+                <PercentWrapper>
+                  <PercentBtn onClick={quarterClick}>25%</PercentBtn>
+                  <PercentBtn onClick={halfClick}>50%</PercentBtn>
+                  <PercentBtn onClick={fullClick}>100%</PercentBtn>
+                </PercentWrapper>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                </AmountWrapper>
                 <RaiseInputContainer>
-                  <span style={{ color: "red" }}>{amount}</span>
                   <input
                     onChange={onHandleAmount}
                     min={board.blind}
                     max={player.money}
                     value={amount}
                     type="range"
+                    step={1000}
+                    style={{
+                      width: "80%",
+                      height: "20px",
+                      cursor: "pointer",
+                      appearance: "none",
+                      borderRadius: "5px",
+                      outline: "none",
+                    }}
                   />
                 </RaiseInputContainer>
-              </div>
+              </AddInformBetting>
               <RaiseContainer>
                 <BettingButton
                   status="fold"
@@ -431,10 +502,16 @@ function Player({
           myPlayer === player &&
           (message === "GAME_START" ||
             message === "NEXT_ACTION" ||
-            message === "NEXT_PHASE_START") && (
+            message === "NEXT_PHASE_START" ||
+            message === "PLAYER_EXIT") && (
             <>
               <Timer>
-                <ProgressBar label={`${time}초`} animated />
+                <ProgressBar
+                  variant="danger"
+                  now={progressValue}
+                  label={`${remainTimeView}초`}
+                  animated
+                />
               </Timer>
             </>
           )}
