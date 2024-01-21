@@ -37,6 +37,7 @@ const Table = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   border: 10px solid black;
   grid-area: table;
   padding: 150px 200px;
@@ -122,8 +123,28 @@ const Card3 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card4 = styled.div``;
-const Card5 = styled.div``;
+const Card4 = styled.div`
+  width: 100px;
+  height: 150px;
+  background-image: ${(props) =>
+    `url("/images/${getCardNum(props.$card4num)}_of_${getCardShape(
+      props.$card4shape
+    )}.png")`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+`;
+const Card5 = styled.div`
+  width: 100px;
+  height: 150px;
+  background-image: ${(props) =>
+    `url("/images/${getCardNum(props.$card5num)}_of_${getCardShape(
+      props.$card5shape
+    )}.png")`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+`;
 const PlayerContainer = styled.div`
   border: 1px solid green;
   display: flex;
@@ -148,6 +169,17 @@ const SubPlayerContainer = styled.div`
 `;
 
 const EmptyBox = styled.div``;
+
+const PotContainer = styled.div``;
+
+const Pot = styled.span`
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+`;
+const PlayerInfo = styled.div``;
+const ChipContainer = styled.div``;
+const Chip = styled(Pot);
 
 function TableComponent({ board, myPlayer, message }) {
   const [others, setOthers] = useState([]);
@@ -193,35 +225,51 @@ function TableComponent({ board, myPlayer, message }) {
       </PlayerCount>
 
       <Table>
+        <PotContainer>
+          <Pot>pot : {board.pot}</Pot>
+        </PotContainer>
         <CardContainer>
-          {message === "NEXT_PHASE_START" ? (
+          {board.phaseStatus >= 2 ? (
             <Card1 $card1shape={card1Shape} $card1num={card1Num} />
           ) : (
             <Card />
           )}
-          {message === "NEXT_PHASE_START" ? (
+          {board.phaseStatus >= 2 ? (
             <Card2 $card2shape={card2Shape} $card2num={card2Num} />
           ) : (
             <Card />
           )}
-          {message === "NEXT_PHASE_START" ? (
+          {board.phaseStatus >= 2 ? (
             <Card3 $card3shape={card3Shape} $card3num={card3Num} />
           ) : (
             <Card />
           )}
-          <Card />
-          <Card />
+          {board.phaseStatus >= 3 ? (
+            <Card4 $card4shape={card4Shape} $card3num={card4Num} />
+          ) : (
+            <Card />
+          )}
+          {board.phaseStatus === 4 ? (
+            <Card5 $card5shape={card5Shape} $card5num={card5Num} />
+          ) : (
+            <Card />
+          )}
         </CardContainer>
       </Table>
 
       <PlayerContainer position="bottom">
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[0] ? (
-            <Player
-              boardData={board}
-              player1={playerArray[0]}
-              message={message}
-            />
+            <PlayerInfo>
+              <Player
+                boardData={board}
+                player1={playerArray[0]}
+                message={message}
+              />
+              {/* <ChipContainer>
+                <Chip>{playerArray[0].phaseCallSize}</Chip>
+              </ChipContainer> */}
+            </PlayerInfo>
           ) : (
             <EmptyBox></EmptyBox>
           )}

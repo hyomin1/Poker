@@ -122,6 +122,11 @@ const RaiseInputContainer = styled.div`
   justify-content: center;
   border: 1px solid black;
 `;
+const ChipContainer = styled.div``;
+
+const Chip = styled.span`
+  color: white;
+`;
 
 function Player({
   myPlayer,
@@ -144,6 +149,11 @@ function Player({
 
   useEffect(() => {
     setBoard(boardData);
+    if (boardData.bettingSize === 0) {
+      setAmount(boardData.blind);
+    } else {
+      setAmount(boardData.bettingSize * 2);
+    }
   }, [boardData]); //최신 보드 데이터 저장
 
   const publishBoardAction = (updatedBoard, playerId) => {
@@ -170,7 +180,7 @@ function Player({
           player && play.id === player.id
             ? {
                 ...play,
-                money: bettingSize - phaseCallSize,
+                money: money - (bettingSize - phaseCallSize),
                 phaseCallSize: bettingSize,
               }
             : play
@@ -212,16 +222,16 @@ function Player({
           player && play.id === player.id
             ? {
                 ...play,
-                status: amount === player.money ? 2 : play.status,
+                status: amount === player.money ? 3 : play.status,
                 money: play.money - amount,
-                phaseCallSize: player.phaseCallSize + amount,
+                phaseCallSize: amount,
               }
             : play
         );
         return {
           ...prev,
           players: updatedPlayers,
-          bettingPos: player.postion,
+          bettingPos: player.position,
           bettingSize: amount,
         };
       }, player.id);
@@ -238,7 +248,7 @@ function Player({
           player && play.id === player.id
             ? {
                 ...play,
-                status: 2,
+                status: 3,
                 money: play.money - play.money,
               }
             : play
@@ -293,7 +303,7 @@ function Player({
   };
   const [isTimeOut, setIsTimeOut] = useState(true);
 
-  const actionTime = 20;
+  const actionTime = 10000;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -303,9 +313,140 @@ function Player({
 
   const progressValue = (remainTimeView / actionTime) * 100;
 
-  const quarterClick = () => {};
-  const halfClick = () => {};
-  const fullClick = () => {};
+  const quarterClick = (bettingSize, phaseCallSize, player) => {
+    const sum = board.players.reduce(
+      (acc, player) => acc + player.phaseCallSize,
+      0
+    );
+
+    const myPhaseCallSize =
+      bettingSize + (board.pot + sum - phaseCallSize) * 0.25;
+    if (player.money < myPhaseCallSize) {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: player.money,
+                status: 3,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: player.money,
+        };
+      });
+    } else {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: myPhaseCallSize,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: myPhaseCallSize,
+        };
+      });
+    }
+  };
+  const halfClick = (bettingSize, phaseCallSize, player) => {
+    const sum = board.players.reduce(
+      (acc, player) => acc + player.phaseCallSize,
+      0
+    );
+
+    const myPhaseCallSize =
+      bettingSize + (board.pot + sum - phaseCallSize) * 0.5;
+    if (player.money < myPhaseCallSize) {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: player.money,
+                status: 3,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: player.money,
+        };
+      });
+    } else {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: myPhaseCallSize,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: myPhaseCallSize,
+        };
+      });
+    }
+  };
+  const fullClick = (bettingSize, phaseCallSize, player) => {
+    const sum = board.players.reduce(
+      (acc, player) => acc + player.phaseCallSize,
+      0
+    );
+
+    const myPhaseCallSize = bettingSize + (board.pot + sum - phaseCallSize) * 1;
+    if (player.money < myPhaseCallSize) {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: player.money,
+                status: 3,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: player.money,
+        };
+      });
+    } else {
+      updateBoard((prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                phaseCallSize: myPhaseCallSize,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+          bettingPos: player.position,
+          bettingSize: myPhaseCallSize,
+        };
+      });
+    }
+  };
 
   const bettingMethod = (
     bettingSize,
@@ -315,12 +456,6 @@ function Player({
     phaseStatus,
     boardLastActionTime
   ) => {
-    const lastActionTime = new Date(boardLastActionTime).getTime() / 1000;
-
-    // const remainTime = Math.floor(
-    //   lastActionTime + actionTime - currentTime.getTime() / 1000
-    // );
-
     if (
       (message === "GAME_START" ||
         message === "NEXT_ACTION" ||
@@ -346,9 +481,27 @@ function Player({
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
-                  <PercentBtn onClick={quarterClick}>25%</PercentBtn>
-                  <PercentBtn onClick={halfClick}>50%</PercentBtn>
-                  <PercentBtn onClick={fullClick}>100%</PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      quarterClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    25%
+                  </PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      halfClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    50%
+                  </PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      fullClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    100%
+                  </PercentBtn>
                 </PercentWrapper>
                 <AmountWrapper>
                   <Amount>{amount}</Amount>
@@ -356,7 +509,11 @@ function Player({
                 <RaiseInputContainer>
                   <input
                     onChange={onHandleAmount}
-                    min={board.blind}
+                    min={
+                      board.bettingSize === 0
+                        ? board.blind
+                        : board.bettingSize * 2
+                    }
                     max={player.money}
                     value={amount}
                     type="range"
@@ -432,9 +589,27 @@ function Player({
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
-                  <PercentBtn onClick={quarterClick}>25%</PercentBtn>
-                  <PercentBtn onClick={halfClick}>50%</PercentBtn>
-                  <PercentBtn onClick={fullClick}>100%</PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      quarterClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    25%
+                  </PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      halfClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    50%
+                  </PercentBtn>
+                  <PercentBtn
+                    onClick={() =>
+                      fullClick(bettingSize, phaseCallSize, player)
+                    }
+                  >
+                    100%
+                  </PercentBtn>
                 </PercentWrapper>
                 <AmountWrapper>
                   <Amount>{amount}</Amount>
@@ -442,7 +617,11 @@ function Player({
                 <RaiseInputContainer>
                   <input
                     onChange={onHandleAmount}
-                    min={board.blind}
+                    min={
+                      board.bettingSize === 0
+                        ? board.blind
+                        : board.bettingSize * 2
+                    }
                     max={player.money}
                     value={amount}
                     type="range"
@@ -526,6 +705,9 @@ function Player({
           {player.status !== 0 ? (
             <CardComponent board={board} player={player} myPlayer={myPlayer} />
           ) : null}
+          {/* <ChipContainer>
+            <Chip>{player.phaseCallSize}</Chip>
+          </ChipContainer> */}
         </PlayerInfo>
         {board &&
           board.actionPos === player.position &&
