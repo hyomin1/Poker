@@ -245,7 +245,7 @@ function TableComponent({ board, myPlayer, message }) {
             <Card />
           )}
           {board.phaseStatus >= 3 ? (
-            <Card4 $card4shape={card4Shape} $card3num={card4Num} />
+            <Card4 $card4shape={card4Shape} $card4num={card4Num} />
           ) : (
             <Card />
           )}

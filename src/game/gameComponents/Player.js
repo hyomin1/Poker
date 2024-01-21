@@ -79,13 +79,21 @@ const PercentWrapper = styled(AmountWrapper)`
   width: 45%;
 `;
 
-const PercentBtn = styled.button`
-  background-color: #353b48;
-  color: white;
+const QuarterBtn = styled.button`
+  background-color: ${(props) => (props.quarter ? "#718093" : "#353b48")};
+  color: ${(props) => (props.quarter ? "black" : "white")};
   font-weight: bold;
   font-size: 18px;
   width: 33%;
   height: 80%;
+`;
+const HalfBtn = styled(QuarterBtn)`
+  background-color: ${(props) => (props.half ? "#718093" : "#353b48")};
+  color: ${(props) => (props.half ? "black" : "white")};
+`;
+const FullBtn = styled(QuarterBtn)`
+  background-color: ${(props) => (props.full ? "#718093" : "#353b48")};
+  color: ${(props) => (props.full ? "black" : "white")};
 `;
 
 const BettingButton = styled.button`
@@ -142,6 +150,10 @@ function Player({
 
   const [board, setBoard] = useState(boardData);
   const [amount, setAmount] = useState(board.blind);
+
+  const [isQuarter, setIsQuarter] = useState(false);
+  const [isHalf, setIsHalf] = useState(false);
+  const [isFull, setIsFull] = useState(false);
 
   const navigate = useNavigate();
 
@@ -216,26 +228,165 @@ function Player({
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
-    if (money - phaseCallSize > bettingSize * 2) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          player && play.id === player.id
-            ? {
-                ...play,
-                status: amount === player.money ? 3 : play.status,
-                money: play.money - amount,
-                phaseCallSize: amount,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: amount,
-        };
-      }, player.id);
+    const calculatePhaseCallSize = (percentage) => {
+      const sum = board.players.reduce(
+        (acc, player) => acc + player.phaseCallSize,
+        0
+      );
+      const calculatedSize =
+        bettingSize + (board.pot + sum - phaseCallSize) * percentage;
+      return calculatedSize;
+    };
+    if (isQuarter) {
+      //25%레이즈
+
+      const myPhaseCallSize = calculatePhaseCallSize(0.25);
+
+      if (player.money < myPhaseCallSize) {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: player.money,
+                  status: 3,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: player.money,
+          };
+        });
+      } else {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: myPhaseCallSize,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: myPhaseCallSize,
+          };
+        });
+      }
+    } else if (isHalf) {
+      //50%레이즈
+
+      const myPhaseCallSize = calculatePhaseCallSize(0.5);
+
+      if (player.money < myPhaseCallSize) {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: player.money,
+                  status: 3,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: player.money,
+          };
+        });
+      } else {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: myPhaseCallSize,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: myPhaseCallSize,
+          };
+        });
+      }
+    } else if (isFull) {
+      //100% 레이즈
+
+      const myPhaseCallSize = calculatePhaseCallSize(1);
+
+      if (player.money < myPhaseCallSize) {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: player.money,
+                  status: 3,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: player.money,
+          };
+        });
+      } else {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            play.id === player.id
+              ? {
+                  ...play,
+                  phaseCallSize: myPhaseCallSize,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: myPhaseCallSize,
+          };
+        });
+      }
+    } else {
+      //일반 레이즈
+      if (money - phaseCallSize > bettingSize * 2) {
+        updateBoard((prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            player && play.id === player.id
+              ? {
+                  ...play,
+                  status: amount === player.money ? 3 : play.status,
+                  money: play.money - amount,
+                  phaseCallSize: amount,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+            bettingPos: player.position,
+            bettingSize: amount,
+          };
+        }, player.id);
+      }
     }
+    //레이즈 후 상태 초기화
+    setIsQuarter(false);
+    setIsHalf(false);
+    setIsFull(false);
   };
 
   const allIn = (bettingSize, phaseCallSize, money, player) => {
@@ -313,139 +464,20 @@ function Player({
 
   const progressValue = (remainTimeView / actionTime) * 100;
 
-  const quarterClick = (bettingSize, phaseCallSize, player) => {
-    const sum = board.players.reduce(
-      (acc, player) => acc + player.phaseCallSize,
-      0
-    );
-
-    const myPhaseCallSize =
-      bettingSize + (board.pot + sum - phaseCallSize) * 0.25;
-    if (player.money < myPhaseCallSize) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: player.money,
-                status: 3,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: player.money,
-        };
-      });
-    } else {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: myPhaseCallSize,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: myPhaseCallSize,
-        };
-      });
-    }
+  const quarterClick = () => {
+    setIsQuarter((prev) => !prev);
+    setIsHalf(false);
+    setIsFull(false);
   };
-  const halfClick = (bettingSize, phaseCallSize, player) => {
-    const sum = board.players.reduce(
-      (acc, player) => acc + player.phaseCallSize,
-      0
-    );
-
-    const myPhaseCallSize =
-      bettingSize + (board.pot + sum - phaseCallSize) * 0.5;
-    if (player.money < myPhaseCallSize) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: player.money,
-                status: 3,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: player.money,
-        };
-      });
-    } else {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: myPhaseCallSize,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: myPhaseCallSize,
-        };
-      });
-    }
+  const halfClick = () => {
+    setIsHalf((prev) => !prev);
+    setIsQuarter(false);
+    setIsFull(false);
   };
-  const fullClick = (bettingSize, phaseCallSize, player) => {
-    const sum = board.players.reduce(
-      (acc, player) => acc + player.phaseCallSize,
-      0
-    );
-
-    const myPhaseCallSize = bettingSize + (board.pot + sum - phaseCallSize) * 1;
-    if (player.money < myPhaseCallSize) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: player.money,
-                status: 3,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: player.money,
-        };
-      });
-    } else {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          play.id === player.id
-            ? {
-                ...play,
-                phaseCallSize: myPhaseCallSize,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-          bettingPos: player.position,
-          bettingSize: myPhaseCallSize,
-        };
-      });
-    }
+  const fullClick = () => {
+    setIsFull((prev) => !prev);
+    setIsHalf(false);
+    setIsQuarter(false);
   };
 
   const bettingMethod = (
@@ -453,8 +485,7 @@ function Player({
     phaseCallSize,
     money,
     player,
-    phaseStatus,
-    boardLastActionTime
+    phaseStatus
   ) => {
     if (
       (message === "GAME_START" ||
@@ -467,8 +498,6 @@ function Player({
       setIsTimeOut((prev) => !prev);
       console.log("타임 아웃", remainTimeView);
       timeOut(player);
-      //여기서 로직 시작 , action exit,
-      //어떻게 한번만 딱 하고 할지
     }
 
     if (phaseStatus !== 0 && bettingSize === phaseCallSize) {
@@ -481,27 +510,18 @@ function Player({
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
-                  <PercentBtn
-                    onClick={() =>
-                      quarterClick(bettingSize, phaseCallSize, player)
-                    }
+                  <QuarterBtn
+                    quarter={isQuarter ? true : false}
+                    onClick={quarterClick}
                   >
                     25%
-                  </PercentBtn>
-                  <PercentBtn
-                    onClick={() =>
-                      halfClick(bettingSize, phaseCallSize, player)
-                    }
-                  >
+                  </QuarterBtn>
+                  <HalfBtn half={isHalf ? true : false} onClick={halfClick}>
                     50%
-                  </PercentBtn>
-                  <PercentBtn
-                    onClick={() =>
-                      fullClick(bettingSize, phaseCallSize, player)
-                    }
-                  >
+                  </HalfBtn>
+                  <FullBtn full={isFull ? true : false} onClick={fullClick}>
                     100%
-                  </PercentBtn>
+                  </FullBtn>
                 </PercentWrapper>
                 <AmountWrapper>
                   <Amount>{amount}</Amount>
@@ -589,27 +609,18 @@ function Player({
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
-                  <PercentBtn
-                    onClick={() =>
-                      quarterClick(bettingSize, phaseCallSize, player)
-                    }
+                  <QuarterBtn
+                    quarter={isQuarter ? true : false}
+                    onClick={quarterClick}
                   >
                     25%
-                  </PercentBtn>
-                  <PercentBtn
-                    onClick={() =>
-                      halfClick(bettingSize, phaseCallSize, player)
-                    }
-                  >
+                  </QuarterBtn>
+                  <HalfBtn half={isHalf ? true : false} onClick={halfClick}>
                     50%
-                  </PercentBtn>
-                  <PercentBtn
-                    onClick={() =>
-                      fullClick(bettingSize, phaseCallSize, player)
-                    }
-                  >
+                  </HalfBtn>
+                  <FullBtn full={isFull ? true : false} onClick={fullClick}>
                     100%
-                  </PercentBtn>
+                  </FullBtn>
                 </PercentWrapper>
                 <AmountWrapper>
                   <Amount>{amount}</Amount>
@@ -659,7 +670,7 @@ function Player({
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
-                  레이즈
+                  {amount === player.money ? "올인" : "레이즈"}
                 </BettingButton>
               </RaiseContainer>
             </BettingButtonContainer>
