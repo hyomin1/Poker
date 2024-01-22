@@ -1,10 +1,12 @@
 import axios from "axios";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { BASE_URL } from "../../api";
 import Player from "./Player";
 
 const TableContainer = styled.div`
+  position: relative;
   width: 100vw;
   height: 100vh;
   display: grid;
@@ -181,6 +183,38 @@ const PlayerInfo = styled.div``;
 const ChipContainer = styled.div``;
 const Chip = styled(Pot);
 
+const winnerVar = {
+  start: {
+    opacity: 0,
+    scale: 0,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+const VictoryContainer = styled(motion.div)`
+  grid-area: table;
+`;
+
+const VictoryMessage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  background-color: green;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 999;
+`;
+
 function TableComponent({ board, myPlayer, message }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
@@ -216,45 +250,84 @@ function TableComponent({ board, myPlayer, message }) {
       const res = axios.post(`${BASE_URL}/api/board/start/${board.id}`);
     } catch (error) {}
   };
+  const testShowDown = async () => {
+    try {
+      const res = axios.post(`${BASE_URL}/api/board/end/${board.id}`);
+      console.log("showdown", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [winnerPlayers, setWinnerPlayers] = useState([]);
+  useEffect(() => {
+    console.log("확인해보자", message);
+    if (message === "GAME_END") {
+      const winnerPlayerList = board.players.filter(
+        (player) => player.gameResult && player.gameResult.winner === true
+      );
+      console.log("승자", winnerPlayerList);
+      setWinnerPlayers(winnerPlayerList);
+    }
+  }, [message]);
 
   return (
     <TableContainer>
       <PlayerCount>
         {board.totalPlayer}/6
         <button onClick={testStart}>게임시작</button>
+        <button onClick={testShowDown}>쇼다운</button>
       </PlayerCount>
+      <AnimatePresence>
+        {message === "GAME_END" &&
+          winnerPlayers.length >= 1 &&
+          winnerPlayers.map((player, index) => (
+            <VictoryContainer
+              variants={winnerVar}
+              initial="start"
+              animate="visible"
+              key={index}
+            >
+              <VictoryMessage>
+                {player.playerName} {player.gameResult.earnedMoney} 얻었습니다!!
+              </VictoryMessage>
+            </VictoryContainer>
+          ))}
+      </AnimatePresence>
 
       <Table>
         <PotContainer>
           <Pot>pot : {board.pot}</Pot>
         </PotContainer>
-        <CardContainer>
-          {board.phaseStatus >= 2 ? (
-            <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-          ) : (
-            <Card />
-          )}
-          {board.phaseStatus >= 2 ? (
-            <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-          ) : (
-            <Card />
-          )}
-          {board.phaseStatus >= 2 ? (
-            <Card3 $card3shape={card3Shape} $card3num={card3Num} />
-          ) : (
-            <Card />
-          )}
-          {board.phaseStatus >= 3 ? (
-            <Card4 $card4shape={card4Shape} $card4num={card4Num} />
-          ) : (
-            <Card />
-          )}
-          {board.phaseStatus === 4 ? (
-            <Card5 $card5shape={card5Shape} $card5num={card5Num} />
-          ) : (
-            <Card />
-          )}
-        </CardContainer>
+        {board.phaseStatus !== 0 ? (
+          <CardContainer>
+            {board.phaseStatus >= 2 ? (
+              <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+            ) : (
+              <Card />
+            )}
+            {board.phaseStatus >= 2 ? (
+              <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+            ) : (
+              <Card />
+            )}
+            {board.phaseStatus >= 2 ? (
+              <Card3 $card3shape={card3Shape} $card3num={card3Num} />
+            ) : (
+              <Card />
+            )}
+            {board.phaseStatus >= 3 ? (
+              <Card4 $card4shape={card4Shape} $card4num={card4Num} />
+            ) : (
+              <Card />
+            )}
+            {board.phaseStatus === 4 ? (
+              <Card5 $card5shape={card5Shape} $card5num={card5Num} />
+            ) : (
+              <Card />
+            )}
+          </CardContainer>
+        ) : null}
       </Table>
 
       <PlayerContainer position="bottom">

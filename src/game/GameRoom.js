@@ -86,10 +86,7 @@ function GameRoom() {
 
   return (
     <GameContainer>
-      {message === "NEXT_ACTION" ||
-      message === "GAME_START" ||
-      message === "NEXT_PHASE_START" ||
-      message === "PLAYER_EXIT" ? (
+      {board.phaseStatus !== 0 ? (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}
