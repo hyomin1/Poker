@@ -77,10 +77,12 @@ function CardComponent({ board, player, myPlayer }) {
   const card2Shape = Math.floor(player.card2 / 13);
   const card1Num = player.card1 % 13;
   const card2Num = player.card2 % 13;
+  //console.log("플레이어", player);
 
   return (
     <CardContainer>
-      {board && myPlayer === player ? (
+      {(board && myPlayer === player) ||
+      (board && board.phaseStatus == 6 && player.status !== 0) ? (
         <>
           <Card1 $card1shape={card1Shape} $card1num={card1Num} />
           <Card2 $card2shape={card2Shape} $card2num={card2Num} />

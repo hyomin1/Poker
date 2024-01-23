@@ -83,10 +83,13 @@ function GameRoom() {
 
     // updatedBoard();
   }, []);
+  console.log(board);
 
   return (
     <GameContainer>
-      {board.phaseStatus !== 0 ? (
+      {board && board.phaseStatus === 0 ? (
+        <Waiting myPlayer={myPlayer} board={board} message={message} />
+      ) : (
         <Playing
           myPlayer={myPlayer}
           setBoard={setBoard}
@@ -94,8 +97,6 @@ function GameRoom() {
           client={client}
           message={message}
         />
-      ) : (
-        <Waiting myPlayer={myPlayer} board={board} message={message} />
       )}
     </GameContainer>
   );

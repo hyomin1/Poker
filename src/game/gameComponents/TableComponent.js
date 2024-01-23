@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { css, keyframes, styled } from "styled-components";
 import { BASE_URL } from "../../api";
 import Player from "./Player";
 
@@ -91,8 +91,11 @@ const getCardNum = (num) => {
     }
   }
 };
+const isJokBo = (cardNum, jokBo) => {
+  return jokBo.includes(cardNum);
+};
 
-const Card1 = styled.div`
+const Card1 = styled(motion.div)`
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -103,7 +106,7 @@ const Card1 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card2 = styled.div`
+const Card2 = styled(motion.div)`
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -114,7 +117,7 @@ const Card2 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card3 = styled.div`
+const Card3 = styled(motion.div)`
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -125,7 +128,7 @@ const Card3 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card4 = styled.div`
+const Card4 = styled(motion.div)`
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -136,7 +139,7 @@ const Card4 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card5 = styled.div`
+const Card5 = styled(motion.div)`
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -197,8 +200,14 @@ const winnerVar = {
     },
   },
 };
+
 const VictoryContainer = styled(motion.div)`
   grid-area: table;
+`;
+const VictoryContainer2 = styled.div`
+  //grid-area: table;
+  display: flex;
+  flex-direction: column;
 `;
 
 const VictoryMessage = styled.div`
@@ -213,6 +222,14 @@ const VictoryMessage = styled.div`
   padding: 20px;
   border-radius: 10px;
   z-index: 999;
+`;
+const flash = keyframes`
+  0%, 100% {
+    border-color: yellow;
+  }
+  50% {
+    border-color: transparent;
+  }
 `;
 
 function TableComponent({ board, myPlayer, message }) {
@@ -229,6 +246,10 @@ function TableComponent({ board, myPlayer, message }) {
   const card3Num = board.communityCard3 % 13;
   const card4Num = board.communityCard4 % 13;
   const card5Num = board.communityCard5 % 13;
+
+  const [result, setResult] = useState([]);
+
+  console.log(board);
 
   useEffect(() => {
     if (myPlayer) {
@@ -258,10 +279,30 @@ function TableComponent({ board, myPlayer, message }) {
       console.log(error);
     }
   };
+  const handRank = (handValue) => {
+    return "good";
+  };
+  const jokBoComparison = (numbers, jokBo) => {
+    return numbers.map((number) => jokBo.includes(number));
+  };
+
+  const calculateJokBoArrays = (players) => {
+    return players.map((player) => {
+      const communityCards = [
+        board.communityCard1,
+        board.communityCard2,
+        board.communityCard3,
+        board.communityCard4,
+        board.communityCard5,
+      ];
+      const playerCards = [player.card1, player.card2];
+      const allNumbers = [...communityCards, ...playerCards];
+      return jokBoComparison(allNumbers, player.gameResult.jokBo);
+    });
+  };
 
   const [winnerPlayers, setWinnerPlayers] = useState([]);
   useEffect(() => {
-    console.log("확인해보자", message);
     if (message === "GAME_END") {
       const winnerPlayerList = board.players.filter(
         (player) => player.gameResult && player.gameResult.winner === true
@@ -269,7 +310,24 @@ function TableComponent({ board, myPlayer, message }) {
       console.log("승자", winnerPlayerList);
       setWinnerPlayers(winnerPlayerList);
     }
+    if (message === "SHOW_DOWN") {
+      const winnerPlayerList = board.players.filter(
+        (player) => player.gameResult && player.gameResult.winner === false
+      ); //테스트용으로 false -> true로 수정하기 1/24
+
+      const sortedHandValuePlayer = winnerPlayerList.sort(
+        (a, b) => b.gameResult.handValue - a.gameResult.handValue
+      ); //handValue 큰 순서대로 정렬(내림차순)
+
+      console.log("쇼다운 승자", sortedHandValuePlayer);
+      setWinnerPlayers((prevPlayers) => [...sortedHandValuePlayer]);
+
+      const resultArray = calculateJokBoArrays(sortedHandValuePlayer);
+      setResult(resultArray);
+      console.log("족보 반환", resultArray);
+    }
   }, [message]);
+  const count = [0, 1, 2, 3, 4, 5];
 
   return (
     <TableContainer>
@@ -294,12 +352,30 @@ function TableComponent({ board, myPlayer, message }) {
             </VictoryContainer>
           ))}
       </AnimatePresence>
+      <AnimatePresence onExitComplete={() => console.log("끝")}>
+        {/* {message === "SHOW_DOWN" &&
+          winnerPlayers.length >= 1 &&
+          winnerPlayers.map((player, index) => (
+            <VictoryContainer
+              key={index}
+              initial={{ opacity: 0, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ display: "none" }}
+              transition={{ duration: 0.4, delay: index * 2 }}
+            >
+              <VictoryMessage>
+                {player.playerName} {player.gameResult.earnedMoney}
+                얻었습니다!!!! rank : {handRank(player.handValue)}
+              </VictoryMessage>
+            </VictoryContainer>
+          ))} */}
+      </AnimatePresence>
 
       <Table>
         <PotContainer>
           <Pot>pot : {board.pot}</Pot>
         </PotContainer>
-        {board.phaseStatus !== 0 ? (
+        {board.phaseStatus !== 0 && board.phaseStatus <= 4 ? (
           <CardContainer>
             {board.phaseStatus >= 2 ? (
               <Card1 $card1shape={card1Shape} $card1num={card1Num} />
@@ -327,6 +403,83 @@ function TableComponent({ board, myPlayer, message }) {
               <Card />
             )}
           </CardContainer>
+        ) : null}
+        {board.phaseStatus === 6 ? (
+          <AnimatePresence>
+            {result.map((playerResult, index) => (
+              <CardContainer key={index}>
+                {index === count[index] && (
+                  <React.Fragment>
+                    <Card1
+                      initial={{ opacity: 0, y: 0 }}
+                      animate={{
+                        opacity: playerResult[0] ? 1 : 1,
+                        scale: playerResult[0] ? 1.3 : 1,
+                        border: playerResult[0] ? "6px solid #fbc531" : "none",
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card1shape={card1Shape}
+                      $card1num={card1Num}
+                    />
+
+                    <Card2
+                      initial={{ opacity: 0, y: 0 }}
+                      animate={{
+                        opacity: playerResult[1] ? 1 : 1,
+                        scale: playerResult[1] ? 1.3 : 1,
+                        border: playerResult[1] ? "6px solid #fbc531" : "none",
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card2shape={card2Shape}
+                      $card2num={card2Num}
+                    />
+
+                    <Card3
+                      initial={{ opacity: 0, y: 0 }}
+                      animate={{
+                        opacity: playerResult[2] ? 1 : 1,
+                        scale: playerResult[2] ? 1.3 : 1,
+                        border: playerResult[2] ? "6px solid #fbc531" : "none",
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card3shape={card3Shape}
+                      $card3num={card3Num}
+                    />
+
+                    <Card4
+                      initial={{ opacity: 0, y: 0 }}
+                      animate={{
+                        opacity: playerResult[3] ? 1 : 1,
+                        scale: playerResult[3] ? 1.3 : 1,
+                        border: playerResult[3] ? "6px solid #fbc531" : "none",
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card4shape={card4Shape}
+                      $card4num={card4Num}
+                    />
+
+                    <Card5
+                      initial={{ opacity: 0, y: 0 }}
+                      animate={{
+                        opacity: playerResult[4] ? 1 : 1,
+
+                        scale: playerResult[4] ? 1.3 : 1,
+                        border: playerResult[4] ? "6px solid #fbc531" : "none",
+                      }}
+                      exit={{ display: "none" }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card5shape={card5Shape}
+                      $card5num={card5Num}
+                    />
+                  </React.Fragment>
+                )}
+              </CardContainer>
+            ))}
+          </AnimatePresence>
         ) : null}
       </Table>
 
