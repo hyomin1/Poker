@@ -1,8 +1,10 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { css, keyframes, styled } from "styled-components";
 import { BASE_URL } from "../../api";
+import { client } from "../../client";
 import Player from "./Player";
 
 const TableContainer = styled.div`
@@ -212,7 +214,7 @@ const VictoryContainer2 = styled.div`
 
 const VictoryMessage = styled.div`
   position: absolute;
-  top: 50%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 36px;
@@ -249,8 +251,6 @@ function TableComponent({ board, myPlayer, message }) {
 
   const [result, setResult] = useState([]);
 
-  console.log(board);
-
   useEffect(() => {
     if (myPlayer) {
       const updatedOthers = Array.from(
@@ -279,9 +279,7 @@ function TableComponent({ board, myPlayer, message }) {
       console.log(error);
     }
   };
-  const handRank = (handValue) => {
-    return "good";
-  };
+
   const jokBoComparison = (numbers, jokBo) => {
     return numbers.map((number) => jokBo.includes(number));
   };
@@ -295,8 +293,8 @@ function TableComponent({ board, myPlayer, message }) {
         board.communityCard4,
         board.communityCard5,
       ];
-      const playerCards = [player.card1, player.card2];
-      const allNumbers = [...communityCards, ...playerCards];
+      //const playerCards = [player.card1, player.card2];
+      const allNumbers = [...communityCards];
       return jokBoComparison(allNumbers, player.gameResult.jokBo);
     });
   };
@@ -312,8 +310,8 @@ function TableComponent({ board, myPlayer, message }) {
     }
     if (message === "SHOW_DOWN") {
       const winnerPlayerList = board.players.filter(
-        (player) => player.gameResult && player.gameResult.winner === false
-      ); //테스트용으로 false -> true로 수정하기 1/24
+        (player) => player.gameResult && player.gameResult.winner === true
+      );
 
       const sortedHandValuePlayer = winnerPlayerList.sort(
         (a, b) => b.gameResult.handValue - a.gameResult.handValue
@@ -324,10 +322,28 @@ function TableComponent({ board, myPlayer, message }) {
 
       const resultArray = calculateJokBoArrays(sortedHandValuePlayer);
       setResult(resultArray);
-      console.log("족보 반환", resultArray);
+      for (let i = 0; i < resultArray.length; i++) {
+        setTimeout(() => {
+          setCurrent(i);
+        }, i * 2000);
+      }
     }
   }, [message]);
   const count = [0, 1, 2, 3, 4, 5];
+
+  const navigate = useNavigate();
+
+  const testExit = async () => {
+    try {
+      const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
+      client.deactivate();
+      navigate("/login");
+      console.log("나가기");
+    } catch (error) {
+      console.log("나가기 에러", error);
+    }
+  };
+  const [current, setCurrent] = useState(null);
 
   return (
     <TableContainer>
@@ -335,6 +351,7 @@ function TableComponent({ board, myPlayer, message }) {
         {board.totalPlayer}/6
         <button onClick={testStart}>게임시작</button>
         <button onClick={testShowDown}>쇼다운</button>
+        <button onClick={testExit}>나가기</button>
       </PlayerCount>
       <AnimatePresence>
         {message === "GAME_END" &&
@@ -352,23 +369,23 @@ function TableComponent({ board, myPlayer, message }) {
             </VictoryContainer>
           ))}
       </AnimatePresence>
-      <AnimatePresence onExitComplete={() => console.log("끝")}>
-        {/* {message === "SHOW_DOWN" &&
+      <AnimatePresence>
+        {message === "SHOW_DOWN" &&
           winnerPlayers.length >= 1 &&
           winnerPlayers.map((player, index) => (
             <VictoryContainer
               key={index}
-              initial={{ opacity: 0, y: 0 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ display: "none" }}
-              transition={{ duration: 0.4, delay: index * 2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: index === current ? 1 : 0 }}
+              transition={{ duration: 0.5, delay: index * 2 }}
             >
               <VictoryMessage>
-                {player.playerName} {player.gameResult.earnedMoney}
-                얻었습니다!!!! rank : {handRank(player.handValue)}
+                {player.playerName} {player.gameResult.earnedMoney} 얻었습니다
+                rank : {player.gameResult.handContext}
+                {/* 얻었습니다!!!! rank : {handRank(player.handValue)} */}
               </VictoryMessage>
             </VictoryContainer>
-          ))} */}
+          ))}
       </AnimatePresence>
 
       <Table>
@@ -408,75 +425,69 @@ function TableComponent({ board, myPlayer, message }) {
           <AnimatePresence>
             {result.map((playerResult, index) => (
               <CardContainer key={index}>
-                {index === count[index] && (
+                {index === current ? (
                   <React.Fragment>
                     <Card1
-                      initial={{ opacity: 0, y: 0 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{
-                        opacity: playerResult[0] ? 1 : 1,
+                        opacity: 1,
                         scale: playerResult[0] ? 1.3 : 1,
                         border: playerResult[0] ? "6px solid #fbc531" : "none",
                       }}
-                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5, delay: index * 2 }}
                       $card1shape={card1Shape}
                       $card1num={card1Num}
                     />
 
                     <Card2
-                      initial={{ opacity: 0, y: 0 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{
-                        opacity: playerResult[1] ? 1 : 1,
+                        opacity: 1,
                         scale: playerResult[1] ? 1.3 : 1,
                         border: playerResult[1] ? "6px solid #fbc531" : "none",
                       }}
-                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5, delay: index * 2 }}
                       $card2shape={card2Shape}
                       $card2num={card2Num}
                     />
 
                     <Card3
-                      initial={{ opacity: 0, y: 0 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{
-                        opacity: playerResult[2] ? 1 : 1,
+                        opacity: 1,
                         scale: playerResult[2] ? 1.3 : 1,
                         border: playerResult[2] ? "6px solid #fbc531" : "none",
                       }}
-                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5, delay: index * 2 }}
                       $card3shape={card3Shape}
                       $card3num={card3Num}
                     />
 
                     <Card4
-                      initial={{ opacity: 0, y: 0 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{
-                        opacity: playerResult[3] ? 1 : 1,
+                        opacity: 1,
                         scale: playerResult[3] ? 1.3 : 1,
                         border: playerResult[3] ? "6px solid #fbc531" : "none",
                       }}
-                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5, delay: index * 2 }}
                       $card4shape={card4Shape}
                       $card4num={card4Num}
                     />
 
                     <Card5
-                      initial={{ opacity: 0, y: 0 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{
-                        opacity: playerResult[4] ? 1 : 1,
-
+                        opacity: 1,
                         scale: playerResult[4] ? 1.3 : 1,
                         border: playerResult[4] ? "6px solid #fbc531" : "none",
                       }}
-                      exit={{ display: "none" }}
                       transition={{ duration: 0.5, delay: index * 2 }}
                       $card5shape={card5Shape}
                       $card5num={card5Num}
                     />
                   </React.Fragment>
-                )}
+                ) : null}
               </CardContainer>
             ))}
           </AnimatePresence>
@@ -491,6 +502,7 @@ function TableComponent({ board, myPlayer, message }) {
                 boardData={board}
                 player1={playerArray[0]}
                 message={message}
+                winnerPlayers={winnerPlayers}
               />
               {/* <ChipContainer>
                 <Chip>{playerArray[0].phaseCallSize}</Chip>
@@ -499,7 +511,12 @@ function TableComponent({ board, myPlayer, message }) {
           ) : (
             <EmptyBox></EmptyBox>
           )}
-          <Player boardData={board} myPlayer={myPlayer} message={message} />
+          <Player
+            boardData={board}
+            myPlayer={myPlayer}
+            message={message}
+            winnerPlayers={winnerPlayers}
+          />
         </SubPlayerContainer>
       </PlayerContainer>
 
@@ -510,6 +527,7 @@ function TableComponent({ board, myPlayer, message }) {
               boardData={board}
               player3={playerArray[2]}
               message={message}
+              winnerPlayers={winnerPlayers}
             />
           ) : (
             <EmptyBox></EmptyBox>
@@ -519,6 +537,7 @@ function TableComponent({ board, myPlayer, message }) {
               boardData={board}
               player4={playerArray[3]}
               message={message}
+              winnerPlayers={winnerPlayers}
             />
           ) : (
             <EmptyBox></EmptyBox>
@@ -532,6 +551,7 @@ function TableComponent({ board, myPlayer, message }) {
             boardData={board}
             player2={playerArray[1]}
             message={message}
+            winnerPlayers={winnerPlayers}
           />
         ) : null}
       </PlayerContainer>
@@ -542,6 +562,7 @@ function TableComponent({ board, myPlayer, message }) {
             boardData={board}
             player5={playerArray[4]}
             message={message}
+            winnerPlayers={winnerPlayers}
           />
         ) : null}
       </PlayerContainer>

@@ -145,6 +145,7 @@ function Player({
   player5,
   boardData,
   message,
+  winnerPlayers,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
 
@@ -454,7 +455,7 @@ function Player({
   };
   const [isTimeOut, setIsTimeOut] = useState(true);
 
-  const actionTime = 10000;
+  const actionTime = 100000;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -714,7 +715,13 @@ function Player({
           </PlayerProfileInfo>
 
           {player.status !== 0 ? (
-            <CardComponent board={board} player={player} myPlayer={myPlayer} />
+            <CardComponent
+              board={board}
+              player={player}
+              myPlayer={myPlayer}
+              message={message}
+              winnerPlayers={winnerPlayers}
+            />
           ) : null}
           {/* <ChipContainer>
             <Chip>{player.phaseCallSize}</Chip>

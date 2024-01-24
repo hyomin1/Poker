@@ -28,7 +28,7 @@ function Waiting({ board, myPlayer, message }) {
       <SpinnerOverlay>
         <Button variant="primary" disabled size="lg">
           <Spinner as="span" animation="grow" size="sm" role="status" />
-          플레이어 대기중
+          게임시작 대기중
         </Button>
       </SpinnerOverlay>
       <TableComponent myPlayer={myPlayer} board={board} message={message} />
