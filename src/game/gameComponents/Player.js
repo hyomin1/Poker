@@ -708,24 +708,24 @@ function Player({
           )}
 
         <PlayerInfo>
-          {player.position === 3 && <PositionButton />}
+          {player.position === board.btn && <PositionButton>D</PositionButton>}
           <PlayerProfileInfo>
             <PlayerName>{player.playerName}</PlayerName>
-            <BsEmojiSunglasses />
+            <div style={{ color: "white" }}>사진</div>
           </PlayerProfileInfo>
 
           {player.status !== 0 ? (
             <CardComponent
-              board={board}
+              board={boardData}
               player={player}
               myPlayer={myPlayer}
               message={message}
               winnerPlayers={winnerPlayers}
             />
           ) : null}
-          {/* <ChipContainer>
-            <Chip>{player.phaseCallSize}</Chip>
-          </ChipContainer> */}
+          <ChipContainer>
+            <Chip>칩 : {player.phaseCallSize}</Chip>
+          </ChipContainer>
         </PlayerInfo>
         {board &&
           board.actionPos === player.position &&

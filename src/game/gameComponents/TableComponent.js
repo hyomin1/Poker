@@ -44,22 +44,32 @@ const Table = styled.div`
   flex-direction: column;
   border: 10px solid black;
   grid-area: table;
-  padding: 150px 200px;
+`;
+const PlayerContainer = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  ${(props) => {
+    if (props.position === "bottom") {
+      return "grid-area : bottom;";
+    } else if (props.position === "top") {
+      return "grid-area : top;";
+    } else if (props.position === "left") {
+      return "grid-area : left;";
+    } else if (props.position === "right") {
+      return "grid-area : right;";
+    }
+  }}
 `;
 
 const CardContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-`;
-
-const Card = styled.div`
-  width: 100px;
-  height: 150px;
-  background-image: url("/images/cardBack.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  margin: 0 10px;
 `;
 const getCardShape = (shape) => {
   switch (shape) {
@@ -93,82 +103,73 @@ const getCardNum = (num) => {
     }
   }
 };
-const isJokBo = (cardNum, jokBo) => {
-  return jokBo.includes(cardNum);
-};
 
 const Card1 = styled(motion.div)`
-  width: 100px;
-  height: 150px;
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
-      props.$card1shape
-    )}.png")`};
+    props.$card1shape
+      ? `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
+          props.$card1shape
+        )}.png")`
+      : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
 const Card2 = styled(motion.div)`
-  width: 100px;
-  height: 150px;
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
-      props.$card2shape
-    )}.png")`};
+    props.$card2shape
+      ? `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
+          props.$card2shape
+        )}.png")`
+      : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
 const Card3 = styled(motion.div)`
-  width: 100px;
-  height: 150px;
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.$card3num)}_of_${getCardShape(
-      props.$card3shape
-    )}.png")`};
+    props.$card3shape
+      ? `url("/images/${getCardNum(props.$card3num)}_of_${getCardShape(
+          props.$card3shape
+        )}.png")`
+      : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
 const Card4 = styled(motion.div)`
-  width: 100px;
-  height: 150px;
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.$card4num)}_of_${getCardShape(
-      props.$card4shape
-    )}.png")`};
+    props.$card4shape
+      ? `url("/images/${getCardNum(props.$card4num)}_of_${getCardShape(
+          props.$card4shape
+        )}.png")`
+      : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
 const Card5 = styled(motion.div)`
-  width: 100px;
-  height: 150px;
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
-    `url("/images/${getCardNum(props.$card5num)}_of_${getCardShape(
-      props.$card5shape
-    )}.png")`};
+    props.$card5shape
+      ? `url("/images/${getCardNum(props.$card5num)}_of_${getCardShape(
+          props.$card5shape
+        )}.png")`
+      : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const PlayerContainer = styled.div`
-  border: 1px solid green;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  ${(props) => {
-    if (props.position === "bottom") {
-      return "grid-area : bottom;";
-    } else if (props.position === "top") {
-      return "grid-area : top;";
-    } else if (props.position === "left") {
-      return "grid-area : left;";
-    } else if (props.position === "right") {
-      return "grid-area : right;";
-    }
-  }}
-`;
+
 const SubPlayerContainer = styled.div`
   display: flex;
   width: 100%;
@@ -274,7 +275,6 @@ function TableComponent({ board, myPlayer, message }) {
   const testShowDown = async () => {
     try {
       const res = axios.post(`${BASE_URL}/api/board/end/${board.id}`);
-      console.log("showdown", res.data);
     } catch (error) {
       console.log(error);
     }
@@ -305,7 +305,7 @@ function TableComponent({ board, myPlayer, message }) {
       const winnerPlayerList = board.players.filter(
         (player) => player.gameResult && player.gameResult.winner === true
       );
-      console.log("승자", winnerPlayerList);
+      //console.log("승자", winnerPlayerList);
       setWinnerPlayers(winnerPlayerList);
     }
     if (message === "SHOW_DOWN") {
@@ -317,7 +317,7 @@ function TableComponent({ board, myPlayer, message }) {
         (a, b) => b.gameResult.handValue - a.gameResult.handValue
       ); //handValue 큰 순서대로 정렬(내림차순)
 
-      console.log("쇼다운 승자", sortedHandValuePlayer);
+      //console.log("쇼다운 승자", sortedHandValuePlayer);
       setWinnerPlayers((prevPlayers) => [...sortedHandValuePlayer]);
 
       const resultArray = calculateJokBoArrays(sortedHandValuePlayer);
@@ -343,7 +343,7 @@ function TableComponent({ board, myPlayer, message }) {
       console.log("나가기 에러", error);
     }
   };
-  const [current, setCurrent] = useState(null);
+  const [current, setCurrent] = useState(0);
 
   return (
     <TableContainer>
@@ -361,7 +361,7 @@ function TableComponent({ board, myPlayer, message }) {
               variants={winnerVar}
               initial="start"
               animate="visible"
-              key={index}
+              key={player.userId}
             >
               <VictoryMessage>
                 {player.playerName} {player.gameResult.earnedMoney} 얻었습니다!!
@@ -395,30 +395,29 @@ function TableComponent({ board, myPlayer, message }) {
         {board.phaseStatus !== 0 && board.phaseStatus <= 4 ? (
           <CardContainer>
             {board.phaseStatus >= 2 ? (
-              <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-            ) : (
-              <Card />
-            )}
-            {board.phaseStatus >= 2 ? (
-              <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-            ) : (
-              <Card />
-            )}
-            {board.phaseStatus >= 2 ? (
-              <Card3 $card3shape={card3Shape} $card3num={card3Num} />
-            ) : (
-              <Card />
-            )}
-            {board.phaseStatus >= 3 ? (
-              <Card4 $card4shape={card4Shape} $card4num={card4Num} />
-            ) : (
-              <Card />
-            )}
-            {board.phaseStatus === 4 ? (
-              <Card5 $card5shape={card5Shape} $card5num={card5Num} />
-            ) : (
-              <Card />
-            )}
+              <React.Fragment>
+                <Card1
+                  $card1shape={board.phaseStatus >= 2 ? card1Shape : null}
+                  $card1num={board.phaseStatus >= 2 ? card1Num : null}
+                />
+                <Card2
+                  $card2shape={board.phaseStatus >= 2 ? card2Shape : null}
+                  $card2num={board.phaseStatus >= 2 ? card2Num : null}
+                />
+                <Card3
+                  $card3shape={board.phaseStatus >= 2 ? card3Shape : null}
+                  $card3num={board.phaseStatus >= 2 ? card3Num : null}
+                />
+                <Card4
+                  $card4shape={board.phaseStatus >= 3 ? card4Shape : null}
+                  $card4num={board.phaseStatus >= 3 ? card4Num : null}
+                />
+                <Card5
+                  $card5shape={board.phaseStatus === 4 ? card5Shape : null}
+                  $card5num={board.phaseStatus === 4 ? card5Num : null}
+                />
+              </React.Fragment>
+            ) : null}
           </CardContainer>
         ) : null}
         {board.phaseStatus === 6 ? (

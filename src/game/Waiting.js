@@ -22,7 +22,6 @@ const SpinnerOverlay = styled.div`
 `;
 
 function Waiting({ board, myPlayer, message }) {
-  console.log("waitng");
   return (
     <WaitingContainer>
       <SpinnerOverlay>

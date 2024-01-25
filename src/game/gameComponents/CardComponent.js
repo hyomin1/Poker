@@ -1,4 +1,4 @@
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { BsHeart } from "react-icons/bs";
 import { styled } from "styled-components";
@@ -39,9 +39,9 @@ const getCardNum = (num) => {
   }
 };
 
-const Card1 = styled.div`
-  width: 80px;
-  height: 120px;
+const Card1 = styled(motion.div)`
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
     `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
       props.$card1shape
@@ -50,9 +50,9 @@ const Card1 = styled.div`
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
-const Card2 = styled.div`
-  width: 80px;
-  height: 120px;
+const Card2 = styled(motion.div)`
+  width: 60px;
+  height: 90px;
   background-image: ${(props) =>
     `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
       props.$card2shape
@@ -63,15 +63,15 @@ const Card2 = styled.div`
 `;
 
 const Card = styled.div`
-  width: 80px;
-  height: 120px;
+  width: 60px;
+  height: 90px;
   background-image: url("/images/cardBack.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
 `;
 
-function CardComponent({ board, player, myPlayer, message, winnerPlayers }) {
+function CardComponent({ board, player, myPlayer, message }) {
   //console.log("card", player.card1, player.card2, board ? board : null);
 
   const card1Shape = Math.floor(player.card1 / 13);
@@ -91,19 +91,35 @@ function CardComponent({ board, player, myPlayer, message, winnerPlayers }) {
       return jokBoComparison(allNumbers, player.gameResult.jokBo);
     });
   };
-
+  const [current, setCurrent] = useState(0);
+  const [result, setResult] = useState([]);
   useEffect(() => {
     if (message === "SHOW_DOWN") {
-      console.log("카드 쇼다운 승자", winnerPlayers);
-      setWinners(winnerPlayers);
-      const resultArray = calculateJokBoArrays(winnerPlayers);
-      //console.log("카드 확인", resultArray);
+      const winnerPlayerList = board.players.filter(
+        (player) => player.gameResult && player.gameResult.winner === true
+      );
+
+      console.log("카드 쇼다운 승자", winnerPlayerList);
+      const sortedHandValuePlayer = winnerPlayerList.sort(
+        (a, b) => b.gameResult.handValue - a.gameResult.handValue
+      ); //handValue 큰 순서대로 정렬(내림차순)
+      setWinners((prev) => [...sortedHandValuePlayer]);
+
+      const resultArray = calculateJokBoArrays(sortedHandValuePlayer);
+      setResult(resultArray);
+      for (let i = 0; i < resultArray.length; i++) {
+        setTimeout(() => {
+          setCurrent(i);
+        }, i * 2000);
+      }
+
+      console.log("카드 확인", resultArray);
     }
   }, [message]);
 
   return (
     <CardContainer>
-      {board && myPlayer === player && board.phaseStatus !== 6 && (
+      {board && myPlayer === player && board.phaseStatus <= 4 && (
         <>
           <Card1 $card1shape={card1Shape} $card1num={card1Num} />
           <Card2 $card2shape={card2Shape} $card2num={card2Num} />
@@ -116,29 +132,49 @@ function CardComponent({ board, player, myPlayer, message, winnerPlayers }) {
         </>
       )}
 
-      {board && board.phaseStatus === 6 && player.status != 0 && (
-        <>
-          <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-          <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-        </>
-        // <>
-        //   {winnerPlayers.map((winPlayer, index) => (
-        //     <React.Fragment>
-        //       {winPlayer[index].userId === player.userId ? (
-        //         <>
-        //           <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-        //           <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-        //         </>
-        //       ) : (
-        //         <>
-        //           <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-        //           <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-        //         </>
-        //       )}
-        //     </React.Fragment>
-        //   ))}
-        // </>
-      )}
+      {board &&
+        board.phaseStatus === 6 &&
+        player.status != 0 &&
+        winners.length >= 1 && (
+          <>
+            {result.map((playerResult, index) => (
+              <React.Fragment key={index}>
+                {winners[current].userId === player.userId &&
+                current === index ? (
+                  <React.Fragment>
+                    <Card1
+                      initial={{ opacity: 1, y: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: playerResult[0] ? 1.3 : 1,
+                        border: playerResult[0] ? "6px solid #fbc531" : "none",
+                      }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card1shape={card1Shape}
+                      $card1num={card1Num}
+                    />
+                    <Card2
+                      initial={{ opacity: 1, y: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: playerResult[1] ? 1.3 : 1,
+                        border: playerResult[1] ? "6px solid #fbc531" : "none",
+                      }}
+                      transition={{ duration: 0.5, delay: index * 2 }}
+                      $card2shape={card2Shape}
+                      $card2num={card2Num}
+                    />
+                  </React.Fragment>
+                ) : (
+                  <>
+                    <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+                    <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+                  </>
+                )}
+              </React.Fragment>
+            ))}
+          </>
+        )}
     </CardContainer>
   );
 }

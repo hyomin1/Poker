@@ -83,7 +83,6 @@ function GameRoom() {
 
     // updatedBoard();
   }, []);
-  console.log(board);
 
   return (
     <GameContainer>
