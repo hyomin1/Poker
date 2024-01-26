@@ -87,7 +87,13 @@ function GameRoom() {
   return (
     <GameContainer>
       {board && board.phaseStatus === 0 ? (
-        <Waiting myPlayer={myPlayer} board={board} message={message} />
+        <Waiting
+          myPlayer={myPlayer}
+          board={board}
+          message={message}
+          userData={userData}
+          userId={userId}
+        />
       ) : (
         <Playing
           myPlayer={myPlayer}
@@ -95,6 +101,8 @@ function GameRoom() {
           board={board}
           client={client}
           message={message}
+          userData={userData}
+          userId={userId}
         />
       )}
     </GameContainer>

@@ -235,7 +235,7 @@ const flash = keyframes`
   }
 `;
 
-function TableComponent({ board, myPlayer, message }) {
+function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [others, setOthers] = useState([]);
   const numOfOtherPlayers = 5;
 
@@ -329,6 +329,7 @@ function TableComponent({ board, myPlayer, message }) {
       }
     }
   }, [message]);
+
   const count = [0, 1, 2, 3, 4, 5];
 
   const navigate = useNavigate();
@@ -337,8 +338,10 @@ function TableComponent({ board, myPlayer, message }) {
     try {
       const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
       client.deactivate();
-      navigate("/login");
-      console.log("나가기");
+
+      navigate("/game", {
+        state: { userData, userId },
+      });
     } catch (error) {
       console.log("나가기 에러", error);
     }
@@ -502,6 +505,8 @@ function TableComponent({ board, myPlayer, message }) {
                 player1={playerArray[0]}
                 message={message}
                 winnerPlayers={winnerPlayers}
+                userData={userData}
+                userId={userId}
               />
               {/* <ChipContainer>
                 <Chip>{playerArray[0].phaseCallSize}</Chip>
@@ -515,6 +520,8 @@ function TableComponent({ board, myPlayer, message }) {
             myPlayer={myPlayer}
             message={message}
             winnerPlayers={winnerPlayers}
+            userData={userData}
+            userId={userId}
           />
         </SubPlayerContainer>
       </PlayerContainer>
@@ -527,6 +534,8 @@ function TableComponent({ board, myPlayer, message }) {
               player3={playerArray[2]}
               message={message}
               winnerPlayers={winnerPlayers}
+              userData={userData}
+              userId={userId}
             />
           ) : (
             <EmptyBox></EmptyBox>
@@ -537,6 +546,8 @@ function TableComponent({ board, myPlayer, message }) {
               player4={playerArray[3]}
               message={message}
               winnerPlayers={winnerPlayers}
+              userData={userData}
+              userId={userId}
             />
           ) : (
             <EmptyBox></EmptyBox>
@@ -551,6 +562,8 @@ function TableComponent({ board, myPlayer, message }) {
             player2={playerArray[1]}
             message={message}
             winnerPlayers={winnerPlayers}
+            userData={userData}
+            userId={userId}
           />
         ) : null}
       </PlayerContainer>
@@ -562,6 +575,8 @@ function TableComponent({ board, myPlayer, message }) {
             player5={playerArray[4]}
             message={message}
             winnerPlayers={winnerPlayers}
+            userData={userData}
+            userId={userId}
           />
         ) : null}
       </PlayerContainer>

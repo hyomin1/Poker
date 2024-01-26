@@ -146,6 +146,8 @@ function Player({
   boardData,
   message,
   winnerPlayers,
+  userData,
+  userId,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
 
@@ -212,7 +214,7 @@ function Player({
           player && play.id === player.id
             ? {
                 ...play,
-                status: 0,
+                status: 3,
               }
             : play
         );
@@ -369,7 +371,7 @@ function Player({
             player && play.id === player.id
               ? {
                   ...play,
-                  status: amount === player.money ? 3 : play.status,
+                  status: amount === player.money ? 4 : play.status,
                   money: play.money - amount,
                   phaseCallSize: amount,
                 }
@@ -400,7 +402,7 @@ function Player({
           player && play.id === player.id
             ? {
                 ...play,
-                status: 3,
+                status: 4,
                 money: play.money - play.money,
               }
             : play
@@ -432,7 +434,7 @@ function Player({
         play.id === player.id
           ? {
               ...play,
-              status: 0,
+              status: 3,
             }
           : play
       );
@@ -447,7 +449,9 @@ function Player({
         //console.log("퇴장데이터", res.data);
         //setBoard(res.data);
         client.deactivate();
-        navigate("/login");
+        navigate("/game", {
+          state: { userData, userId },
+        });
       } catch (error) {
         console.log("플레이어 퇴장 에러", error);
       }
@@ -455,7 +459,7 @@ function Player({
   };
   const [isTimeOut, setIsTimeOut] = useState(true);
 
-  const actionTime = 100000;
+  const actionTime = 10;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +

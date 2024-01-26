@@ -21,7 +21,7 @@ const SpinnerOverlay = styled.div`
   z-index: 999;
 `;
 
-function Waiting({ board, myPlayer, message }) {
+function Waiting({ board, myPlayer, message, userData, userId }) {
   return (
     <WaitingContainer>
       <SpinnerOverlay>
@@ -30,7 +30,13 @@ function Waiting({ board, myPlayer, message }) {
           게임시작 대기중
         </Button>
       </SpinnerOverlay>
-      <TableComponent myPlayer={myPlayer} board={board} message={message} />
+      <TableComponent
+        myPlayer={myPlayer}
+        board={board}
+        message={message}
+        userData={userData}
+        userId={userId}
+      />
     </WaitingContainer>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { IoPersonCircle } from "react-icons/io5";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
@@ -189,6 +189,10 @@ function GameMenu() {
       console.log("바이인 에러", error);
     }
   };
+
+  const viewProfile = () => {
+    window.open("/profile", "_blank", "width=500,height=500");
+  };
   return (
     <GameContainer>
       <TitleBox>
@@ -200,12 +204,12 @@ function GameMenu() {
           <IoPersonCircle />
         </ProfileIcon>
 
-        <ProfileUser>
-          {userData.userName ? userData.userName : "player"}
-        </ProfileUser>
+        <ProfileUser>player</ProfileUser>
       </ProfileBox>
 
       <PlayBox>
+        <PlayBtn onClick={viewProfile}>프로필</PlayBtn>
+
         <PlayBtn onClick={playGame}>게임 시작</PlayBtn>
 
         <AnimatePresence>
