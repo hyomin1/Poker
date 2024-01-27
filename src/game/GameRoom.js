@@ -24,7 +24,7 @@ function GameRoom() {
   //   state: { boardData, userData, userId },
   // } = useLocation();
   const receivedData = JSON.parse(window.name);
-  console.log("cc", receivedData);
+
   const { boardData, userData, userId } = receivedData;
 
   const [message, setMessage] = useState("");
@@ -57,19 +57,21 @@ function GameRoom() {
   useEffect(() => {
     //let sub1, sub2;
 
-    if (client && client.connected) {
+    client.onConnect = function (frame) {
+      console.log("웹소켓 연결완료3");
       client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
-    } else {
-      //새로 고침 시 재연결 로직, setTimeout말고 다른 방법 없나?
+    };
+    if (!client.connected) {
       client.connectHeaders = {
         userId: userData.userId,
         password: userData.password,
       };
       client.activate();
-      setTimeout(() => {
+      client.onConnect = () => {
+        console.log("웹소켓 연결완료3");
         client.subscribe(`/topic/${boardData.id}`, function (message) {});
         client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
-      }, 100);
+      };
     }
     // console.log(board.id);
 

@@ -98,7 +98,6 @@ function Login() {
     const { userId, password } = data;
 
     //removeCookie("JSESSIONID", { path: "/" });
-
     try {
       const res = await axios.post(`${BASE_URL}/login`, null, {
         params: {
@@ -106,18 +105,41 @@ function Login() {
           password,
         },
       });
+      const subId = res.headers["subscribe-id"];
+      const playerId = parseInt(subId, 10);
+      const res2 = await axios.get(`${BASE_URL}/api/board/context`);
+      console.log(res2.data);
+
+      await Promise.all(
+        res2.data.map(async (board) => {
+          await Promise.all(
+            board.players.map(async (player) => {
+              console.log(playerId, player.userId);
+              if (player.userId === playerId) {
+                // await을 사용하여 비동기 처리를 기다린 후에 다음 코드 실행
+                await axios.post(`${BASE_URL}/api/player/connect/${playerId}`);
+              }
+            })
+          );
+        })
+      );
 
       console.log("로그인 성공", res.data);
-      const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
+      //웹소켓 구독 + board에서 본인 찾기위함
       client.connectHeaders = {
         userId,
         password,
       };
 
-      navigate("/game", { state: { userData: data, userId: subId } });
+      navigate("/game", {
+        state: { userData: data, userId: subId, existBoard: res2.data },
+      });
       client.activate();
-      client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
-      client.subscribe(`/queue/error/${subId}`, function (message) {});
+      client.onConnect = function (message) {
+        console.log("웹소켓 구독완료1");
+        client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
+        client.subscribe(`/queue/error/${subId}`, function (message) {});
+      };
     } catch (error) {
       console.log("로그인 에러", error);
     }

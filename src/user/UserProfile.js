@@ -3,14 +3,20 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
+import Form from "react-bootstrap/Form";
 
 const UserContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: #323234;
 `;
-const UserBox = styled.div``;
+const UserBox = styled.div`
+  border: 1px solid black;
+`;
 
 function UserProfile() {
   const [user, setUser] = useState({});
@@ -32,17 +38,13 @@ function UserProfile() {
         console.log("프로필가져오기 에러");
       }
     };
-
     getProfile();
-    console.log("hi");
   }, []);
 
   const createFormData = (data) => {
     const { profileImg } = data;
     const formData = new FormData();
-
     formData.append("img", profileImg[0]);
-
     return formData;
   };
 

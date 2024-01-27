@@ -171,63 +171,71 @@ function Player({
     }
   }, [boardData]); //최신 보드 데이터 저장
 
-  const publishBoardAction = (updatedBoard, playerId) => {
+  const publishBoardAction = (updatedBoard, playerId, option) => {
     //websokcet 통신 함수
     client.publish({
-      destination: "/pub/board/action",
+      destination: `/pub/board/action/${option}`,
       body: JSON.stringify(updatedBoard),
       headers: { PlayerId: playerId },
     });
   };
-  const updateBoard = (update, playerId) => {
+  const updateBoard = (update, playerId, option) => {
     //board 업데이트 함수
     setBoard((prev) => {
       const updatedBoard = update(prev);
-      publishBoardAction(updatedBoard, playerId);
+      publishBoardAction(updatedBoard, playerId, option);
       return updatedBoard;
     });
   };
 
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          player && play.id === player.id
-            ? {
-                ...play,
-                money: money - (bettingSize - phaseCallSize),
-                phaseCallSize: bettingSize,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-        };
-      }, player.id);
+      updateBoard(
+        (prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            player && play.id === player.id
+              ? {
+                  ...play,
+                  money: money - (bettingSize - phaseCallSize),
+                  phaseCallSize: bettingSize,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+          };
+        },
+        player.id,
+        "play"
+      );
     }
   };
   const fold = (bettingSize, player) => {
     if (bettingSize !== 0) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          player && play.id === player.id
-            ? {
-                ...play,
-                status: 3,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-        };
-      }, player.id);
+      updateBoard(
+        (prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            player && play.id === player.id
+              ? {
+                  ...play,
+                  status: 3,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+          };
+        },
+        player.id,
+        "fold"
+      );
     }
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
-      publishBoardAction(board, player.id);
+      publishBoardAction(board, player.id, "play");
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
@@ -242,85 +250,97 @@ function Player({
     };
     if (isQuarter) {
       //25%레이즈
-
       const myPhaseCallSize = calculatePhaseCallSize(0.25);
-
       if (player.money < myPhaseCallSize) {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: player.money,
-                  status: 3,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: player.money,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: player.money,
+                    status: 3,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: player.money,
+            };
+          },
+          player.id,
+          "play"
+        );
       } else {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: myPhaseCallSize,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: myPhaseCallSize,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: myPhaseCallSize,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: myPhaseCallSize,
+            };
+          },
+          player.id,
+          "play"
+        );
       }
     } else if (isHalf) {
       //50%레이즈
-
       const myPhaseCallSize = calculatePhaseCallSize(0.5);
-
       if (player.money < myPhaseCallSize) {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: player.money,
-                  status: 3,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: player.money,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: player.money,
+                    status: 3,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: player.money,
+            };
+          },
+          player.id,
+          "play"
+        );
       } else {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: myPhaseCallSize,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: myPhaseCallSize,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: myPhaseCallSize,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: myPhaseCallSize,
+            };
+          },
+          player.id,
+          "play"
+        );
       }
     } else if (isFull) {
       //100% 레이즈
@@ -328,62 +348,74 @@ function Player({
       const myPhaseCallSize = calculatePhaseCallSize(1);
 
       if (player.money < myPhaseCallSize) {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: player.money,
-                  status: 3,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: player.money,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: player.money,
+                    status: 3,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: player.money,
+            };
+          },
+          player.id,
+          "play"
+        );
       } else {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            play.id === player.id
-              ? {
-                  ...play,
-                  phaseCallSize: myPhaseCallSize,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: myPhaseCallSize,
-          };
-        });
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              play.id === player.id
+                ? {
+                    ...play,
+                    phaseCallSize: myPhaseCallSize,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: myPhaseCallSize,
+            };
+          },
+          player.id,
+          "play"
+        );
       }
     } else {
       //일반 레이즈
       if (money - phaseCallSize > bettingSize * 2) {
-        updateBoard((prev) => {
-          const updatedPlayers = prev.players.map((play) =>
-            player && play.id === player.id
-              ? {
-                  ...play,
-                  status: amount === player.money ? 4 : play.status,
-                  money: play.money - amount,
-                  phaseCallSize: amount,
-                }
-              : play
-          );
-          return {
-            ...prev,
-            players: updatedPlayers,
-            bettingPos: player.position,
-            bettingSize: amount,
-          };
-        }, player.id);
+        updateBoard(
+          (prev) => {
+            const updatedPlayers = prev.players.map((play) =>
+              player && play.id === player.id
+                ? {
+                    ...play,
+                    status: amount === player.money ? 4 : play.status,
+                    money: play.money - amount,
+                    phaseCallSize: amount,
+                  }
+                : play
+            );
+            return {
+              ...prev,
+              players: updatedPlayers,
+              bettingPos: player.position,
+              bettingSize: amount,
+            };
+          },
+          player.id,
+          "play"
+        );
       }
     }
     //레이즈 후 상태 초기화
@@ -397,21 +429,25 @@ function Player({
       bettingSize - phaseCallSize > money ||
       money * 2 < bettingSize - phaseCallSize
     ) {
-      updateBoard((prev) => {
-        const updatedPlayers = prev.players.map((play) =>
-          player && play.id === player.id
-            ? {
-                ...play,
-                status: 4,
-                money: play.money - play.money,
-              }
-            : play
-        );
-        return {
-          ...prev,
-          players: updatedPlayers,
-        };
-      }, player.id);
+      updateBoard(
+        (prev) => {
+          const updatedPlayers = prev.players.map((play) =>
+            player && play.id === player.id
+              ? {
+                  ...play,
+                  status: 4,
+                  money: play.money - play.money,
+                }
+              : play
+          );
+          return {
+            ...prev,
+            players: updatedPlayers,
+          };
+        },
+        player.id,
+        "allin"
+      );
     }
   };
   const onHandleAmount = (e) => {
@@ -429,20 +465,24 @@ function Player({
   }, []);
 
   const timeOut = async (player) => {
-    updateBoard((prev) => {
-      const updatedPlayers = prev.players.map((play) =>
-        play.id === player.id
-          ? {
-              ...play,
-              status: 3,
-            }
-          : play
-      );
-      return {
-        ...prev,
-        players: updatedPlayers,
-      };
-    });
+    updateBoard(
+      (prev) => {
+        const updatedPlayers = prev.players.map((play) =>
+          play.id === player.id
+            ? {
+                ...play,
+                status: 3,
+              }
+            : play
+        );
+        return {
+          ...prev,
+          players: updatedPlayers,
+        };
+      },
+      player.id,
+      "fold"
+    );
     setTimeout(async () => {
       try {
         const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
@@ -459,7 +499,7 @@ function Player({
   };
   const [isTimeOut, setIsTimeOut] = useState(true);
 
-  const actionTime = 10;
+  const actionTime = 20;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -493,10 +533,8 @@ function Player({
     phaseStatus
   ) => {
     if (
-      (message === "GAME_START" ||
-        message === "NEXT_ACTION" ||
-        message === "NEXT_PHASE_START" ||
-        message === "PLAYER_EXIT") &&
+      phaseStatus >= 1 &&
+      phaseStatus <= 4 &&
       remainTimeView < 0 &&
       isTimeOut
     ) {
@@ -508,10 +546,7 @@ function Player({
     if (phaseStatus !== 0 && bettingSize === phaseCallSize) {
       return (
         <>
-          {message === "GAME_START" ||
-          message === "NEXT_ACTION" ||
-          message === "NEXT_PHASE_START" ||
-          message === "PLAYER_EXIT" ? (
+          {phaseStatus >= 1 && phaseStatus <= 4 ? (
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
@@ -582,10 +617,7 @@ function Player({
     ) {
       return (
         <>
-          {message === "GAME_START" ||
-          message === "NEXT_ACTION" ||
-          message === "NEXT_PHASE_START" ||
-          message === "PLAYER_EXIT" ? (
+          {phaseStatus >= 1 && phaseStatus <= 4 ? (
             <BettingButtonContainer>
               <BettingButton
                 status="fold"
@@ -606,11 +638,7 @@ function Player({
     } else {
       return (
         <>
-          {phaseStatus !== 0 &&
-          (message === "GAME_START" ||
-            message === "NEXT_ACTION" ||
-            message === "NEXT_PHASE_START" ||
-            message === "PLAYER_EXIT") ? (
+          {phaseStatus !== 0 && phaseStatus >= 1 && phaseStatus <= 4 ? (
             <BettingButtonContainer batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
@@ -695,10 +723,8 @@ function Player({
         {board &&
           board.actionPos === player.position &&
           myPlayer === player &&
-          (message === "GAME_START" ||
-            message === "NEXT_ACTION" ||
-            message === "NEXT_PHASE_START" ||
-            message === "PLAYER_EXIT") && (
+          board.phaseStatus >= 1 &&
+          board.phaseStatus <= 4 && (
             <>
               <Timer>
                 <ProgressBar

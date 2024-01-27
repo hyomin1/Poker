@@ -139,12 +139,8 @@ const inputVar = {
 function GameMenu() {
   const navigate = useNavigate();
 
-  client.onConnect = async function (frame) {
-    console.log("웹소켓 연결 완료");
-  };
-
   const {
-    state: { userData, userId },
+    state: { userData, userId, existBoard },
   } = useLocation();
 
   const [bb, setBb] = useState(0);
@@ -161,6 +157,25 @@ function GameMenu() {
     }
   };
 
+  useEffect(() => {
+    if (existBoard.length >= 1) {
+      const userResponse = window.confirm(
+        "진행중인 게임이 있습니다. 다시 참여하시겠습니까?"
+      );
+      if (userResponse) {
+        existBoard.forEach((board, index) => {
+          const goGame = window.open("/gameRoom", `gameRoom${index}`);
+
+          const sendData = {
+            userData: userData,
+            userId: userId,
+            boardData: board,
+          };
+          goGame.name = JSON.stringify(sendData);
+        });
+      }
+    }
+  }, []);
   const buyIn = async () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
@@ -169,22 +184,27 @@ function GameMenu() {
         },
       });
       console.log("게임정보", res.data);
-      if (client && client.connected) {
+      client.onConnect = async function (frame) {
+        console.log("웹소켓 연결 완료2");
         const subscription = client.subscribe(
           `/topic/${res.data.id}`,
           function (message) {}
         ); //게임 입장시 단체 큐 구독
-      } else {
+      };
+      if (!client.connected) {
         client.connectHeaders = {
           userId: userData.userId,
           password: userData.password,
         };
         client.activate();
+        // setTimeout(() => {
+        //   const sub = client.subscribe(
+        //     `/topic/${res.data.id}`,
+        //     function (message) {}
+        //   );
+        // }, 1000);
       }
 
-      // navigate("/gameRoom", {
-      //   state: { boardData: res.data, userData: userData, userId: userId },
-      // });
       const goGame = window.open("/gameRoom", "gameRoom");
       const sendData = {
         userData: userData,
