@@ -182,9 +182,16 @@ function GameMenu() {
         client.activate();
       }
 
-      navigate("/gameRoom", {
-        state: { boardData: res.data, userData: userData, userId: userId },
-      });
+      // navigate("/gameRoom", {
+      //   state: { boardData: res.data, userData: userData, userId: userId },
+      // });
+      const goGame = window.open("/gameRoom", "gameRoom");
+      const sendData = {
+        userData: userData,
+        userId: userId,
+        boardData: res.data,
+      };
+      goGame.name = JSON.stringify(sendData);
     } catch (error) {
       console.log("바이인 에러", error);
     }

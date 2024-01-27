@@ -119,10 +119,19 @@ function CardComponent({ board, player, myPlayer, message }) {
 
   return (
     <CardContainer>
-      {board && myPlayer === player && board.phaseStatus <= 4 && (
+      {board &&
+        myPlayer === player &&
+        board.phaseStatus >= 1 &&
+        board.phaseStatus <= 4 && (
+          <>
+            <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+            <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+          </>
+        )}
+      {board && myPlayer === player && board.phaseStatus === 0 && (
         <>
-          <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-          <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+          <Card />
+          <Card />
         </>
       )}
       {board && myPlayer !== player && board.phaseStatus !== 6 && (

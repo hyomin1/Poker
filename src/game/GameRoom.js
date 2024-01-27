@@ -20,9 +20,12 @@ const GameContainer = styled.div`
 `;
 
 function GameRoom() {
-  const {
-    state: { boardData, userData, userId },
-  } = useLocation();
+  // const {
+  //   state: { boardData, userData, userId },
+  // } = useLocation();
+  const receivedData = JSON.parse(window.name);
+  console.log("cc", receivedData);
+  const { boardData, userData, userId } = receivedData;
 
   const [message, setMessage] = useState("");
 
