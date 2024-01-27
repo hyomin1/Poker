@@ -32,7 +32,7 @@ function GameRoom() {
   const [board, setBoard] = useState(boardData);
 
   const userIdInt = parseInt(userId, 10); //userId String값이어서 Int형으로 형변환
-  //const myPlayer = board.players.find((player) => player.userId === userIdInt);
+
   const [myPlayer, setMyPlayer] = useState(null);
 
   useEffect(() => {
@@ -49,14 +49,12 @@ function GameRoom() {
     setMessage(webSocketBoard.messageType); // GAME_START 저장
     setBoard(webSocketBoard.data); //갱신되는 boardData 저장
     console.log("web", webSocketBoard.messageType, webSocketBoard.data);
-    if (webSocketBoard.messageType === "PLAYER_JOIN") {
-      console.log("플레이어 입장");
-    }
+    // if (webSocketBoard.messageType === "PLAYER_JOIN") {
+    //   console.log("플레이어 입장");
+    // }
   };
 
   useEffect(() => {
-    //let sub1, sub2;
-
     client.onConnect = function (frame) {
       console.log("웹소켓 연결완료3");
       client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
@@ -73,7 +71,6 @@ function GameRoom() {
         client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
       };
     }
-    // console.log(board.id);
 
     // const updatedBoard = async () => {
     //   //새로고침시 최신 board 받아오는 것 필요

@@ -32,7 +32,7 @@ function UserProfile() {
         //   `${BASE_URL}/api/user/image/${res.data.imagePath}`
         // );
         // console.log(image);
-        //유저 이미지 요청
+
         setUser(res.data);
       } catch (error) {
         console.log("프로필가져오기 에러");
@@ -43,6 +43,7 @@ function UserProfile() {
 
   const createFormData = (data) => {
     const { profileImg } = data;
+    console.log(data);
     const formData = new FormData();
     formData.append("img", profileImg[0]);
     return formData;

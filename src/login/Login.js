@@ -1,6 +1,5 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
@@ -97,7 +96,6 @@ function Login() {
   const onValid = async (data) => {
     const { userId, password } = data;
 
-    //removeCookie("JSESSIONID", { path: "/" });
     try {
       const res = await axios.post(`${BASE_URL}/login`, null, {
         params: {
@@ -105,7 +103,7 @@ function Login() {
           password,
         },
       });
-      const subId = res.headers["subscribe-id"];
+      const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
       const playerId = parseInt(subId, 10);
       const res2 = await axios.get(`${BASE_URL}/api/board/context`);
       console.log(res2.data);
@@ -125,7 +123,7 @@ function Login() {
       );
 
       console.log("로그인 성공", res.data);
-      //웹소켓 구독 + board에서 본인 찾기위함
+
       client.connectHeaders = {
         userId,
         password,

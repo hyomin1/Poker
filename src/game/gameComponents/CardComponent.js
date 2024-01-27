@@ -72,8 +72,6 @@ const Card = styled.div`
 `;
 
 function CardComponent({ board, player, myPlayer, message }) {
-  //console.log("card", player.card1, player.card2, board ? board : null);
-
   const card1Shape = Math.floor(player.card1 / 13);
   const card2Shape = Math.floor(player.card2 / 13);
   const card1Num = player.card1 % 13;

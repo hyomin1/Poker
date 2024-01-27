@@ -50,7 +50,7 @@ const BettingButtonContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 25px;
-  flex-direction: ${(props) => (props.batch === "raise" ? "column" : "row")};
+  flex-direction: ${(props) => (props.$batch === "raise" ? "column" : "row")};
 `;
 const AddInformBetting = styled.div`
   display: flex;
@@ -80,20 +80,20 @@ const PercentWrapper = styled(AmountWrapper)`
 `;
 
 const QuarterBtn = styled.button`
-  background-color: ${(props) => (props.quarter ? "#718093" : "#353b48")};
-  color: ${(props) => (props.quarter ? "black" : "white")};
+  background-color: ${(props) => (props.$quarter ? "#718093" : "#353b48")};
+  color: ${(props) => (props.$quarter ? "black" : "white")};
   font-weight: bold;
   font-size: 18px;
   width: 33%;
   height: 80%;
 `;
 const HalfBtn = styled(QuarterBtn)`
-  background-color: ${(props) => (props.half ? "#718093" : "#353b48")};
-  color: ${(props) => (props.half ? "black" : "white")};
+  background-color: ${(props) => (props.$half ? "#718093" : "#353b48")};
+  color: ${(props) => (props.$half ? "black" : "white")};
 `;
 const FullBtn = styled(QuarterBtn)`
-  background-color: ${(props) => (props.full ? "#718093" : "#353b48")};
-  color: ${(props) => (props.full ? "black" : "white")};
+  background-color: ${(props) => (props.$full ? "#718093" : "#353b48")};
+  color: ${(props) => (props.$full ? "black" : "white")};
 `;
 
 const BettingButton = styled.button`
@@ -161,6 +161,18 @@ function Player({
   const navigate = useNavigate();
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isTimeOut, setIsTimeOut] = useState(true);
+  const [exit, setExit] = useState(false);
+
+  const actionTime = 5;
+
+  const remainTimeView = Math.floor(
+    new Date(board.lastActionTime).getTime() / 1000 +
+      actionTime -
+      currentTime.getTime() / 1000
+  );
+
+  const progressValue = (remainTimeView / actionTime) * 100;
 
   useEffect(() => {
     setBoard(boardData);
@@ -465,6 +477,7 @@ function Player({
   }, []);
 
   const timeOut = async (player) => {
+    setExit(true);
     updateBoard(
       (prev) => {
         const updatedPlayers = prev.players.map((play) =>
@@ -485,29 +498,22 @@ function Player({
     );
     setTimeout(async () => {
       try {
-        const res = await axios.put(`${BASE_URL}/api/board/exit`, board);
-        //console.log("퇴장데이터", res.data);
-        //setBoard(res.data);
-        client.deactivate();
-        navigate("/game", {
-          state: { userData, userId },
-        });
+        await axios.put(`${BASE_URL}/api/board/exit`, board);
+
+        // navigate("/game", {
+        //   state: { userData, userId },
+        // });
       } catch (error) {
         console.log("플레이어 퇴장 에러", error);
       }
     }, 1000);
   };
-  const [isTimeOut, setIsTimeOut] = useState(true);
-
-  const actionTime = 20;
-
-  const remainTimeView = Math.floor(
-    new Date(board.lastActionTime).getTime() / 1000 +
-      actionTime -
-      currentTime.getTime() / 1000
-  );
-
-  const progressValue = (remainTimeView / actionTime) * 100;
+  useEffect(() => {
+    if (exit) {
+      client.deactivate();
+      window.close();
+    }
+  }, [message]);
 
   const quarterClick = () => {
     setIsQuarter((prev) => !prev);
@@ -547,19 +553,19 @@ function Player({
       return (
         <>
           {phaseStatus >= 1 && phaseStatus <= 4 ? (
-            <BettingButtonContainer batch="raise">
+            <BettingButtonContainer $batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
                   <QuarterBtn
-                    quarter={isQuarter ? true : false}
+                    $quarter={isQuarter ? true : false}
                     onClick={quarterClick}
                   >
                     25%
                   </QuarterBtn>
-                  <HalfBtn half={isHalf ? true : false} onClick={halfClick}>
+                  <HalfBtn $half={isHalf ? true : false} onClick={halfClick}>
                     50%
                   </HalfBtn>
-                  <FullBtn full={isFull ? true : false} onClick={fullClick}>
+                  <FullBtn $full={isFull ? true : false} onClick={fullClick}>
                     100%
                   </FullBtn>
                 </PercentWrapper>
@@ -639,19 +645,19 @@ function Player({
       return (
         <>
           {phaseStatus !== 0 && phaseStatus >= 1 && phaseStatus <= 4 ? (
-            <BettingButtonContainer batch="raise">
+            <BettingButtonContainer $batch="raise">
               <AddInformBetting>
                 <PercentWrapper>
                   <QuarterBtn
-                    quarter={isQuarter ? true : false}
+                    $quarter={isQuarter ? true : false}
                     onClick={quarterClick}
                   >
                     25%
                   </QuarterBtn>
-                  <HalfBtn half={isHalf ? true : false} onClick={halfClick}>
+                  <HalfBtn $half={isHalf ? true : false} onClick={halfClick}>
                     50%
                   </HalfBtn>
-                  <FullBtn full={isFull ? true : false} onClick={fullClick}>
+                  <FullBtn $full={isFull ? true : false} onClick={fullClick}>
                     100%
                   </FullBtn>
                 </PercentWrapper>
@@ -722,7 +728,6 @@ function Player({
       <React.Fragment key={player.id}>
         {board &&
           board.actionPos === player.position &&
-          myPlayer === player &&
           board.phaseStatus >= 1 &&
           board.phaseStatus <= 4 && (
             <>

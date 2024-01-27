@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { IoPersonCircle } from "react-icons/io5";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
@@ -137,13 +137,11 @@ const inputVar = {
   },
 };
 function GameMenu() {
-  const navigate = useNavigate();
-
   const {
     state: { userData, userId, existBoard },
   } = useLocation();
 
-  const [bb, setBb] = useState(0);
+  const [bb, setBb] = useState(50);
   const [isPlay, isSetPlay] = useState(false);
 
   const handleMoneyChange = (e) => {
@@ -153,12 +151,12 @@ function GameMenu() {
   const playGame = (cancel) => {
     isSetPlay((prev) => !prev);
     if (cancel) {
-      setBb(0);
+      setBb(50);
     }
   };
 
   useEffect(() => {
-    if (existBoard.length >= 1) {
+    if (existBoard && existBoard.length >= 1) {
       const userResponse = window.confirm(
         "진행중인 게임이 있습니다. 다시 참여하시겠습니까?"
       );
@@ -250,7 +248,7 @@ function GameMenu() {
               <MoneyInput
                 type="range"
                 id="money"
-                min="0"
+                min="50"
                 max="100"
                 value={bb}
                 onChange={handleMoneyChange}
