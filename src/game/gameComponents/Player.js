@@ -164,7 +164,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 5;
+  const actionTime = 10;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -477,7 +477,6 @@ function Player({
   }, []);
 
   const timeOut = async (player) => {
-    setExit(true);
     updateBoard(
       (prev) => {
         const updatedPlayers = prev.players.map((play) =>
@@ -496,16 +495,14 @@ function Player({
       player.id,
       "fold"
     );
-    setTimeout(async () => {
-      try {
-        await axios.put(`${BASE_URL}/api/board/exit`, board);
-
-        // navigate("/game", {
-        //   state: { userData, userId },
-        // });
-      } catch (error) {
-        console.log("플레이어 퇴장 에러", error);
-      }
+    setTimeout(() => {
+      client.publish({
+        destination: "/pub/board/exit",
+        body: JSON.stringify(board),
+        headers: { PlayerId: player.id },
+      });
+      window.close();
+      client.deactivate();
     }, 1000);
   };
   useEffect(() => {

@@ -240,7 +240,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [result, setResult] = useState([]);
   const [current, setCurrent] = useState(0);
   const [exit, setExit] = useState(false);
-  console.log(exit);
 
   useEffect(() => {
     if (myPlayer) {
@@ -274,8 +273,13 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     try {
       const userResponse = window.confirm("게임에서 나가시겠습니까?");
       if (userResponse) {
-        setExit(true);
-        await axios.put(`${BASE_URL}/api/board/exit`, board);
+        client.publish({
+          destination: "/pub/board/exit",
+          body: JSON.stringify(board),
+          headers: { PlayerId: myPlayer.id },
+        });
+        window.close();
+        client.deactivate();
       }
     } catch (error) {
       console.log("나가기 에러", error);
@@ -328,11 +332,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         setTimeout(() => {
           setCurrent(i);
         }, i * 2000);
-      }
-    } else if (message === "PLAYER_EXIT") {
-      if (exit) {
-        window.close();
-        client.deactivate();
       }
     }
   }, [message]);
