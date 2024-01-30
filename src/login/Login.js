@@ -106,21 +106,23 @@ function Login() {
       const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
       const playerId = parseInt(subId, 10);
       const res2 = await axios.get(`${BASE_URL}/api/board/context`);
-      console.log(res2.data);
 
-      await Promise.all(
-        res2.data.map(async (board) => {
-          await Promise.all(
-            board.players.map(async (player) => {
-              console.log(playerId, player.userId);
-              if (player.userId === playerId) {
-                // await을 사용하여 비동기 처리를 기다린 후에 다음 코드 실행
-                await axios.post(`${BASE_URL}/api/player/connect/${playerId}`);
-              }
-            })
-          );
-        })
-      );
+      //재접속시 필요한 보드 데이터
+      console.log("context", res2.data);
+
+      // await Promise.all(
+      //   res2.data.map(async (board) => {
+      //     await Promise.all(
+      //       board.players.map(async (player) => {
+      //         console.log(playerId, player.userId);
+      //         if (player.userId === playerId) {
+      //           // await을 사용하여 비동기 처리를 기다린 후에 다음 코드 실행
+      //           await axios.post(`${BASE_URL}/api/player/connect/${playerId}`);
+      //         }
+      //       })
+      //     );
+      //   })
+      // );
 
       console.log("로그인 성공", res.data);
 
@@ -135,7 +137,9 @@ function Login() {
       client.activate();
       client.onConnect = function (message) {
         console.log("웹소켓 구독완료1");
-        client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
+        client.subscribe(`/queue/${subId}`, function (message) {
+          console.log("웹소켓 에러메시지", message);
+        }); //로그인 시 개인 큐 구독
         client.subscribe(`/queue/error/${subId}`, function (message) {});
       };
     } catch (error) {
@@ -172,6 +176,7 @@ function Login() {
               required: "비밀번호를 입력해주세요",
             })}
             placeholder="비밀번호"
+            type="password"
           />
           <LoginSpan>{errors.password?.message}</LoginSpan>
           <BtnDiv>

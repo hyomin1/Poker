@@ -6,6 +6,7 @@ import Start from "./Start";
 import Game from "./game/Game";
 import GameRoom from "./game/GameRoom";
 import UserProfile from "./user/UserProfile";
+import HandHistory from "./handHistory/HandHistory";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <UserProfile />,
+      },
+      {
+        path: "/handHistory",
+        element: <HandHistory />,
       },
     ],
   },

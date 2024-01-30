@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { IoPersonCircle } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
@@ -143,6 +143,7 @@ function GameMenu() {
 
   const [bb, setBb] = useState(50);
   const [isPlay, isSetPlay] = useState(false);
+  const navigate = useNavigate();
 
   const handleMoneyChange = (e) => {
     setBb(parseInt(e.target.value, 10));
@@ -157,21 +158,24 @@ function GameMenu() {
 
   useEffect(() => {
     if (existBoard && existBoard.length >= 1) {
-      const userResponse = window.confirm(
-        "진행중인 게임이 있습니다. 다시 참여하시겠습니까?"
-      );
-      if (userResponse) {
-        existBoard.forEach((board, index) => {
-          const goGame = window.open("/gameRoom", `gameRoom${index}`);
+      client.onConnect = function (message) {
+        existBoard.forEach(async (board, index) => {
+          const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
+          const subscription = client.subscribe(
+            `/topic.${res.data.id}`,
+            function (message) {}
+          );
+          console.log("이전 게임 정보 데이터", res.data);
 
+          const goGame = window.open("/gameRoom", `gameRoom${index}`);
           const sendData = {
             userData: userData,
             userId: userId,
-            boardData: board,
+            boardData: res.data,
           };
           goGame.name = JSON.stringify(sendData);
         });
-      }
+      };
     }
   }, []);
   const buyIn = async () => {
@@ -182,25 +186,24 @@ function GameMenu() {
         },
       });
       console.log("게임정보", res.data);
-      client.onConnect = async function (frame) {
-        console.log("웹소켓 연결 완료2");
-        const subscription = client.subscribe(
-          `/topic/${res.data.id}`,
-          function (message) {}
-        ); //게임 입장시 단체 큐 구독
-      };
+      // client.onConnect = async function (frame) {
+      //   console.log("웹소켓 연결 완료2");
+      //   const subscription = client.subscribe(
+      //     `/topic/${res.data.id}`,
+      //     function (message) {
+      //       console.log("구독 완료");
+      //     }
+      //   ); //게임 입장시 단체 큐 구독
+      //   console.log(subscription);
+
+      //   //구독 되면 게임 입장
+      // };
       if (!client.connected) {
         client.connectHeaders = {
           userId: userData.userId,
           password: userData.password,
         };
         client.activate();
-        // setTimeout(() => {
-        //   const sub = client.subscribe(
-        //     `/topic/${res.data.id}`,
-        //     function (message) {}
-        //   );
-        // }, 1000);
       }
 
       const goGame = window.open("/gameRoom", "gameRoom");
@@ -218,19 +221,22 @@ function GameMenu() {
   const viewProfile = () => {
     window.open("/profile", "_blank", "width=500,height=500");
   };
+  const goHandHistory = () => {
+    navigate("/handHistory");
+  };
   return (
     <GameContainer>
       <TitleBox>
         <Title>Poker Game</Title>
       </TitleBox>
 
-      <ProfileBox>
+      {/* <ProfileBox>
         <ProfileIcon>
           <IoPersonCircle />
         </ProfileIcon>
 
         <ProfileUser>player</ProfileUser>
-      </ProfileBox>
+      </ProfileBox> */}
 
       <PlayBox>
         <PlayBtn onClick={viewProfile}>프로필</PlayBtn>
@@ -260,7 +266,7 @@ function GameMenu() {
           ) : null}
         </AnimatePresence>
 
-        <PlayBtn>핸드 히스토리</PlayBtn>
+        <PlayBtn onClick={goHandHistory}>핸드 히스토리</PlayBtn>
       </PlayBox>
     </GameContainer>
   );

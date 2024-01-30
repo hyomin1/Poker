@@ -14,7 +14,7 @@ const UserContainer = styled.div`
   flex-direction: column;
   width: 100vw;
   height: 100vh;
-  background-color: #323234;
+  background-color: #7f8fa6;
 `;
 const UserBox = styled.div`
   border: 1px solid black;
@@ -27,14 +27,14 @@ const UserImageWrapper = styled.div`
   margin-bottom: 20px;
 `;
 const UserImage = styled.img`
-  width: 100px;
-  height: 100px;
-  background-color: green;
+  width: 150px;
+  height: 150px;
+  background-color: white;
   border-radius: 50%;
 `;
 
 const labelStyle = {
-  color: "whitesmoke",
+  color: "#dcdde1",
   fontWeight: "bold",
   fontSize: 20,
 };
@@ -55,7 +55,8 @@ function UserProfile() {
         const res2 = await axios.get(
           `${BASE_URL}/api/user/image/${res.data.imagePath}`
         );
-        console.log(res2.data);
+        // const decode = Buffer.from(res2.data, "base64");
+        // console.log(decode);
         //const decode = new TextDecoder("base64").decode(res2.data);
         //const decode2 = Buffer.from(res2.data, "base64").toString();
 
