@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 import Form from "react-bootstrap/Form";
-import Image from "react-bootstrap/Image";
 import "./user.css";
 
 const UserContainer = styled.div`
@@ -16,9 +15,7 @@ const UserContainer = styled.div`
   height: 100vh;
   background-color: #7f8fa6;
 `;
-const UserBox = styled.div`
-  border: 1px solid black;
-`;
+
 const UserImageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -29,7 +26,7 @@ const UserImageWrapper = styled.div`
 const UserImage = styled.img`
   width: 150px;
   height: 150px;
-  background-color: white;
+
   border-radius: 50%;
 `;
 
@@ -45,26 +42,28 @@ const inputStyle = {
 function UserProfile() {
   const [user, setUser] = useState({});
   const [image, setImage] = useState();
+  const img = "/images/defaultProfile.png";
 
   const { register, handleSubmit } = useForm();
   useEffect(() => {
     const getProfile = async () => {
+      let res;
       try {
-        const res = await axios.get(`${BASE_URL}/api/user/profile`);
+        res = await axios.get(`${BASE_URL}/api/user/profile`);
         console.log("유저 정보", res.data);
-        const res2 = await axios.get(
-          `${BASE_URL}/api/user/image/${res.data.imagePath}`
-        );
-        // const decode = Buffer.from(res2.data, "base64");
-        // console.log(decode);
-        //const decode = new TextDecoder("base64").decode(res2.data);
-        //const decode2 = Buffer.from(res2.data, "base64").toString();
 
-        //console.log("이미지체크", check);
         setUser(res.data);
-        //setImage(res.data);
       } catch (error) {
-        console.log("프로필가져오기 에러", error);
+        console.log("유저 정보 가져오기 에러", error);
+      }
+      try {
+        const res2 = await axios.get(
+          `${BASE_URL}/api/user/image/${res.data.imagePath}`,
+          { responseType: "blob" }
+        );
+        setImage(res2.data);
+      } catch (error) {
+        console.error("프로필 사진 가져오기 에러", error);
       }
     };
     getProfile();
@@ -85,6 +84,13 @@ function UserProfile() {
           "Content-Type": "multipart/form-data",
         },
       });
+      const res2 = await axios.get(
+        `${BASE_URL}/api/user/image/${res.data.imagePath}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImage(res2.data);
       console.log("사진 전송", res.data);
     } catch (error) {
       console.log("사진전송에러", error);
@@ -95,7 +101,7 @@ function UserProfile() {
   return (
     <UserContainer>
       <UserImageWrapper>
-        <UserImage />
+        <UserImage src={image ? URL.createObjectURL(image) : img} />
         <form onSubmit={handleSubmit(sendImg)}>
           <input {...register("profileImg")} type="file" />
           <input type="submit" value="완료" />
@@ -126,11 +132,6 @@ function UserProfile() {
           disabled
         />
       </Form.Group>
-      {/* <UserBox>사진</UserBox>
-     
-
-      <UserBox>이름 {user.userName}</UserBox>
-      <UserBox>돈 {user.money}</UserBox> */}
     </UserContainer>
   );
 }

@@ -162,7 +162,7 @@ function GameMenu() {
         existBoard.forEach(async (board, index) => {
           const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
           const subscription = client.subscribe(
-            `/topic.${res.data.id}`,
+            `/topic/${res.data.id}`,
             function (message) {}
           );
           console.log("이전 게임 정보 데이터", res.data);
@@ -221,8 +221,14 @@ function GameMenu() {
   const viewProfile = () => {
     window.open("/profile", "_blank", "width=500,height=500");
   };
-  const goHandHistory = () => {
-    navigate("/handHistory");
+  const goHandHistory = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/handHistory`);
+      console.log(res.data);
+    } catch (error) {
+      console.error("핸드 히스토리 에러", error);
+    }
+    //navigate("/handHistory");
   };
   return (
     <GameContainer>

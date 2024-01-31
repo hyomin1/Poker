@@ -1,5 +1,7 @@
+import axios from "axios";
 import React, { useEffect } from "react";
 import { styled } from "styled-components";
+import { BASE_URL } from "../api";
 
 const Container = styled.div`
   width: 100vw;
@@ -35,7 +37,17 @@ const Content = styled.div`
 `;
 
 function HandHistory() {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const getHandHistory = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/handHistory`);
+        console.log(res.data);
+      } catch (error) {
+        console.error("핸드 히스토리 가져오기", error);
+      }
+    };
+    getHandHistory();
+  }, []);
   return (
     <Container>
       <Row>

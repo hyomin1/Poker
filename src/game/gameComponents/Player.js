@@ -164,7 +164,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 100;
+  const actionTime = 10;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -184,6 +184,7 @@ function Player({
   }, [boardData]); //최신 보드 데이터 저장
 
   const publishBoardAction = (updatedBoard, playerId, option) => {
+    console.log(option);
     //websokcet 통신 함수
     client.publish({
       destination: `/pub/board/action/${option}`,
@@ -219,7 +220,7 @@ function Player({
           };
         },
         player.id,
-        "play"
+        "call"
       );
     }
   };
@@ -247,7 +248,7 @@ function Player({
   };
   const check = (bettingSize, phaseCallSize, player) => {
     if (bettingSize === phaseCallSize) {
-      publishBoardAction(board, player.id, "play");
+      publishBoardAction(board, player.id, "check");
     }
   };
   const raise = (money, phaseCallSize, bettingSize, player) => {
@@ -283,7 +284,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       } else {
         updateBoard(
@@ -304,7 +305,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       }
     } else if (isHalf) {
@@ -330,7 +331,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       } else {
         updateBoard(
@@ -351,7 +352,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       }
     } else if (isFull) {
@@ -379,7 +380,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       } else {
         updateBoard(
@@ -400,7 +401,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          "raise"
         );
       }
     } else {
@@ -426,7 +427,7 @@ function Player({
             };
           },
           player.id,
-          "play"
+          amount === player.money ? "allInRaise" : "raise"
         );
       }
     }
@@ -458,7 +459,7 @@ function Player({
           };
         },
         player.id,
-        "allin"
+        "allInCall"
       );
     }
   };
