@@ -222,13 +222,13 @@ function GameMenu() {
     window.open("/profile", "_blank", "width=500,height=500");
   };
   const goHandHistory = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/handHistory`);
-      console.log(res.data);
-    } catch (error) {
-      console.error("핸드 히스토리 에러", error);
-    }
-    //navigate("/handHistory");
+    // try {
+    //   const res = await axios.get(`${BASE_URL}/api/handHistory`);
+    //   console.log(res.data);
+    // } catch (error) {
+    //   console.error("핸드 히스토리 에러", error);
+    // }
+    navigate("/handHistory");
   };
   return (
     <GameContainer>

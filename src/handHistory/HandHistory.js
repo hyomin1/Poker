@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
+import HandHistoryTable from "./HandHistoryTable";
 
 const Container = styled.div`
   width: 100vw;
@@ -11,31 +12,45 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   justify-content: space-around;
-  height: 100%;
+  height: 35%;
+  background-color: #2f3640;
 `;
 const Col = styled.div`
-  width: 100%;
+  width: 15%;
   color: white;
   font-weight: bold;
   font-size: 23px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid lightgray;
-  border-right: 1px solid lightgray;
 `;
 const Phase = styled.div`
-  background-color: black;
-  height: 10%;
+  background-color: #2f3542;
+  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 3px solid lightgray;
 `;
 const Content = styled.div`
-  background-color: gray;
-  height: 90%;
+  background-color: #7f8c8d;
+  height: 85%;
+  border-left: 3px solid lightgray;
+  border-right: 3px solid lightgray;
+  padding: 10px 20px;
+`;
+const DetailContainer = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+`;
+const Postion = styled.div`
+  margin-right: 10px;
 `;
 
+const BetDetail = styled.div`
+  background-color: white;
+  color: black;
+`;
 function HandHistory() {
   useEffect(() => {
     const getHandHistory = async () => {
@@ -48,16 +63,35 @@ function HandHistory() {
     };
     getHandHistory();
   }, []);
+  const testData = [
+    {
+      postion: "UTG",
+      bet: "폴드",
+    },
+    {
+      postion: "MP",
+      bet: "폴드",
+    },
+    {
+      postion: "CO",
+      bet: "폴드",
+    },
+  ];
+
   return (
     <Container>
+      <HandHistoryTable />
       <Row>
         <Col>
-          <Phase>블라인드(엔티)</Phase>
-          <Content></Content>
-        </Col>
-        <Col>
           <Phase>프리 플랍</Phase>
-          <Content></Content>
+          <Content>
+            {testData.map((data, index) => (
+              <DetailContainer>
+                <Postion>{data.postion}</Postion>
+                <BetDetail>{data.bet}</BetDetail>
+              </DetailContainer>
+            ))}
+          </Content>
         </Col>
         <Col>
           <Phase>플랍</Phase>

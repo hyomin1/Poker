@@ -164,7 +164,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 10;
+  const actionTime = 1000;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -184,7 +184,6 @@ function Player({
   }, [boardData]); //최신 보드 데이터 저장
 
   const publishBoardAction = (updatedBoard, playerId, option) => {
-    console.log(option);
     //websokcet 통신 함수
     client.publish({
       destination: `/pub/board/action/${option}`,
@@ -407,6 +406,7 @@ function Player({
     } else {
       //일반 레이즈
       if (money - phaseCallSize > bettingSize * 2) {
+        console.log("돈", money, amount);
         updateBoard(
           (prev) => {
             const updatedPlayers = prev.players.map((play) =>
@@ -427,7 +427,8 @@ function Player({
             };
           },
           player.id,
-          amount === player.money ? "allInRaise" : "raise"
+          amount === money ? "allInRaise" : "raise",
+          money
         );
       }
     }
@@ -581,7 +582,7 @@ function Player({
                     max={player.money}
                     value={amount}
                     type="range"
-                    step={1000}
+                    step={100}
                     style={{
                       width: "80%",
                       height: "20px",
@@ -673,7 +674,7 @@ function Player({
                     max={player.money}
                     value={amount}
                     type="range"
-                    step={1000}
+                    step={100}
                     style={{
                       width: "80%",
                       height: "20px",

@@ -379,9 +379,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       </AnimatePresence>
 
       <Table>
-        <PotContainer>
-          <Pot>pot : {board.pot}</Pot>
-        </PotContainer>
+        {board.phaseStatus >= 1 ? (
+          <PotContainer>
+            <Pot>pot : {board.pot}</Pot>
+          </PotContainer>
+        ) : null}
+
         {board.phaseStatus >= 2 && board.phaseStatus <= 4 ? (
           <CardContainer>
             <React.Fragment>
