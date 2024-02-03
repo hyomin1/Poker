@@ -12,3 +12,7 @@ export const client = new StompJs.Client({
   heartbeatIncoming: 4000,
   heartbeatOutgoing: 4000,
 });
+
+client.onStompError = function (frame) {
+  console.log("STOMP 에러", frame);
+};

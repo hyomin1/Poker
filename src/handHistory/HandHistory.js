@@ -86,7 +86,7 @@ function HandHistory() {
           <Phase>프리 플랍</Phase>
           <Content>
             {testData.map((data, index) => (
-              <DetailContainer>
+              <DetailContainer key={index}>
                 <Postion>{data.postion}</Postion>
                 <BetDetail>{data.bet}</BetDetail>
               </DetailContainer>

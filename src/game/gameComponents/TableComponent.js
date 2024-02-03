@@ -276,7 +276,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         client.publish({
           destination: "/pub/board/exit",
           body: JSON.stringify(board),
-          headers: { PlayerId: myPlayer.id },
+          headers: {
+            PlayerId: myPlayer.id,
+            disconnect_option: "exit",
+          },
         });
         window.close();
         client.deactivate();
@@ -336,6 +339,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     }
   }, [message]);
 
+  const test = () => {
+    client.publish({
+      destination: "/pub/errorTest",
+    });
+  };
+
   return (
     <TableContainer>
       <PlayerCount>
@@ -343,6 +352,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         <button onClick={testStart}>게임시작</button>
         <button onClick={testShowDown}>쇼다운</button>
         <button onClick={testExit}>나가기</button>
+        <button onClick={test}>ㅌㅅㅌ</button>
       </PlayerCount>
       <AnimatePresence>
         {message === "GAME_END" &&

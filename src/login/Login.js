@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { BASE_URL } from "../api";
+import { BASE_URL, api } from "../api";
 import { client } from "../client";
 
 const LoginContainer = styled.div`
@@ -103,6 +103,12 @@ function Login() {
           password,
         },
       });
+      // const res = await api.post("/login", null, {
+      //   params: {
+      //     username: userId,
+      //     password,
+      //   },
+      // });
       const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
       const playerId = parseInt(subId, 10);
       const res2 = await axios.get(`${BASE_URL}/api/board/context`);
@@ -137,13 +143,14 @@ function Login() {
       client.activate();
       client.onConnect = function (message) {
         console.log("웹소켓 구독완료1");
-        client.subscribe(`/queue/${subId}`, function (message) {
-          console.log("웹소켓 에러메시지", message);
-        }); //로그인 시 개인 큐 구독
-        client.subscribe(`/queue/error/${subId}`, function (message) {});
+        client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
+        client.subscribe(`/queue/error/${subId}`, function (message) {
+          console.log("queue/error 에러메시지", message);
+        });
       };
     } catch (error) {
       console.log("로그인 에러", error);
+      alert(error.response.data.message);
     }
 
     setValue("userId", "");

@@ -183,6 +183,7 @@ function GameMenu() {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
         params: {
           bb,
+          blind: 1000,
         },
       });
       console.log("게임정보", res.data);
@@ -230,6 +231,15 @@ function GameMenu() {
     // }
     navigate("/handHistory");
   };
+  const searchRoom = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/board/boardList/${1000}`);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <GameContainer>
       <TitleBox>
@@ -246,7 +256,7 @@ function GameMenu() {
 
       <PlayBox>
         <PlayBtn onClick={viewProfile}>프로필</PlayBtn>
-
+        <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
         <PlayBtn onClick={playGame}>게임 시작</PlayBtn>
 
         <AnimatePresence>

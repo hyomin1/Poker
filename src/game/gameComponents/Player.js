@@ -164,7 +164,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 1000;
+  const actionTime = 1111130;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -501,7 +501,10 @@ function Player({
       client.publish({
         destination: "/pub/board/exit",
         body: JSON.stringify(board),
-        headers: { PlayerId: player.id },
+        headers: {
+          PlayerId: player.id,
+          disconnect_option: "exit",
+        },
       });
       window.close();
       client.deactivate();
@@ -529,6 +532,11 @@ function Player({
     setIsHalf(false);
     setIsQuarter(false);
   };
+  const viewOtherHud = async (userId) => {
+    const res = await axios.get(`${BASE_URL}/api/hud/${userId}`);
+    console.log(res.data);
+  };
+  const viewMyHud = (userId) => {};
 
   const bettingMethod = (
     bettingSize,
@@ -745,7 +753,12 @@ function Player({
           {player.position === board.btn && <PositionButton>D</PositionButton>}
           <PlayerProfileInfo>
             <PlayerName>{player.playerName}</PlayerName>
-            <div style={{ color: "white" }}>사진</div>
+            <div
+              onClick={() => viewOtherHud(player.userId)}
+              style={{ color: "white" }}
+            >
+              사진
+            </div>
           </PlayerProfileInfo>
 
           {player.status !== 0 ? (
