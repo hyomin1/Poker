@@ -108,6 +108,9 @@ function Join() {
         navigate("/login");
       } catch (error) {
         console.log("회원가입 에러", error);
+        if (error.response) {
+          alert(error.response.data.message);
+        }
       }
       //setValue로 필드초기화하기, 순서 봐보고
     }

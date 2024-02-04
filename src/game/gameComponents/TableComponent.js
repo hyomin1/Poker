@@ -285,6 +285,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         client.deactivate();
       }
     } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message);
+      }
       console.log("나가기 에러", error);
     }
   };
@@ -342,6 +345,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const test = () => {
     client.publish({
       destination: "/pub/errorTest",
+      headers: { board_id: board.id },
     });
   };
 

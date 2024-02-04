@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { IoPersonCircle } from "react-icons/io5";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
 import { client } from "../client";
+import GameRoomList from "./GameRoomList";
 
 const GameContainer = styled.div`
   background-color: #2c3e50;
@@ -14,14 +15,14 @@ const GameContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  //justify-content: space-around;
 `;
 
 const TitleBox = styled.div`
   height: 10%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const Title = styled.span`
@@ -30,26 +31,18 @@ const Title = styled.span`
   font-size: 48px;
 `;
 
-const ProfileBox = styled.div`
-  height: 10%;
+const SettingBox = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 20px;
+  justify-content: flex-end;
+  width: 100%;
 `;
-
-const ProfileIcon = styled.div`
-  svg {
-    width: 45px;
-    height: 45px;
-    color: #f5f6fa;
-  }
+const GameList = styled.div`
+  height: 60%;
 `;
-
-const ProfileUser = styled.span`
-  font-weight: bold;
-  font-size: 24px;
-  color: #ecf0f1;
+const BoardInform = styled.div`
+  width: 400px;
+  height: 200px;
+  background-color: green;
 `;
 
 const PlayBox = styled.div`
@@ -144,6 +137,10 @@ function GameMenu() {
   const [bb, setBb] = useState(50);
   const [isPlay, isSetPlay] = useState(false);
   const navigate = useNavigate();
+  const [blind1000, setBlind1000] = useState([]);
+  const [blind2000, setBlind2000] = useState([]);
+  const [blind4000, setBlind4000] = useState([]);
+  const [blind10000, setBlind10000] = useState([]);
 
   const handleMoneyChange = (e) => {
     setBb(parseInt(e.target.value, 10));
@@ -177,6 +174,27 @@ function GameMenu() {
         });
       };
     }
+    //blind단위로 보드 받아오기
+    const getBoardList = async () => {
+      try {
+        const [res1, res2, res3, res4] = await Promise.all([
+          await axios.get(`${BASE_URL}/api/board/search/${1000}`),
+          await axios.get(`${BASE_URL}/api/board/search/${2000}`),
+          await axios.get(`${BASE_URL}/api/board/search/${4000}`),
+          await axios.get(`${BASE_URL}/api/board/search/${10000}`),
+        ]);
+        setBlind1000(res1.data);
+        setBlind2000(res2.data);
+        setBlind4000(res3.data);
+        setBlind10000(res4.data);
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.message);
+        }
+        console.error("방검색 에러", error);
+      }
+    };
+    getBoardList();
   }, []);
   const buyIn = async () => {
     try {
@@ -186,19 +204,7 @@ function GameMenu() {
           blind: 1000,
         },
       });
-      console.log("게임정보", res.data);
-      // client.onConnect = async function (frame) {
-      //   console.log("웹소켓 연결 완료2");
-      //   const subscription = client.subscribe(
-      //     `/topic/${res.data.id}`,
-      //     function (message) {
-      //       console.log("구독 완료");
-      //     }
-      //   ); //게임 입장시 단체 큐 구독
-      //   console.log(subscription);
 
-      //   //구독 되면 게임 입장
-      // };
       if (!client.connected) {
         client.connectHeaders = {
           userId: userData.userId,
@@ -215,6 +221,9 @@ function GameMenu() {
       };
       goGame.name = JSON.stringify(sendData);
     } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message);
+      }
       console.log("바이인 에러", error);
     }
   };
@@ -223,22 +232,9 @@ function GameMenu() {
     window.open("/profile", "_blank", "width=500,height=500");
   };
   const goHandHistory = async () => {
-    // try {
-    //   const res = await axios.get(`${BASE_URL}/api/handHistory`);
-    //   console.log(res.data);
-    // } catch (error) {
-    //   console.error("핸드 히스토리 에러", error);
-    // }
     navigate("/handHistory");
   };
-  const searchRoom = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/board/boardList/${1000}`);
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const searchRoom = async () => {};
 
   return (
     <GameContainer>
@@ -246,44 +242,45 @@ function GameMenu() {
         <Title>Poker Game</Title>
       </TitleBox>
 
-      {/* <ProfileBox>
-        <ProfileIcon>
-          <IoPersonCircle />
-        </ProfileIcon>
-
-        <ProfileUser>player</ProfileUser>
-      </ProfileBox> */}
-
-      <PlayBox>
+      <SettingBox>
         <PlayBtn onClick={viewProfile}>프로필</PlayBtn>
-        <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
-        <PlayBtn onClick={playGame}>게임 시작</PlayBtn>
-
-        <AnimatePresence>
-          {isPlay ? (
-            <InputBox
-              variants={inputVar}
-              initial="start"
-              animate="visible"
-              exit="leaving"
-            >
-              <MoneyInput
-                type="range"
-                id="money"
-                min="50"
-                max="100"
-                value={bb}
-                onChange={handleMoneyChange}
-              />
-              <MoneyStatus>{bb}</MoneyStatus>
-              <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
-              <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
-            </InputBox>
-          ) : null}
-        </AnimatePresence>
-
         <PlayBtn onClick={goHandHistory}>핸드 히스토리</PlayBtn>
-      </PlayBox>
+      </SettingBox>
+
+      <GameList>
+        <GameRoomList
+          blind1000={blind1000}
+          blind2000={blind2000}
+          blind4000={blind4000}
+          blind10000={blind10000}
+        />
+      </GameList>
+
+      <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
+      <PlayBtn onClick={playGame}>게임 시작</PlayBtn>
+
+      <AnimatePresence>
+        {isPlay ? (
+          <InputBox
+            variants={inputVar}
+            initial="start"
+            animate="visible"
+            exit="leaving"
+          >
+            <MoneyInput
+              type="range"
+              id="money"
+              min="50"
+              max="100"
+              value={bb}
+              onChange={handleMoneyChange}
+            />
+            <MoneyStatus>{bb}</MoneyStatus>
+            <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
+            <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
+          </InputBox>
+        ) : null}
+      </AnimatePresence>
     </GameContainer>
   );
 }

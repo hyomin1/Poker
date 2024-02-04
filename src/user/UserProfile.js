@@ -55,6 +55,9 @@ function UserProfile() {
         setUser(res.data);
       } catch (error) {
         console.log("유저 정보 가져오기 에러", error);
+        if (error.response) {
+          alert(error.response.data.message);
+        }
       }
       try {
         const res2 = await axios.get(
@@ -64,6 +67,9 @@ function UserProfile() {
         setImage(res2.data);
       } catch (error) {
         console.error("프로필 사진 가져오기 에러", error);
+        if (error.response) {
+          alert(error.response.data.message);
+        }
       }
     };
     getProfile();
@@ -94,6 +100,9 @@ function UserProfile() {
       console.log("사진 전송", res.data);
     } catch (error) {
       console.log("사진전송에러", error);
+      if (error.response) {
+        alert(error.response.data.message);
+      }
     }
   };
   // console.log(user);

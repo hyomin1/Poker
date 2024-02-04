@@ -58,22 +58,32 @@ function GameRoom() {
     client.activate();
     client.onConnect = function (frame) {
       console.log("웹소켓 연결완료2");
-      client.subscribe(`/topic/${boardData.id}`);
       client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
+      //client.subscribe(`/queue/${userId}`, function (message) {});
+      client.subscribe(
+        `/queue/error/${boardData.id}/${userId}`,
+        function (message) {
+          console.log("queue/error 에러", message);
+        }
+      );
     };
 
-    // const updatedBoard = async () => {
-    //   //새로고침시 최신 board 받아오는 것 필요
-    //   try {
-    //     const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
-    //     console.log("새로고침", res.data);
-    //     setBoard(res.data);
-    //   } catch (error) {
-    //     console.log("새로고침시 최신 보드 받기 에러", error);
-    //   }
-    // };
+    const updatedBoard = async () => {
+      //새로고침시 최신 board 받아오는 것 필요
+      try {
+        const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
+        console.log("새로고침", res.data);
+        setBoard(res.data);
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.message);
+        }
+        alert(error.response.data.message);
+        console.log("새로고침시 최신 보드 받기 에러", error);
+      }
+    };
 
-    // updatedBoard();
+    updatedBoard();
   }, []);
 
   return (

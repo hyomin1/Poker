@@ -142,15 +142,17 @@ function Login() {
       });
       client.activate();
       client.onConnect = function (message) {
-        console.log("웹소켓 구독완료1");
+        //console.log("웹소켓 구독완료1");
         client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
-        client.subscribe(`/queue/error/${subId}`, function (message) {
-          console.log("queue/error 에러메시지", message);
-        });
+        // client.subscribe(`/queue/error/${subId}`, function (message) {
+        //   console.log("queue/error 에러메시지", message);
+        // });
       };
     } catch (error) {
       console.log("로그인 에러", error);
-      alert(error.response.data.message);
+      if (error.response) {
+        alert(error.response.data.message);
+      }
     }
 
     setValue("userId", "");

@@ -59,6 +59,9 @@ function HandHistory() {
         console.log(res.data);
       } catch (error) {
         console.error("핸드 히스토리 가져오기", error);
+        if (error.response) {
+          alert(error.response.data.message);
+        }
       }
     };
     getHandHistory();
