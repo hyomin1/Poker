@@ -537,6 +537,7 @@ function Player({
     console.log(res.data);
   };
   const viewMyHud = (userId) => {};
+  //console.log(userId);
 
   const bettingMethod = (
     bettingSize,
@@ -771,7 +772,7 @@ function Player({
             />
           ) : null}
           <ChipContainer>
-            <Chip>칩 : {player.phaseCallSize}</Chip>
+            <Chip>돈 : {player.money}</Chip>
           </ChipContainer>
         </PlayerInfo>
         {board &&

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
-
+import { BiUserCircle } from "react-icons/bi";
+import { RiFileHistoryLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
@@ -15,6 +16,7 @@ const GameContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 45px 45px;
   //justify-content: space-around;
 `;
 
@@ -35,6 +37,16 @@ const SettingBox = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  margin-bottom: 20px;
+  svg {
+    fill: #fff;
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+    &:hover {
+      fill: #e5e5e5;
+    }
+  }
 `;
 const GameList = styled.div`
   height: 60%;
@@ -164,7 +176,7 @@ function GameMenu() {
           );
           console.log("이전 게임 정보 데이터", res.data);
 
-          const goGame = window.open("/gameRoom", `gameRoom${index}`);
+          const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
           const sendData = {
             userData: userData,
             userId: userId,
@@ -195,7 +207,12 @@ function GameMenu() {
       }
     };
     getBoardList();
+    const intervalId = setInterval(() => {
+      getBoardList();
+    }, 10000);
+    return () => clearInterval(intervalId);
   }, []);
+
   const buyIn = async () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
@@ -213,7 +230,7 @@ function GameMenu() {
         client.activate();
       }
 
-      const goGame = window.open("/gameRoom", "gameRoom");
+      const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
       const sendData = {
         userData: userData,
         userId: userId,
@@ -234,30 +251,32 @@ function GameMenu() {
   const goHandHistory = async () => {
     navigate("/handHistory");
   };
-  const searchRoom = async () => {};
 
   return (
     <GameContainer>
       <TitleBox>
-        <Title>Poker Game</Title>
+        <Title>포커 게임</Title>
       </TitleBox>
 
       <SettingBox>
-        <PlayBtn onClick={viewProfile}>프로필</PlayBtn>
-        <PlayBtn onClick={goHandHistory}>핸드 히스토리</PlayBtn>
+        <BiUserCircle onClick={viewProfile} />
+
+        <RiFileHistoryLine onClick={goHandHistory} />
       </SettingBox>
 
       <GameList>
         <GameRoomList
-          blind1000={blind1000}
-          blind2000={blind2000}
-          blind4000={blind4000}
-          blind10000={blind10000}
+          userData={userData}
+          userId={userId}
+          blind1={blind1000}
+          blind2={blind2000}
+          blind3={blind4000}
+          blind4={blind10000}
         />
       </GameList>
 
-      <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
-      <PlayBtn onClick={playGame}>게임 시작</PlayBtn>
+      {/* <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
+      <PlayBtn onClick={playGame}>게임 시작</PlayBtn> */}
 
       <AnimatePresence>
         {isPlay ? (

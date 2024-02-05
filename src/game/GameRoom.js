@@ -19,9 +19,6 @@ const GameContainer = styled.div`
 `;
 
 function GameRoom() {
-  // const {
-  //   state: { boardData, userData, userId },
-  // } = useLocation();
   const receivedData = JSON.parse(window.name);
 
   const { boardData, userData, userId } = receivedData;
@@ -49,8 +46,9 @@ function GameRoom() {
     setBoard(webSocketBoard.data); //갱신되는 boardData 저장
     console.log("web", webSocketBoard.messageType, webSocketBoard.data);
   };
-
+  console.log("확인", board);
   useEffect(() => {
+    setBoard(boardData);
     client.connectHeaders = {
       userId: userData.userId,
       password: userData.password,

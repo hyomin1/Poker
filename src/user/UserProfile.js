@@ -67,9 +67,9 @@ function UserProfile() {
         setImage(res2.data);
       } catch (error) {
         console.error("프로필 사진 가져오기 에러", error);
-        if (error.response) {
-          alert(error.response.data.message);
-        }
+        // if (error.response) {
+        //   alert(error.response.data.message);
+        // }
       }
     };
     getProfile();
