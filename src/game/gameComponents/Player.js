@@ -533,7 +533,13 @@ function Player({
     setIsQuarter(false);
   };
   const viewOtherHud = async (userId) => {
+    const goHud = window.open("/hud", "_blank", "width=500,height=300");
     const res = await axios.get(`${BASE_URL}/api/hud/${userId}`);
+    const sendData = {
+      hudData: res.data,
+    };
+    goHud.name = JSON.stringify(sendData);
+
     console.log(res.data);
   };
   const viewMyHud = (userId) => {};
