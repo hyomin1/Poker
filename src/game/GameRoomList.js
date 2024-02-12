@@ -1,33 +1,42 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import Carousel from "react-bootstrap/Carousel";
-
+import React, { useState } from "react";
+import Table from "react-bootstrap/Table";
+import { IoMdRefresh } from "react-icons/io";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 35px;
 `;
-const BoardInform = styled.img`
-  width: 900px;
-  height: 300px;
-  border-radius: 10px;
-`;
-const NoBoard = styled.div`
-  width: 900px;
-  height: 300px;
-  background-color: green;
+const Title = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  margin-bottom: 10px;
+`;
+
+const Blind = styled.h1`
+  font-size: 25px;
   color: whitesmoke;
-  font-size: 18px;
   font-weight: bold;
 `;
+const SettingBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    fill: #fff;
+    height: 35px;
+    width: 35px;
+    &:hover {
+      fill: #e5e5e5;
+    }
+  }
+`;
+
 const InputBox = styled(motion.div)`
   background-color: rgba(44, 62, 80, 0.9); /* 투명한 배경 색상 */
   padding: 20px;
@@ -93,7 +102,18 @@ const inputVar = {
     scale: 0,
   },
 };
-function GameRoomList({ blind1, blind2, blind3, blind4, userData, userId }) {
+function GameRoomList({
+  blind1,
+  blind2,
+  blind3,
+  blind4,
+  userData,
+  userId,
+  getBlind1,
+  getBlind2,
+  getBlind3,
+  getBlind4,
+}) {
   const [bb, setBb] = useState(50);
   const [isPlay, isSetPlay] = useState(false);
   const [type, setType] = useState(0);
@@ -211,58 +231,121 @@ function GameRoomList({ blind1, blind2, blind3, blind4, userData, userId }) {
     //getBoardList();
   };
 
-  const renderCarousel = (blindData, unique) => (
-    <Carousel key={unique}>
-      {blindData.map((board, index) => (
-        <Carousel.Item key={index} interval={10000}>
-          <BoardInform src="/images/board.jpg" className="d-block w-100" />
-          <Carousel.Caption>
-            <h3>NO. {board.id}</h3>
-            <p>{board.totalPlayer}/6</p>
-            {board.phaseStatus === 0 ? <p>대기중</p> : <p>게임중</p>}
-            <button onClick={() => enterGame(board)}>방 입장하기</button>
-            <button onClick={() => createRoom(board.blind)}>빠른 참가</button>
-          </Carousel.Caption>
-        </Carousel.Item>
-      ))}
-    </Carousel>
+  const refreshTable = (blind) => {
+    // 새로고침 버튼
+
+    if (blind === 1000) {
+      getBlind1();
+    } else if (blind === 2000) {
+      getBlind2();
+    } else if (blind === 4000) {
+      getBlind3();
+    } else if (blind === 10000) {
+      getBlind4();
+    }
+  };
+
+  const renderTable = (blindData, blind) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Title>
+        <Blind>Blind : {blind}</Blind>
+        <button onClick={() => createRoom(blind)}>빠른 참가</button>
+        <SettingBox>
+          <IoMdRefresh onClick={() => refreshTable(blind)} />
+        </SettingBox>
+      </Title>
+      <div
+        style={{
+          maxHeight: "25vh",
+          height: "25vh",
+          width: "35vw",
+          overflowY: "auto",
+        }}
+      >
+        <Table striped bordered hover variant="dark">
+          <thead>
+            <tr>
+              <th>NO</th>
+              <th>인원</th>
+              <th>게임 상태</th>
+              <th>입장 여부</th>
+            </tr>
+          </thead>
+          <tbody>
+            {blindData.map((board, index) => (
+              <tr key={index}>
+                <td>{board.id}</td>
+                <td>{board.totalPlayer}/6</td>
+                <td>
+                  {board.phaseStatus === 0 ? <p>대기중</p> : <p>게임중</p>}
+                </td>
+                <td>
+                  <button onClick={() => enterGame(board)}>입장하기</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    </div>
+  );
+  const renderNoTable = (blind) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Title>
+        <Blind>Blind : {blind}</Blind>
+        <button onClick={() => createRoom(blind)}>랜덤 매칭</button>
+      </Title>
+      <div
+        style={{
+          maxHeight: "25vh",
+          height: "25vh",
+          width: "35vw",
+          overflowY: "auto",
+        }}
+      >
+        <Table striped bordered hover variant="dark">
+          <thead>
+            <tr>
+              <th>NO</th>
+              <th>인원</th>
+              <th>게임 상태</th>
+              <th>입장 여부</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td>방이 없습니다</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
+    </div>
   );
 
   return (
     <React.Fragment>
       <Grid>
-        {blind1.length >= 1 ? (
-          renderCarousel(blind1, "blind1000")
-        ) : (
-          <NoBoard>
-            방이 없습니다
-            <button onClick={() => createRoom(1000)}>방만들기</button>
-          </NoBoard>
-        )}
-        {blind2.length >= 1 ? (
-          renderCarousel(blind2, "blind2000")
-        ) : (
-          <NoBoard>
-            방이 없습니다
-            <button onClick={() => createRoom(2000)}>방만들기</button>
-          </NoBoard>
-        )}
-        {blind3.length >= 1 ? (
-          renderCarousel(blind3, "blind4000")
-        ) : (
-          <NoBoard>
-            방이 없습니다
-            <button onClick={() => createRoom(4000)}>방만들기</button>
-          </NoBoard>
-        )}
-        {blind4.length >= 1 ? (
-          renderCarousel(blind4, "blind10000")
-        ) : (
-          <NoBoard>
-            방이 없습니다
-            <button onClick={() => createRoom(10000)}>방만들기</button>
-          </NoBoard>
-        )}
+        {blind1.length >= 1 ? renderTable(blind1, 1000) : renderNoTable(1000)}
+        {blind2.length >= 1 ? renderTable(blind2, 2000) : renderNoTable(2000)}
+        {blind3.length >= 1 ? renderTable(blind3, 4000) : renderNoTable(4000)}
+        {blind4.length >= 1 ? renderTable(blind4, 10000) : renderNoTable(10000)}
       </Grid>
 
       <AnimatePresence>

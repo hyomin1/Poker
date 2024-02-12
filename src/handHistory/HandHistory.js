@@ -12,11 +12,11 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   justify-content: space-around;
-  height: 35%;
-  background-color: #2f3640;
+  height: 50%;
+  background-color: #141414;
 `;
 const Col = styled.div`
-  width: 15%;
+  width: 100%;
   color: white;
   font-weight: bold;
   font-size: 23px;
@@ -25,18 +25,18 @@ const Col = styled.div`
   flex-direction: column;
 `;
 const Phase = styled.div`
-  background-color: #2f3542;
-  height: 15%;
+  background-color: #141414;
+  height: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 3px solid lightgray;
+  border: 1px solid lightgray;
 `;
 const Content = styled.div`
-  background-color: #7f8c8d;
-  height: 85%;
-  border-left: 3px solid lightgray;
-  border-right: 3px solid lightgray;
+  background-color: #3b3b3f;
+  height: 90%;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
   padding: 10px 20px;
 `;
 const DetailContainer = styled.div`
@@ -44,12 +44,26 @@ const DetailContainer = styled.div`
   margin-bottom: 10px;
 `;
 const Postion = styled.div`
-  margin-right: 10px;
+  margin-right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const BetDetail = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: white;
   color: black;
+  padding: 10px;
+  border-radius: 8px;
+
+  //max-width: 300px;
 `;
 function HandHistory() {
   useEffect(() => {
@@ -60,7 +74,7 @@ function HandHistory() {
       } catch (error) {
         console.error("핸드 히스토리 가져오기", error);
         if (error.response) {
-          alert(error.response.data.message);
+          //alert(error.response.data.message);
         }
       }
     };

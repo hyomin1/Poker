@@ -207,11 +207,43 @@ function GameMenu() {
       }
     };
     getBoardList();
-    const intervalId = setInterval(() => {
-      getBoardList();
-    }, 10000);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(() => {
+    //   getBoardList();
+    // }, 10000);
+    // return () => clearInterval(intervalId);
   }, []);
+  const getBlind1 = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
+      setBlind1000(res.data);
+    } catch (error) {
+      console.error("새로고침 search board error", error);
+    }
+  };
+  const getBlind2 = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/board/search/${2000}`);
+      setBlind2000(res.data);
+    } catch (error) {
+      console.error("새로고침 search board error", error);
+    }
+  };
+  const getBlind3 = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/board/search/${4000}`);
+      setBlind4000(res.data);
+    } catch (error) {
+      console.error("새로고침 search board error", error);
+    }
+  };
+  const getBlind4 = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/board/search/${10000}`);
+      setBlind10000(res.data);
+    } catch (error) {
+      console.error("새로고침 search board error", error);
+    }
+  };
 
   const buyIn = async () => {
     try {
@@ -249,7 +281,10 @@ function GameMenu() {
     window.open("/profile", "_blank", "width=500,height=500");
   };
   const goHandHistory = async () => {
-    navigate("/handHistory");
+    const width = window.screen.availWidth / 2;
+    const height = window.screen.availHeight;
+    window.open("/handHistory", "_blank", `width=${width},height=${height}`);
+    // navigate("/handHistory");
   };
 
   return (
@@ -272,6 +307,10 @@ function GameMenu() {
           blind2={blind2000}
           blind3={blind4000}
           blind4={blind10000}
+          getBlind1={getBlind1}
+          getBlind2={getBlind2}
+          getBlind3={getBlind3}
+          getBlind4={getBlind4}
         />
       </GameList>
 

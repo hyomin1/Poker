@@ -19,7 +19,7 @@ const TableContainer = styled.div`
 
   grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누어 간격 조정 */
   grid-template-rows: repeat(3, 1fr); /* 3개의 행으로 나누어 간격 조정 */
-  gap: 20px; /* 열과 행 사이의 간격 조정 */
+  //gap: 20px; /* 열과 행 사이의 간격 조정 */
 `;
 const PlayerCount = styled.span`
   color: white;
@@ -34,21 +34,23 @@ const PlayerCount = styled.span`
 `;
 
 const Table = styled.div`
-  width: 100%;
-  height: 100%;
-  border-radius: 160px;
-  background-color: #c23616;
+  position: relative;
+  width: 60vw;
+  height: 50vh;
+  border-radius: 250px;
+  background-image: linear-gradient(135deg, #6e1410 0%, #a71f17 100%);
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.75); /* 검정색 그림자 */
+  //box-shadow: 0 0 0 30px #342e2d, 0 0 0 10px #c4a487;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 10px solid black;
+  border: 15px solid #654b45;
   grid-area: table;
 `;
 const PlayerContainer = styled.div`
   width: 100%;
   height: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -68,8 +70,12 @@ const PlayerContainer = styled.div`
 
 const CardContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  border: 1px solid lightgray;
+  border-radius: 250px;
+  width: 90%;
+  height: 80%;
 `;
 const getCardShape = (shape) => {
   switch (shape) {
@@ -105,8 +111,9 @@ const getCardNum = (num) => {
 };
 
 const Card1 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 100px;
+  height: 150px;
   background-image: ${(props) =>
     props.$card1shape !== null
       ? `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
@@ -118,8 +125,9 @@ const Card1 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card2 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 100px;
+  height: 150px;
   background-image: ${(props) =>
     props.$card2shape !== null
       ? `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
@@ -131,8 +139,9 @@ const Card2 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card3 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 100px;
+  height: 150px;
   background-image: ${(props) =>
     props.$card3shape !== null
       ? `url("/images/${getCardNum(props.$card3num)}_of_${getCardShape(
@@ -144,8 +153,8 @@ const Card3 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card4 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  width: 100px;
+  height: 150px;
   background-image: ${(props) =>
     props.$card4shape !== null
       ? `url("/images/${getCardNum(props.$card4num)}_of_${getCardShape(
@@ -155,10 +164,12 @@ const Card4 = styled(motion.div)`
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
+  border-radius: 10px;
 `;
 const Card5 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 100px;
+  height: 150px;
   background-image: ${(props) =>
     props.$card5shape !== null
       ? `url("/images/${getCardNum(props.$card5num)}_of_${getCardShape(
@@ -178,12 +189,16 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-const PotContainer = styled.div``;
+const PotContainer = styled.div`
+  position: absolute;
+  top: 0%;
+`;
 
 const Pot = styled.span`
   color: white;
-  font-weight: bold;
+  font-weight: bolder;
   font-size: 24px;
+  color: yellow;
 `;
 const PlayerInfo = styled.div``;
 const ChipContainer = styled.div``;
@@ -395,7 +410,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       <Table>
         {board.phaseStatus >= 1 ? (
           <PotContainer>
-            <Pot>pot : {board.pot}</Pot>
+            <Pot>Pot : {board.pot}BB</Pot>
           </PotContainer>
         ) : null}
 

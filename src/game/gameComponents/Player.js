@@ -7,6 +7,7 @@ import { client } from "../../client";
 import axios from "axios";
 import { BASE_URL } from "../../api";
 import { useNavigate } from "react-router-dom";
+import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 const PlayContainer = styled.div`
   display: flex;
   svg {
@@ -14,7 +15,8 @@ const PlayContainer = styled.div`
     height: 60px;
     color: yellow;
   }
-  flex-direction: column;
+  border: 1px solid red;
+  z-index: 2;
 `;
 const Timer = styled.div`
   margin-bottom: 10px;
@@ -23,19 +25,13 @@ const Timer = styled.div`
 const PlayerInfo = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
 `;
 
 const PlayerProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const PlayerName = styled.span`
-  color: yellow;
-  font-weight: bold;
-  font-size: 20px;
-  margin-bottom: 20px;
 `;
 
 const PositionButton = styled.button`
@@ -130,10 +126,40 @@ const RaiseInputContainer = styled.div`
   justify-content: center;
   border: 1px solid black;
 `;
-const ChipContainer = styled.div``;
+const PlayerImg = styled.div`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
+const ChipContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 10px 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+`;
+const PlayerName = styled.span`
+  color: gray;
+  font-weight: bold;
+  font-size: 24px;
+  margin-right: 20px;
+`;
 const Chip = styled.span`
   color: white;
+  font-weight: bold;
+  font-size: 24px;
+`;
+const Time = styled.div`
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
 `;
 
 function Player({
@@ -164,7 +190,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 1111130;
+  const actionTime = 1000;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
@@ -740,7 +766,7 @@ function Player({
 
     return (
       <React.Fragment key={player.id}>
-        {board &&
+        {/* {board &&
           board.actionPos === player.position &&
           board.phaseStatus >= 1 &&
           board.phaseStatus <= 4 && (
@@ -754,32 +780,69 @@ function Player({
                 />
               </Timer>
             </>
-          )}
+          )} */}
 
         <PlayerInfo>
           {player.position === board.btn && <PositionButton>D</PositionButton>}
           <PlayerProfileInfo>
-            <PlayerName>{player.playerName}</PlayerName>
-            <div
-              onClick={() => viewOtherHud(player.userId)}
-              style={{ color: "white" }}
-            >
-              사진
-            </div>
-          </PlayerProfileInfo>
+            {board &&
+            board.actionPos === player.position &&
+            board.phaseStatus >= 1 &&
+            board.phaseStatus <= 4 ? (
+              <div style={{ display: "flex" }}>
+                <ChipContainer>
+                  <PlayerName>{player.playerName}</PlayerName>
+                  <Chip>{player.money}BB</Chip>
+                </ChipContainer>
 
-          {player.status !== 0 ? (
-            <CardComponent
-              board={boardData}
-              player={player}
-              myPlayer={myPlayer}
-              message={message}
-              winnerPlayers={winnerPlayers}
-            />
-          ) : null}
-          <ChipContainer>
-            <Chip>돈 : {player.money}</Chip>
-          </ChipContainer>
+                <CircularProgressbarWithChildren
+                  value={100 - progressValue}
+                  styles={{
+                    root: { height: "50px" },
+                    path: {
+                      stroke: "red",
+                      strokeLinecap: "butt",
+                      transition: "stroke-dashoffset 0.5s ease 0s",
+                      strokeWidth: "10px",
+                    },
+
+                    trail: {
+                      stroke: "#d7d7d7",
+                    },
+                  }}
+                >
+                  <Time>{remainTimeView}초</Time>
+                </CircularProgressbarWithChildren>
+              </div>
+            ) : (
+              <div style={{ display: "flex" }}>
+                <ChipContainer>
+                  <PlayerName>{player.playerName}</PlayerName>
+                  <Chip>{player.money}BB</Chip>
+                </ChipContainer>
+              </div>
+            )}
+          </PlayerProfileInfo>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <PlayerImg onClick={() => viewOtherHud(player.userId)}>
+              사진
+            </PlayerImg>
+            {player.status !== 0 ? (
+              <CardComponent
+                board={boardData}
+                player={player}
+                myPlayer={myPlayer}
+                message={message}
+                winnerPlayers={winnerPlayers}
+              />
+            ) : null}
+          </div>
         </PlayerInfo>
         {board &&
           board.actionPos === player.position &&

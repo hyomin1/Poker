@@ -40,8 +40,8 @@ const getCardNum = (num) => {
 };
 
 const Card1 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  width: 80px;
+  height: 120px;
   background-image: ${(props) =>
     `url("/images/${getCardNum(props.$card1num)}_of_${getCardShape(
       props.$card1shape
@@ -49,10 +49,12 @@ const Card1 = styled(motion.div)`
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0 10px;
+  border-radius: 10px;
 `;
 const Card2 = styled(motion.div)`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 80px;
+  height: 120px;
   background-image: ${(props) =>
     `url("/images/${getCardNum(props.$card2num)}_of_${getCardShape(
       props.$card2shape
@@ -63,8 +65,9 @@ const Card2 = styled(motion.div)`
 `;
 
 const Card = styled.div`
-  width: 60px;
-  height: 90px;
+  border-radius: 10px;
+  width: 80px;
+  height: 120px;
   background-image: url("/images/cardBack.jpg");
   background-size: cover;
   background-repeat: no-repeat;

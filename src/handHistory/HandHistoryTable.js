@@ -1,24 +1,23 @@
 import React from "react";
 import { styled } from "styled-components";
 const Container = styled.div`
-  height: 65%;
+  height: 50%;
   display: grid;
   grid-template-areas:
     ". top ."
     "left table right"
     ". bottom .";
-  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누어 간격 조정 */
-  grid-template-rows: repeat(3, 1fr); /* 3개의 행으로 나누어 간격 조정 */
-  //gap: 0px; /* 열과 행 사이의 간격 조정 */
-  background-color: #2c3e50;
-  border: 1px green solid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background: linear-gradient(135deg, #1b1516 0%, #2f2627 100%);
 `;
 const Table = styled.div`
-  background-color: green;
-  width: 100%;
-  height: 100%;
-  border-radius: 200px;
-  border: 30px solid brown;
+  background-color: #265f35;
+  width: 800px;
+  height: 350px;
+  border-radius: 175px;
+  border: 30px solid transparent;
+  box-shadow: 0 0 0 30px #906650, 0 0 0 35px #c4a487; /* 둥근 테두리 그라데이션 적용 */
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -26,8 +25,12 @@ const Table = styled.div`
 `;
 const CardContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
+  border: 1px solid lightgray;
+  border-radius: 175px;
+  width: 100%;
+  height: 100%;
 `;
 
 const Card = styled.div`
@@ -54,8 +57,8 @@ const PlayerContainer = styled.div`
   }}
 `;
 const Player = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background-color: white;
 `;

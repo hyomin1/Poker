@@ -9,10 +9,7 @@ import Playing from "./Playing";
 import Waiting from "./Waiting";
 
 const GameContainer = styled.div`
-  background-image: url("/images/gameBack.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(135deg, #2a2624 0%, #2f2627 100%);
   width: 100vw;
   height: 100vh;
   overflow: hidden;

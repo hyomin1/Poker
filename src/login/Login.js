@@ -5,35 +5,50 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL, api } from "../api";
 import { client } from "../client";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const LoginContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   height: 100vh;
   width: 100vw;
-  background-image: url("/images/pokerBack.jpg");
+  background-color: #15202b; /* Dark background color */
+  /* background-image: url("/images/pokerBack.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: center; */
 `;
 
 const LoginForm = styled(motion.form)`
   display: flex;
   flex-direction: column;
-  margin-bottom: 100px;
-  width: 20%;
+  align-items: center;
+  padding: 20px;
+  //margin-bottom: 100px;
+  width: 18vw;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Semi-transparent white background */
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
 `;
 
 const LoginInput = styled.input`
+  width: 100%;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.1);
-  margin: 5px 0;
-  padding: 7px 5px;
-  border: 2px solid gray;
-  font-size: 15px;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f0f2f5; /* Light gray background color */
+  font-size: 16px;
+  outline: none;
   font-weight: bold;
-  border: 2px solid #e1b12c;
+  //border: 2px solid #e1b12c;
   &::placeholder {
     color: #2f3640;
     font-weight: bold;
@@ -42,20 +57,29 @@ const LoginInput = styled.input`
 
 const LoginSpan = styled.span`
   color: red;
-  text-align: center;
+  margin-top: 5px;
   font-weight: bold;
-  font-size: 17px;
-`;
-
-const BtnDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+  font-size: 15px;
 `;
 
 const LoginBtn = styled.button`
-  width: 40%;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #1e88e5; /* Blue color */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  outline: none;
+
+  &:hover {
+    background-color: #1565c0; /* Darker blue on hover */
+  }
+  /* width: 40%;
   height: 30px;
   font-weight: bold;
   font-size: 16px;
@@ -65,20 +89,20 @@ const LoginBtn = styled.button`
   color: #dcdde1;
   &:hover {
     background-color: #e1b12c;
-  }
+  } */
 `;
 
 const loginVar = {
   start: {
     opacity: 0,
-    scale: 0,
+    y: -20,
   },
   visible: {
     opacity: 1,
-    scale: 1,
+    y: 0,
 
     transition: {
-      duration: 0.5,
+      duration: 1,
     },
   },
 };
@@ -179,6 +203,7 @@ function Login() {
             })}
             placeholder="아이디"
           />
+
           <LoginSpan>{errors.userId?.message}</LoginSpan>
           <LoginInput
             {...register("password", {
@@ -188,10 +213,9 @@ function Login() {
             type="password"
           />
           <LoginSpan>{errors.password?.message}</LoginSpan>
-          <BtnDiv>
-            <LoginBtn>로그인</LoginBtn>
-            <LoginBtn onClick={onClickJoinBtn}>회원가입</LoginBtn>
-          </BtnDiv>
+
+          <LoginBtn>로그인</LoginBtn>
+          <LoginBtn onClick={onClickJoinBtn}>회원가입</LoginBtn>
         </LoginForm>
       </AnimatePresence>
     </LoginContainer>

@@ -104,7 +104,7 @@ function Hud() {
             <HudBox>
               <HudText>VPIP</HudText>
               <CircularProgressbarWithChildren
-                value={hud.vpip / hud.totalHands}
+                value={hud.totalHands !== 0 ? hud.vpip / hud.totalHands : 0}
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -120,14 +120,17 @@ function Hud() {
                 }}
               >
                 <HudPercent>
-                  {(hud.vpip / hud.totalHands).toFixed(1)}%
+                  {hud.totalHands !== 0
+                    ? (hud.vpip / hud.totalHands).toFixed(1)
+                    : 0}
+                  %
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
             <HudBox>
               <HudText>PFR</HudText>
               <CircularProgressbarWithChildren
-                value={hud.pfr / hud.totalHands}
+                value={hud.totalHands !== 0 ? hud.pfr / hud.totalHands : 0}
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -142,7 +145,10 @@ function Hud() {
                 }}
               >
                 <HudPercent>
-                  {(hud.pfr / hud.totalHands).toFixed(1)}%
+                  {hud.totalHands !== 0
+                    ? (hud.pfr / hud.totalHands).toFixed(1)
+                    : 0}
+                  %
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
@@ -150,7 +156,9 @@ function Hud() {
             <HudBox>
               <HudText>CBET</HudText>
               <CircularProgressbarWithChildren
-                value={hud.cbet / hud.pfAggressiveCnt}
+                value={
+                  hud.pfAggressiveCnt !== 0 ? hud.cbet / hud.pfAggressiveCnt : 0
+                }
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -165,7 +173,10 @@ function Hud() {
                 }}
               >
                 <HudPercent>
-                  {(hud.cbet / hud.pfAggressiveCnt).toFixed(1)}%
+                  {hud.pfAggressiveCnt !== 0
+                    ? (hud.cbet / hud.pfAggressiveCnt).toFixed(1)
+                    : 0}
+                  %
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
@@ -173,7 +184,7 @@ function Hud() {
             <HudBox>
               <HudText>3BET</HudText>
               <CircularProgressbarWithChildren
-                value={hud.threeBet / hud.wtf}
+                value={hud.wtf !== 0 ? hud.threeBet / hud.wtf : 0}
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -187,13 +198,15 @@ function Hud() {
                   },
                 }}
               >
-                <HudPercent>{(hud.threeBet / hud.wtf).toFixed(1)}%</HudPercent>
+                <HudPercent>
+                  {hud.wtf !== 0 ? (hud.threeBet / hud.wtf).toFixed(1) : 0}%
+                </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
             <HudBox>
               <HudText>WTSD</HudText>
               <CircularProgressbarWithChildren
-                value={hud.wtsd / hud.wtf}
+                value={hud.wtf !== 0 ? hud.wtsd / hud.wtf : 0}
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -207,13 +220,15 @@ function Hud() {
                   },
                 }}
               >
-                <HudPercent>{(hud.wtsd / hud.wtf).toFixed(1)}%</HudPercent>
+                <HudPercent>
+                  {hud.wtf !== 0 ? (hud.wtsd / hud.wtf).toFixed(1) : 0}%
+                </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
             <HudBox>
               <HudText>WSD</HudText>
               <CircularProgressbarWithChildren
-                value={hud.wsd / hud.wtsd}
+                value={hud.wtsd !== 0 ? hud.wsd / hud.wtsd : 0}
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -227,7 +242,9 @@ function Hud() {
                   },
                 }}
               >
-                <HudPercent>{(hud.wsd / hud.wtsd).toFixed(1)}%</HudPercent>
+                <HudPercent>
+                  {hud.wtsd !== 0 ? (hud.wsd / hud.wtsd).toFixed(1) : 0}%
+                </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
           </HudInform>
