@@ -154,7 +154,7 @@ function GameRoomList({
 
   const playGame = (cancel) => {
     isSetPlay((prev) => !prev);
-    console.log(cancel);
+
     if (cancel) {
       setBb(50);
     }
@@ -163,8 +163,8 @@ function GameRoomList({
     try {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
         params: {
-          bb,
-          blind,
+          bb: 100,
+          blind: 90000,
         },
       });
       const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
@@ -176,6 +176,7 @@ function GameRoomList({
       goGame.name = JSON.stringify(sendData);
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message);
     }
   };
   const f2 = async () => {
@@ -186,18 +187,17 @@ function GameRoomList({
         {
           params: {
             boardId: board.id,
-            bb,
+            bb: 100,
           },
         }
       );
+      console.log("확인", res.data);
       const userIdInt = parseInt(userId, 10);
       const isExistUser = board.players.some(
         (player) => player.userId === userIdInt
       );
-      console.log(isExistUser);
-      if (isExistUser) {
-        alert("이미 참여하고 있는 게임입니다.");
-      } else {
+      //console.log(isExistUser);
+      if (!isExistUser) {
         const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
         const sendData = {
           userData: userData,
@@ -207,6 +207,7 @@ function GameRoomList({
         goGame.name = JSON.stringify(sendData);
       }
     } catch (error) {
+      alert(error.response.data.message);
       console.log(error);
     }
   };
@@ -234,7 +235,7 @@ function GameRoomList({
   const refreshTable = (blind) => {
     // 새로고침 버튼
 
-    if (blind === 1000) {
+    if (blind === 90000) {
       getBlind1();
     } else if (blind === 2000) {
       getBlind2();
@@ -257,6 +258,7 @@ function GameRoomList({
       <Title>
         <Blind>Blind : {blind}</Blind>
         <button onClick={() => createRoom(blind)}>빠른 참가</button>
+
         <SettingBox>
           <IoMdRefresh onClick={() => refreshTable(blind)} />
         </SettingBox>
@@ -308,6 +310,7 @@ function GameRoomList({
       <Title>
         <Blind>Blind : {blind}</Blind>
         <button onClick={() => createRoom(blind)}>랜덤 매칭</button>
+        <button onClick={() => refreshTable(blind)}>새로 고침</button>
       </Title>
       <div
         style={{

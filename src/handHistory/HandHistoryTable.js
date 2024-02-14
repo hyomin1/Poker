@@ -12,12 +12,12 @@ const Container = styled.div`
   background: linear-gradient(135deg, #1b1516 0%, #2f2627 100%);
 `;
 const Table = styled.div`
-  background-color: #265f35;
-  width: 800px;
-  height: 350px;
-  border-radius: 175px;
-  border: 30px solid transparent;
-  box-shadow: 0 0 0 30px #906650, 0 0 0 35px #c4a487; /* 둥근 테두리 그라데이션 적용 */
+  width: 50vw;
+  height: 40vh;
+  border-radius: 250px;
+  background-image: linear-gradient(135deg, #6e1410 0%, #a71f17 100%);
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.75);
+  border: 15px solid #654b45;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -29,15 +29,16 @@ const CardContainer = styled.div`
   align-items: center;
   border: 1px solid lightgray;
   border-radius: 175px;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 70%;
 `;
 
 const Card = styled.div`
-  width: 90px;
-  height: 120px;
-  border: 1px solid black;
+  width: 100px;
+  height: 150px;
+  border: 1px solid yellow;
   margin: 0px 10px;
+  border-radius: 10px;
 `;
 const PlayerContainer = styled.div`
   display: flex;

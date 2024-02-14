@@ -122,29 +122,36 @@ function CardComponent({ board, player, myPlayer, message }) {
     <CardContainer>
       {board &&
         myPlayer === player &&
+        player.status !== 3 &&
         board.phaseStatus >= 1 &&
-        board.phaseStatus <= 4 && (
+        board.phaseStatus <= 5 && (
           <>
             <Card1 $card1shape={card1Shape} $card1num={card1Num} />
             <Card2 $card2shape={card2Shape} $card2num={card2Num} />
           </>
         )}
-      {board && myPlayer === player && board.phaseStatus === 0 && (
-        <>
-          <Card />
-          <Card />
-        </>
-      )}
-      {board && myPlayer !== player && board.phaseStatus !== 6 && (
-        <>
-          <Card />
-          <Card />
-        </>
-      )}
+      {board &&
+        myPlayer === player &&
+        board.phaseStatus === 0 &&
+        player.status !== 3 && (
+          <>
+            <Card />
+            <Card />
+          </>
+        )}
+      {board &&
+        myPlayer !== player &&
+        board.phaseStatus !== 6 &&
+        player.status !== 3 && (
+          <>
+            <Card />
+            <Card />
+          </>
+        )}
 
       {board &&
         board.phaseStatus === 6 &&
-        player.status != 0 &&
+        player.status !== 3 &&
         winners.length >= 1 && (
           <>
             {result.map((playerResult, index) => (

@@ -1,4 +1,5 @@
 import * as StompJs from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 
 export const client = new StompJs.Client({
   brokerURL: "ws://localhost:8080/ws",

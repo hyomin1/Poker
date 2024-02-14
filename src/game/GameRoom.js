@@ -43,7 +43,7 @@ function GameRoom() {
     setBoard(webSocketBoard.data); //갱신되는 boardData 저장
     console.log("web", webSocketBoard.messageType, webSocketBoard.data);
   };
-  console.log("확인", board);
+
   useEffect(() => {
     setBoard(boardData);
     client.connectHeaders = {
@@ -58,7 +58,9 @@ function GameRoom() {
       client.subscribe(
         `/queue/error/${boardData.id}/${userId}`,
         function (message) {
-          console.log("queue/error 에러", message);
+          const decoder = new TextDecoder();
+          const text = decoder.decode(message.binaryBody);
+          console.log("queue/error 에러", text);
         }
       );
     };

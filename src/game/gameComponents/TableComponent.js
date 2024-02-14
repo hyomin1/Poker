@@ -6,6 +6,7 @@ import { css, keyframes, styled } from "styled-components";
 import { BASE_URL } from "../../api";
 import { client } from "../../client";
 import Player from "./Player";
+import { PiPokerChipBold } from "react-icons/pi";
 
 const TableContainer = styled.div`
   position: relative;
@@ -40,11 +41,12 @@ const Table = styled.div`
   border-radius: 250px;
   background-image: linear-gradient(135deg, #6e1410 0%, #a71f17 100%);
   box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.75); /* 검정색 그림자 */
-  //box-shadow: 0 0 0 30px #342e2d, 0 0 0 10px #c4a487;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  justify-items: center;
   align-items: center;
-  flex-direction: column;
+
   border: 15px solid #654b45;
   grid-area: table;
 `;
@@ -75,7 +77,7 @@ const CardContainer = styled.div`
   border: 1px solid lightgray;
   border-radius: 250px;
   width: 90%;
-  height: 80%;
+  height: 100%;
 `;
 const getCardShape = (shape) => {
   switch (shape) {
@@ -189,10 +191,7 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-const PotContainer = styled.div`
-  position: absolute;
-  top: 0%;
-`;
+const PotContainer = styled.div``;
 
 const Pot = styled.span`
   color: white;
@@ -201,8 +200,19 @@ const Pot = styled.span`
   color: yellow;
 `;
 const PlayerInfo = styled.div``;
-const ChipContainer = styled.div``;
-const Chip = styled(Pot);
+const ChipContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    fill: #0097e6;
+    width: 30px;
+    height: 30px;
+  }
+`;
+const Chip = styled.div`
+  color: white;
+`;
 
 const winnerVar = {
   start: {
@@ -292,12 +302,18 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           destination: "/pub/board/exit",
           body: JSON.stringify(board),
           headers: {
-            PlayerId: myPlayer.id,
-            disconnect_option: "exit",
+            board_id: board.id,
           },
         });
-        window.close();
+
+        client.disconnectHeaders = {
+          disconnect_option: "exit",
+        };
         client.deactivate();
+        client.onDisconnect = () => {
+          window.close();
+          console.log("종료");
+        };
       }
     } catch (error) {
       if (error.response) {
@@ -409,13 +425,83 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
       <Table>
         {board.phaseStatus >= 1 ? (
-          <PotContainer>
+          <PotContainer
+            style={{ gridColumn: "2 / span 1", gridRow: "1 / span 1" }}
+          >
             <Pot>Pot : {board.pot}BB</Pot>
           </PotContainer>
         ) : null}
+        {myPlayer && myPlayer.phaseCallSize !== 0 && board.phaseStatus >= 1 && (
+          <ChipContainer
+            style={{ gridColumn: "3 / span 1", gridRow: "3 / span 1" }}
+          >
+            <PiPokerChipBold />
+            <Chip>{myPlayer.phaseCallSize}BB</Chip>
+          </ChipContainer>
+        )}
+
+        {board.totalPlayer >= 2 &&
+          playerArray[0] &&
+          playerArray[0].phaseCallSize &&
+          board.phaseStatus >= 1 && (
+            <ChipContainer
+              style={{ gridColumn: "1 / span 1", gridRow: "3 / span 1" }}
+            >
+              <PiPokerChipBold />
+              <Chip>{playerArray[0].phaseCallSize}BB</Chip>
+            </ChipContainer>
+          )}
+        {board.totalPlayer >= 2 &&
+          playerArray[1] &&
+          playerArray[1].phaseCallSize !== 0 &&
+          board.phaseStatus >= 1 && (
+            <ChipContainer
+              style={{ gridColumn: "1 / span 1", gridRow: "2 / span 1" }}
+            >
+              <PiPokerChipBold />
+              <Chip>{playerArray[1].phaseCallSize}BB</Chip>
+            </ChipContainer>
+          )}
+
+        {board.totalPlayer >= 2 &&
+          playerArray[2] &&
+          playerArray[2].phaseCallSize !== 0 &&
+          board.phaseStatus >= 1 && (
+            <ChipContainer
+              style={{ gridColumn: "1 / span 1", gridRow: "1 / span 1" }}
+            >
+              <PiPokerChipBold />
+              <Chip>{playerArray[2].phaseCallSize}BB</Chip>
+            </ChipContainer>
+          )}
+
+        {board.totalPlayer >= 2 &&
+          playerArray[3] &&
+          playerArray[3].phaseCallSize !== 0 &&
+          board.phaseStatus >= 1 && (
+            <ChipContainer
+              style={{ gridColumn: "3 / span 1", gridRow: "1 / span 1" }}
+            >
+              <PiPokerChipBold />
+              <Chip>{playerArray[3].phaseCallSize}BB</Chip>
+            </ChipContainer>
+          )}
+        {board.totalPlayer >= 2 &&
+          playerArray[4] &&
+          playerArray[4].phaseCallSize !== 0 &&
+          board.phaseStatus >= 1 && (
+            <ChipContainer
+              style={{ gridColumn: "3 / span 1", gridRow: "2 / span 1" }}
+            >
+              <PiPokerChipBold />
+              <Chip>{playerArray[4].phaseCallSize}BB</Chip>
+            </ChipContainer>
+          )}
 
         {board.phaseStatus >= 2 && board.phaseStatus <= 4 ? (
-          <CardContainer>
+          <CardContainer
+            style={{ gridColumn: "2 / span 1", gridRow: "2 / span 1" }}
+          >
             <React.Fragment>
               <Card1
                 $card1shape={board.phaseStatus >= 2 ? card1Shape : null}
@@ -443,7 +529,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         {board.phaseStatus === 6 ? (
           <AnimatePresence>
             {result.map((playerResult, index) => (
-              <CardContainer key={index}>
+              <CardContainer
+                key={index}
+                style={{ gridColumn: "2 / span 1", gridRow: "2 / span 1" }}
+              >
                 {index === current ? (
                   <React.Fragment>
                     <Card1
@@ -525,9 +614,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 userData={userData}
                 userId={userId}
               />
-              {/* <ChipContainer>
-                <Chip>{playerArray[0].phaseCallSize}</Chip>
-              </ChipContainer> */}
             </PlayerInfo>
           ) : (
             <EmptyBox></EmptyBox>

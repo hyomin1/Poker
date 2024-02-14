@@ -214,7 +214,10 @@ function Player({
     client.publish({
       destination: `/pub/board/action/${option}`,
       body: JSON.stringify(updatedBoard),
-      headers: { PlayerId: playerId },
+      headers: {
+        PlayerId: playerId,
+        board_id: board.id,
+      },
     });
   };
   const updateBoard = (update, playerId, option) => {
@@ -432,15 +435,17 @@ function Player({
     } else {
       //일반 레이즈
       if (money - phaseCallSize > bettingSize * 2) {
-        console.log("돈", money, amount);
         updateBoard(
           (prev) => {
             const updatedPlayers = prev.players.map((play) =>
               player && play.id === player.id
                 ? {
                     ...play,
-                    status: amount === player.money ? 4 : play.status,
-                    money: play.money - amount,
+                    status:
+                      amount === player.money + player.phaseCallSize
+                        ? 4
+                        : play.status,
+                    money: play.money - (amount - phaseCallSize),
                     phaseCallSize: amount,
                   }
                 : play
@@ -453,7 +458,7 @@ function Player({
             };
           },
           player.id,
-          amount === money ? "allInRaise" : "raise",
+          amount === money + phaseCallSize ? "allInRaise" : "raise",
           money
         );
       }
@@ -465,10 +470,7 @@ function Player({
   };
 
   const allIn = (bettingSize, phaseCallSize, money, player) => {
-    if (
-      bettingSize - phaseCallSize > money ||
-      money * 2 < bettingSize - phaseCallSize
-    ) {
+    if (bettingSize - phaseCallSize >= money) {
       updateBoard(
         (prev) => {
           const updatedPlayers = prev.players.map((play) =>
@@ -477,6 +479,7 @@ function Player({
                   ...play,
                   status: 4,
                   money: play.money - play.money,
+                  phaseCallSize: money + phaseCallSize,
                 }
               : play
           );
@@ -529,11 +532,15 @@ function Player({
         body: JSON.stringify(board),
         headers: {
           PlayerId: player.id,
-          disconnect_option: "exit",
+          board_id: board.id,
         },
       });
-      window.close();
+
+      client.disconnectHeaders = {
+        disconnect_option: "exit",
+      };
       client.deactivate();
+      window.close();
     }, 1000);
   };
   useEffect(() => {
@@ -620,7 +627,7 @@ function Player({
                         ? board.blind
                         : board.bettingSize * 2
                     }
-                    max={player.money}
+                    max={player.money + player.phaseCallSize}
                     value={amount}
                     type="range"
                     step={100}
@@ -682,6 +689,7 @@ function Player({
         </>
       );
     } else {
+      console.log(money, bettingSize, phaseCallSize);
       return (
         <>
           {phaseStatus !== 0 && phaseStatus >= 1 && phaseStatus <= 4 ? (
@@ -712,7 +720,7 @@ function Player({
                         ? board.blind
                         : board.bettingSize * 2
                     }
-                    max={player.money}
+                    max={player.money + player.phaseCallSize}
                     value={amount}
                     type="range"
                     step={100}
@@ -749,7 +757,9 @@ function Player({
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
-                  {amount === player.money ? "올인" : "레이즈"}
+                  {amount === player.money + player.phaseCallSize
+                    ? "올인"
+                    : "레이즈"}
                 </BettingButton>
               </RaiseContainer>
             </BettingButtonContainer>
@@ -792,7 +802,7 @@ function Player({
               <div style={{ display: "flex" }}>
                 <ChipContainer>
                   <PlayerName>{player.playerName}</PlayerName>
-                  <Chip>{player.money}BB</Chip>
+                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
                 </ChipContainer>
 
                 <CircularProgressbarWithChildren
@@ -818,7 +828,7 @@ function Player({
               <div style={{ display: "flex" }}>
                 <ChipContainer>
                   <PlayerName>{player.playerName}</PlayerName>
-                  <Chip>{player.money}BB</Chip>
+                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
                 </ChipContainer>
               </div>
             )}
@@ -833,15 +843,14 @@ function Player({
             <PlayerImg onClick={() => viewOtherHud(player.userId)}>
               사진
             </PlayerImg>
-            {player.status !== 0 ? (
-              <CardComponent
-                board={boardData}
-                player={player}
-                myPlayer={myPlayer}
-                message={message}
-                winnerPlayers={winnerPlayers}
-              />
-            ) : null}
+
+            <CardComponent
+              board={boardData}
+              player={player}
+              myPlayer={myPlayer}
+              message={message}
+              winnerPlayers={winnerPlayers}
+            />
           </div>
         </PlayerInfo>
         {board &&

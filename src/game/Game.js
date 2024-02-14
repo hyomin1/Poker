@@ -280,11 +280,11 @@ function GameMenu() {
   const viewProfile = () => {
     window.open("/profile", "_blank", "width=500,height=500");
   };
-  const goHandHistory = async () => {
-    const width = window.screen.availWidth / 2;
-    const height = window.screen.availHeight;
-    window.open("/handHistory", "_blank", `width=${width},height=${height}`);
-    // navigate("/handHistory");
+  const goHandHistory = () => {
+    // const width = window.screen.availWidth / 2;
+    // const height = window.screen.availHeight;
+    // window.open("/handHistory", "_blank", `width=${width},height=${height}`);
+    navigate("/handHistory");
   };
 
   return (
