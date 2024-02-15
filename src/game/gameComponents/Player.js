@@ -15,7 +15,7 @@ const PlayContainer = styled.div`
     height: 60px;
     color: yellow;
   }
-  border: 1px solid red;
+
   z-index: 2;
 `;
 const Timer = styled.div`
@@ -34,13 +34,6 @@ const PlayerProfileInfo = styled.div`
   align-items: center;
 `;
 
-const PositionButton = styled.button`
-  background-color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
 const BettingButtonContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -138,18 +131,17 @@ const PlayerImg = styled.div`
 
 const ChipContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
   padding: 10px 10px;
   border-radius: 10px;
-  margin-bottom: 20px;
 `;
 const PlayerName = styled.span`
   color: gray;
   font-weight: bold;
   font-size: 24px;
-  margin-right: 20px;
 `;
 const Chip = styled.span`
   color: white;
@@ -540,7 +532,9 @@ function Player({
         disconnect_option: "exit",
       };
       client.deactivate();
-      window.close();
+      client.onDisconnect = () => {
+        window.close();
+      };
     }, 1000);
   };
   useEffect(() => {
@@ -689,7 +683,6 @@ function Player({
         </>
       );
     } else {
-      console.log(money, bettingSize, phaseCallSize);
       return (
         <>
           {phaseStatus !== 0 && phaseStatus >= 1 && phaseStatus <= 4 ? (
@@ -793,18 +786,11 @@ function Player({
           )} */}
 
         <PlayerInfo>
-          {player.position === board.btn && <PositionButton>D</PositionButton>}
           <PlayerProfileInfo>
             {board &&
-            board.actionPos === player.position &&
-            board.phaseStatus >= 1 &&
-            board.phaseStatus <= 4 ? (
-              <div style={{ display: "flex" }}>
-                <ChipContainer>
-                  <PlayerName>{player.playerName}</PlayerName>
-                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
-                </ChipContainer>
-
+              board.actionPos === player.position &&
+              board.phaseStatus >= 1 &&
+              board.phaseStatus <= 4 && (
                 <CircularProgressbarWithChildren
                   value={100 - progressValue}
                   styles={{
@@ -823,15 +809,7 @@ function Player({
                 >
                   <Time>{remainTimeView}초</Time>
                 </CircularProgressbarWithChildren>
-              </div>
-            ) : (
-              <div style={{ display: "flex" }}>
-                <ChipContainer>
-                  <PlayerName>{player.playerName}</PlayerName>
-                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
-                </ChipContainer>
-              </div>
-            )}
+              )}
           </PlayerProfileInfo>
           <div
             style={{
@@ -840,9 +818,21 @@ function Player({
               alignItems: "center",
             }}
           >
-            <PlayerImg onClick={() => viewOtherHud(player.userId)}>
-              사진
-            </PlayerImg>
+            <div
+              style={{
+                marginRight: "10px",
+              }}
+            >
+              <PlayerImg onClick={() => viewOtherHud(player.userId)}>
+                사진
+              </PlayerImg>
+              <div style={{ display: "flex" }}>
+                <ChipContainer>
+                  <PlayerName>{player.playerName}</PlayerName>
+                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
+                </ChipContainer>
+              </div>
+            </div>
 
             <CardComponent
               board={boardData}

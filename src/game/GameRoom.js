@@ -52,9 +52,9 @@ function GameRoom() {
     };
     client.activate();
     client.onConnect = function (frame) {
-      console.log("웹소켓 연결완료2");
+      console.log("웹소켓 연결완료");
       client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
-      //client.subscribe(`/queue/${userId}`, function (message) {});
+      client.subscribe(`/queue/${userId}`, function (message) {});
       client.subscribe(
         `/queue/error/${boardData.id}/${userId}`,
         function (message) {

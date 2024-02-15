@@ -156,22 +156,22 @@ function Login() {
 
       console.log("로그인 성공", res.data);
 
-      client.connectHeaders = {
-        userId,
-        password,
-      };
+      // client.connectHeaders = {
+      //   userId,
+      //   password,
+      // };
 
       navigate("/game", {
         state: { userData: data, userId: subId, existBoard: res2.data },
       });
-      client.activate();
-      client.onConnect = function (message) {
-        //console.log("웹소켓 구독완료1");
-        client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
-        // client.subscribe(`/queue/error/${subId}`, function (message) {
-        //   console.log("queue/error 에러메시지", message);
-        // });
-      };
+      // client.activate();
+      // client.onConnect = function (message) {
+      //   //console.log("웹소켓 구독완료1");
+      //   client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
+      //   // client.subscribe(`/queue/error/${subId}`, function (message) {
+      //   //   console.log("queue/error 에러메시지", message);
+      //   // });
+      // };
     } catch (error) {
       console.log("로그인 에러", error);
       if (error.response) {

@@ -48,7 +48,7 @@ const Card1 = styled(motion.div)`
     )}.png")`};
   background-size: cover;
   background-repeat: no-repeat;
-  margin: 0 10px;
+  margin: 0 5px;
   border-radius: 10px;
 `;
 const Card2 = styled(motion.div)`
@@ -61,7 +61,7 @@ const Card2 = styled(motion.div)`
     )}.png")`};
   background-size: cover;
   background-repeat: no-repeat;
-  margin: 0 10px;
+  margin: 0 5px;
 `;
 
 const Card = styled.div`
@@ -71,7 +71,7 @@ const Card = styled.div`
   background-image: url("/images/cardBack.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  margin: 0 10px;
+  margin: 0 5px;
 `;
 
 function CardComponent({ board, player, myPlayer, message }) {

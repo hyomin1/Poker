@@ -163,8 +163,8 @@ function GameRoomList({
     try {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
         params: {
-          bb: 100,
-          blind: 90000,
+          bb,
+          blind,
         },
       });
       const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
@@ -187,7 +187,7 @@ function GameRoomList({
         {
           params: {
             boardId: board.id,
-            bb: 100,
+            bb,
           },
         }
       );

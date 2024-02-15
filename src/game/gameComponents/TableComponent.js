@@ -212,6 +212,7 @@ const ChipContainer = styled.div`
 `;
 const Chip = styled.div`
   color: white;
+  font-weight: bold;
 `;
 
 const winnerVar = {
@@ -245,6 +246,13 @@ const VictoryMessage = styled.div`
   padding: 20px;
   border-radius: 10px;
   z-index: 999;
+`;
+const PositionButton = styled.button`
+  background-color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 `;
 
 function TableComponent({ board, myPlayer, message, userData, userId }) {
@@ -305,14 +313,13 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board_id: board.id,
           },
         });
-
         client.disconnectHeaders = {
           disconnect_option: "exit",
         };
+
         client.deactivate();
         client.onDisconnect = () => {
           window.close();
-          console.log("종료");
         };
       }
     } catch (error) {
@@ -435,6 +442,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           <ChipContainer
             style={{ gridColumn: "3 / span 1", gridRow: "3 / span 1" }}
           >
+            {myPlayer.position === board.btn && (
+              <PositionButton>D</PositionButton>
+            )}
             <PiPokerChipBold />
             <Chip>{myPlayer.phaseCallSize}BB</Chip>
           </ChipContainer>
@@ -447,6 +457,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             <ChipContainer
               style={{ gridColumn: "1 / span 1", gridRow: "3 / span 1" }}
             >
+              {playerArray[0].position === board.btn && (
+                <PositionButton>D</PositionButton>
+              )}
               <PiPokerChipBold />
               <Chip>{playerArray[0].phaseCallSize}BB</Chip>
             </ChipContainer>
@@ -458,6 +471,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             <ChipContainer
               style={{ gridColumn: "1 / span 1", gridRow: "2 / span 1" }}
             >
+              {playerArray[1].position === board.btn && (
+                <PositionButton>D</PositionButton>
+              )}
               <PiPokerChipBold />
               <Chip>{playerArray[1].phaseCallSize}BB</Chip>
             </ChipContainer>
@@ -470,6 +486,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             <ChipContainer
               style={{ gridColumn: "1 / span 1", gridRow: "1 / span 1" }}
             >
+              {playerArray[2].position === board.btn && (
+                <PositionButton>D</PositionButton>
+              )}
               <PiPokerChipBold />
               <Chip>{playerArray[2].phaseCallSize}BB</Chip>
             </ChipContainer>
@@ -482,6 +501,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             <ChipContainer
               style={{ gridColumn: "3 / span 1", gridRow: "1 / span 1" }}
             >
+              {playerArray[3].position === board.btn && (
+                <PositionButton>D</PositionButton>
+              )}
               <PiPokerChipBold />
               <Chip>{playerArray[3].phaseCallSize}BB</Chip>
             </ChipContainer>
@@ -493,6 +515,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             <ChipContainer
               style={{ gridColumn: "3 / span 1", gridRow: "2 / span 1" }}
             >
+              {playerArray[4].position === board.btn && (
+                <PositionButton>D</PositionButton>
+              )}
               <PiPokerChipBold />
               <Chip>{playerArray[4].phaseCallSize}BB</Chip>
             </ChipContainer>

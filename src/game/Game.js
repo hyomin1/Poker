@@ -254,13 +254,13 @@ function GameMenu() {
         },
       });
 
-      if (!client.connected) {
-        client.connectHeaders = {
-          userId: userData.userId,
-          password: userData.password,
-        };
-        client.activate();
-      }
+      // if (!client.connected) {
+      //   client.connectHeaders = {
+      //     userId: userData.userId,
+      //     password: userData.password,
+      //   };
+      //   client.activate();
+      // }
 
       const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
       const sendData = {
