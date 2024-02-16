@@ -35,11 +35,16 @@ const PlayerProfileInfo = styled.div`
 `;
 
 const BettingButtonContainer = styled.div`
+  position: absolute;
+  bottom: 0%;
+  right: 0%;
+  transform: translateX(50%);
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 25px;
   flex-direction: ${(props) => (props.$batch === "raise" ? "column" : "row")};
+  z-index: 3;
 `;
 const AddInformBetting = styled.div`
   display: flex;

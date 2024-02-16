@@ -46,7 +46,6 @@ const Table = styled.div`
   grid-template-rows: repeat(3, 1fr);
   justify-items: center;
   align-items: center;
-
   border: 15px solid #654b45;
   grid-area: table;
 `;
@@ -74,10 +73,11 @@ const CardContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid lightgray;
+  //border: 1px solid lightgray;
   border-radius: 250px;
-  width: 90%;
+  width: 100%;
   height: 100%;
+  //padding: 5vw 10vw;
 `;
 const getCardShape = (shape) => {
   switch (shape) {
@@ -191,7 +191,9 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-const PotContainer = styled.div``;
+const PotContainer = styled.div`
+  //margin-bottom: 50px;
+`;
 
 const Pot = styled.span`
   color: white;
@@ -316,8 +318,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         client.disconnectHeaders = {
           disconnect_option: "exit",
         };
-
-        client.deactivate();
+        setTimeout(() => {
+          client.deactivate();
+        }, 100);
         client.onDisconnect = () => {
           window.close();
         };
@@ -386,11 +389,24 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       headers: { board_id: board.id },
     });
   };
+  const testImg = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${board.players[0].userId}`
+      );
+      const res1 = await axios.get(
+        `${BASE_URL}/api/user/image/${board.players[1].userId}`
+      );
+      console.log(res.data);
+      console.log(res1.data);
+    } catch (error) {}
+  };
 
   return (
     <TableContainer>
       <PlayerCount>
         {board.totalPlayer}/6
+        <button onClick={testImg}>이미지 </button>
         <button onClick={testStart}>게임시작</button>
         <button onClick={testShowDown}>쇼다운</button>
         <button onClick={testExit}>나가기</button>
@@ -433,99 +449,155 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       <Table>
         {board.phaseStatus >= 1 ? (
           <PotContainer
-            style={{ gridColumn: "2 / span 1", gridRow: "1 / span 1" }}
+            style={{
+              gridColumn: "2 / span 1",
+              gridRow: "1 / span 1",
+              alignSelf: "flex-start",
+            }}
           >
             <Pot>Pot : {board.pot}BB</Pot>
           </PotContainer>
         ) : null}
-        {myPlayer && myPlayer.phaseCallSize !== 0 && board.phaseStatus >= 1 && (
-          <ChipContainer
-            style={{ gridColumn: "3 / span 1", gridRow: "3 / span 1" }}
-          >
-            {myPlayer.position === board.btn && (
-              <PositionButton>D</PositionButton>
+        <div
+          style={{
+            display: "flex",
+            gridColumn: "3 / span 1",
+            gridRow: "3 / span 1",
+            alignSelf: "flex-end",
+            justifySelf: "flex-start",
+          }}
+        >
+          {myPlayer && myPlayer.position === board.btn && (
+            <PositionButton>D</PositionButton>
+          )}
+          {myPlayer &&
+            myPlayer.phaseCallSize !== 0 &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{myPlayer.phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
             )}
-            <PiPokerChipBold />
-            <Chip>{myPlayer.phaseCallSize}BB</Chip>
-          </ChipContainer>
-        )}
-
-        {board.totalPlayer >= 2 &&
-          playerArray[0] &&
-          playerArray[0].phaseCallSize &&
-          board.phaseStatus >= 1 && (
-            <ChipContainer
-              style={{ gridColumn: "1 / span 1", gridRow: "3 / span 1" }}
-            >
-              {playerArray[0].position === board.btn && (
-                <PositionButton>D</PositionButton>
-              )}
-              <PiPokerChipBold />
-              <Chip>{playerArray[0].phaseCallSize}BB</Chip>
-            </ChipContainer>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gridColumn: "1 / span 1",
+            gridRow: "3 / span 1",
+            alignSelf: "flex-end",
+            justifySelf: "flex-end",
+          }}
+        >
+          {playerArray[0] && playerArray[0].position === board.btn && (
+            <PositionButton>D</PositionButton>
           )}
-        {board.totalPlayer >= 2 &&
-          playerArray[1] &&
-          playerArray[1].phaseCallSize !== 0 &&
-          board.phaseStatus >= 1 && (
-            <ChipContainer
-              style={{ gridColumn: "1 / span 1", gridRow: "2 / span 1" }}
-            >
-              {playerArray[1].position === board.btn && (
-                <PositionButton>D</PositionButton>
-              )}
-              <PiPokerChipBold />
-              <Chip>{playerArray[1].phaseCallSize}BB</Chip>
-            </ChipContainer>
+          {board.totalPlayer >= 2 &&
+            playerArray[0] &&
+            playerArray[0].phaseCallSize &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{playerArray[0].phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
+            )}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gridColumn: "1 / span 1",
+            gridRow: "2 / span 1",
+            justifySelf: "flex-start",
+            alignSelf: "center",
+          }}
+        >
+          {playerArray[1] && playerArray[1].position === board.btn && (
+            <PositionButton>D</PositionButton>
           )}
-
-        {board.totalPlayer >= 2 &&
-          playerArray[2] &&
-          playerArray[2].phaseCallSize !== 0 &&
-          board.phaseStatus >= 1 && (
-            <ChipContainer
-              style={{ gridColumn: "1 / span 1", gridRow: "1 / span 1" }}
-            >
-              {playerArray[2].position === board.btn && (
-                <PositionButton>D</PositionButton>
-              )}
-              <PiPokerChipBold />
-              <Chip>{playerArray[2].phaseCallSize}BB</Chip>
-            </ChipContainer>
+          {board.totalPlayer >= 2 &&
+            playerArray[1] &&
+            playerArray[1].phaseCallSize !== 0 &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{playerArray[1].phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
+            )}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gridColumn: "1 / span 1",
+            gridRow: "1 / span 1",
+            alignSelf: "flex-start",
+            justifySelf: "flex-end",
+          }}
+        >
+          {playerArray[2] && playerArray[2].position === board.btn && (
+            <PositionButton>D</PositionButton>
           )}
-
-        {board.totalPlayer >= 2 &&
-          playerArray[3] &&
-          playerArray[3].phaseCallSize !== 0 &&
-          board.phaseStatus >= 1 && (
-            <ChipContainer
-              style={{ gridColumn: "3 / span 1", gridRow: "1 / span 1" }}
-            >
-              {playerArray[3].position === board.btn && (
-                <PositionButton>D</PositionButton>
-              )}
-              <PiPokerChipBold />
-              <Chip>{playerArray[3].phaseCallSize}BB</Chip>
-            </ChipContainer>
+          {board.totalPlayer >= 2 &&
+            playerArray[2] &&
+            playerArray[2].phaseCallSize !== 0 &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{playerArray[2].phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
+            )}
+        </div>
+        <div
+          style={{
+            gridColumn: "3 / span 1",
+            gridRow: "1 / span 1",
+            alignSelf: "flex-start",
+            justifySelf: "flex-start",
+            display: "flex",
+          }}
+        >
+          {playerArray[3] && playerArray[3].position === board.btn && (
+            <PositionButton>D</PositionButton>
           )}
-        {board.totalPlayer >= 2 &&
-          playerArray[4] &&
-          playerArray[4].phaseCallSize !== 0 &&
-          board.phaseStatus >= 1 && (
-            <ChipContainer
-              style={{ gridColumn: "3 / span 1", gridRow: "2 / span 1" }}
-            >
-              {playerArray[4].position === board.btn && (
-                <PositionButton>D</PositionButton>
-              )}
-              <PiPokerChipBold />
-              <Chip>{playerArray[4].phaseCallSize}BB</Chip>
-            </ChipContainer>
+          {board.totalPlayer >= 2 &&
+            playerArray[3] &&
+            playerArray[3].phaseCallSize !== 0 &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{playerArray[3].phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
+            )}
+        </div>
+        <div
+          style={{
+            gridColumn: "3 / span 1",
+            gridRow: "2 / span 1",
+            justifySelf: "flex-end",
+            alignSelf: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {playerArray[4] && playerArray[4].position === board.btn && (
+            <PositionButton>D</PositionButton>
           )}
+          {board.totalPlayer >= 2 &&
+            playerArray[4] &&
+            playerArray[4].phaseCallSize !== 0 &&
+            board.phaseStatus >= 1 && (
+              <ChipContainer style={{}}>
+                <PiPokerChipBold />
+                <Chip>{playerArray[4].phaseCallSize / board.blind}BB</Chip>
+              </ChipContainer>
+            )}
+        </div>
 
         {board.phaseStatus >= 2 && board.phaseStatus <= 4 ? (
           <CardContainer
-            style={{ gridColumn: "2 / span 1", gridRow: "2 / span 1" }}
+            style={{
+              gridColumn: "2 / span 1",
+              gridRow: "2 / span 1",
+            }}
           >
             <React.Fragment>
               <Card1

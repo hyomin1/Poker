@@ -44,6 +44,17 @@ function GameRoom() {
     console.log("web", webSocketBoard.messageType, webSocketBoard.data);
   };
 
+  const headers = {
+    player_id: boardData.id,
+  };
+  const windowClose = (e) => {
+    e.preventDefault();
+    client.disconnectHeaders = {
+      disconnect_option: "disconnect",
+      player_id: boardData.id,
+    };
+    client.deactivate();
+  };
   useEffect(() => {
     setBoard(boardData);
     client.connectHeaders = {
@@ -51,10 +62,17 @@ function GameRoom() {
       password: userData.password,
     };
     client.activate();
+
     client.onConnect = function (frame) {
       console.log("웹소켓 연결완료");
-      client.subscribe(`/topic/board/${boardData.id}`, handleGameStart);
-      client.subscribe(`/queue/${userId}`, function (message) {});
+
+      window.addEventListener("beforeunload", windowClose); //게임중에 창 닫을시 실행
+      client.subscribe(
+        `/topic/board/${boardData.id}`,
+        handleGameStart,
+        headers
+      );
+      client.subscribe(`/queue/${userId}`, function (message) {}, headers);
       client.subscribe(
         `/queue/error/${boardData.id}/${userId}`,
         function (message) {
@@ -64,11 +82,19 @@ function GameRoom() {
           console.log("queue/error 에러", parseText);
           if (parseText.messageType === "ERROR-EXIT-BOARD") {
             alert(parseText.data);
-            window.close();
+            client.disconnectHeaders = {
+              disconnect_option: "exit",
+            };
+
+            client.deactivate();
+            client.onDisconnect = () => {
+              window.close();
+            };
           } else if (parseText.messageType === "ERROR") {
             alert(parseText.data);
           }
-        }
+        },
+        headers
       );
     };
 

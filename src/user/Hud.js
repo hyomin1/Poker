@@ -74,6 +74,7 @@ function Hud() {
   useEffect(() => {
     setHud(hudData);
   }, []);
+  console.log(hudData);
 
   return (
     <HudContainer>
@@ -104,7 +105,9 @@ function Hud() {
             <HudBox>
               <HudText>VPIP</HudText>
               <CircularProgressbarWithChildren
-                value={hud.totalHands !== 0 ? hud.vpip / hud.totalHands : 0}
+                value={
+                  hud.totalHands !== 0 ? (hud.vpip / hud.totalHands) * 100 : 0
+                }
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -121,7 +124,7 @@ function Hud() {
               >
                 <HudPercent>
                   {hud.totalHands !== 0
-                    ? (hud.vpip / hud.totalHands).toFixed(1)
+                    ? (hud.vpip / hud.totalHands).toFixed(1) * 100
                     : 0}
                   %
                 </HudPercent>
@@ -130,7 +133,9 @@ function Hud() {
             <HudBox>
               <HudText>PFR</HudText>
               <CircularProgressbarWithChildren
-                value={hud.totalHands !== 0 ? hud.pfr / hud.totalHands : 0}
+                value={
+                  hud.totalHands !== 0 ? (hud.pfr / hud.totalHands) * 100 : 0
+                }
                 styles={{
                   root: { height: "60px" },
                   path: {
@@ -146,7 +151,7 @@ function Hud() {
               >
                 <HudPercent>
                   {hud.totalHands !== 0
-                    ? (hud.pfr / hud.totalHands).toFixed(1)
+                    ? (hud.pfr / hud.totalHands).toFixed(1) * 100
                     : 0}
                   %
                 </HudPercent>

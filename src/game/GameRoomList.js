@@ -38,7 +38,7 @@ const Title = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  padding: 12px 20px;
+  padding: 12px 15px;
   background-color: #2c3e50; /* 배경색 추가 */
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
@@ -55,7 +55,7 @@ const QuickJoinBtn = styled.button`
   background-color: #27ae60;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   padding: 8px 16px;
   cursor: pointer;
   transition: background-color 0.3s ease; /* Adding smooth transition */
@@ -122,7 +122,7 @@ const BtnDiv = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 50%;
+  width: 60%;
 `;
 
 const BoardTitle = styled.th`

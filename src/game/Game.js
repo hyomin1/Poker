@@ -216,6 +216,7 @@ function GameMenu() {
     try {
       const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
       setBlind1000(res.data);
+      console.log("체크", res.data);
     } catch (error) {
       console.error("새로고침 search board error", error);
     }
