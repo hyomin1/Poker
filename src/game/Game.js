@@ -21,7 +21,7 @@ const GameContainer = styled.div`
 `;
 
 const TitleBox = styled.div`
-  height: 10%;
+  height: 5%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -49,7 +49,7 @@ const SettingBox = styled.div`
   }
 `;
 const GameList = styled.div`
-  height: 60%;
+  height: 70%;
 `;
 const BoardInform = styled.div`
   width: 400px;

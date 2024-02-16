@@ -11,11 +11,38 @@ const Grid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 35px;
 `;
+const TableComponent = styled.div`
+  max-height: 25vh;
+  height: 25vh;
+  width: 30vw;
+  overflow-y: auto;
+  border-radius: 10px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd; /* 스크롤바 호버 시 색상 */
+  }
+`;
 const Title = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  padding: 12px 20px;
+  background-color: #2c3e50; /* 배경색 추가 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+  width: 30vw;
 `;
 
 const Blind = styled.h1`
@@ -23,17 +50,24 @@ const Blind = styled.h1`
   color: whitesmoke;
   font-weight: bold;
 `;
-const SettingBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  svg {
-    fill: #fff;
-    height: 35px;
-    width: 35px;
-    &:hover {
-      fill: #e5e5e5;
-    }
+
+const QuickJoinBtn = styled.button`
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Adding smooth transition */
+  &:hover {
+    background-color: #219653;
+  }
+  font-weight: bold;
+`;
+const EnterBtn = styled(QuickJoinBtn)`
+  background-color: #718093;
+  &:hover {
+    background-color: #7f8fa6;
   }
 `;
 
@@ -84,6 +118,16 @@ const MoneyBtn = styled.button`
     background-color: #2574a9;
   }
 `;
+const BtnDiv = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 50%;
+`;
+
+const BoardTitle = styled.th`
+  font-weight: bolder;
+`;
 const inputVar = {
   start: {
     opacity: 0,
@@ -119,34 +163,6 @@ function GameRoomList({
   const [type, setType] = useState(0);
   const [blind, setBlind] = useState();
   const [board, setBoard] = useState();
-  // const [blind1, setBlind1] = useState(blind1000Data);
-  // const [blind2, setBlind2] = useState(blind2000Data);
-  // const [blind3, setBlind3] = useState(blind4000Data);
-  // const [blind4, setBlind4] = useState(blind10000Data);
-  // console.log(blind1);
-
-  // const getBoardList = async () => {
-  //   try {
-  //     const [res1, res2, res3, res4] = await Promise.all([
-  //       await axios.get(`${BASE_URL}/api/board/search/${1000}`),
-  //       await axios.get(`${BASE_URL}/api/board/search/${2000}`),
-  //       await axios.get(`${BASE_URL}/api/board/search/${4000}`),
-  //       await axios.get(`${BASE_URL}/api/board/search/${10000}`),
-  //     ]);
-  //     setBlind1(res1.data);
-  //     setBlind2(res2.data);
-  //     setBlind3(res3.data);
-  //     setBlind4(res4.data);
-  //   } catch (error) {
-  //     if (error.response) {
-  //       alert(error.response.data.message);
-  //     }
-  //     console.error("방검색 에러", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   //getBoardList();
-  // }, []);
 
   const handleMoneyChange = (e) => {
     setBb(parseInt(e.target.value, 10));
@@ -235,7 +251,7 @@ function GameRoomList({
   const refreshTable = (blind) => {
     // 새로고침 버튼
 
-    if (blind === 90000) {
+    if (blind === 1000) {
       getBlind1();
     } else if (blind === 2000) {
       getBlind2();
@@ -253,49 +269,52 @@ function GameRoomList({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#34495e", // 게임 배경색
+        padding: "20px",
+        borderRadius: "10px",
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
       }}
     >
       <Title>
         <Blind>Blind : {blind}</Blind>
-        <button onClick={() => createRoom(blind)}>빠른 참가</button>
-
-        <SettingBox>
-          <IoMdRefresh onClick={() => refreshTable(blind)} />
-        </SettingBox>
+        <BtnDiv>
+          <QuickJoinBtn onClick={() => createRoom(blind)}>
+            빠른 참가
+          </QuickJoinBtn>
+          <QuickJoinBtn onClick={() => refreshTable(blind)}>
+            새로고침
+          </QuickJoinBtn>
+        </BtnDiv>
       </Title>
-      <div
-        style={{
-          maxHeight: "25vh",
-          height: "25vh",
-          width: "35vw",
-          overflowY: "auto",
-        }}
-      >
+      <TableComponent>
         <Table striped bordered hover variant="dark">
           <thead>
             <tr>
-              <th>NO</th>
-              <th>인원</th>
-              <th>게임 상태</th>
-              <th>입장 여부</th>
+              <BoardTitle>NO</BoardTitle>
+              <BoardTitle>인원</BoardTitle>
+              <BoardTitle>게임 상태</BoardTitle>
+              <BoardTitle>입장 여부</BoardTitle>
             </tr>
           </thead>
           <tbody>
-            {blindData.map((board, index) => (
-              <tr key={index}>
-                <td>{board.id}</td>
-                <td>{board.totalPlayer}/6</td>
-                <td>
-                  {board.phaseStatus === 0 ? <p>대기중</p> : <p>게임중</p>}
-                </td>
-                <td>
-                  <button onClick={() => enterGame(board)}>입장하기</button>
-                </td>
-              </tr>
-            ))}
+            {blindData &&
+              blindData.map((board, index) => (
+                <tr key={index}>
+                  <td>{board.id}</td>
+                  <td>{board.totalPlayer}/6</td>
+                  <td>
+                    {board.phaseStatus === 0 ? <p>대기중</p> : <p>게임중</p>}
+                  </td>
+                  <td>
+                    <EnterBtn onClick={() => enterGame(board)}>
+                      입장하기
+                    </EnterBtn>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </Table>
-      </div>
+      </TableComponent>
     </div>
   );
   const renderNoTable = (blind) => (
@@ -305,28 +324,38 @@ function GameRoomList({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#34495e", // 게임 배경색
+        padding: "20px",
+        borderRadius: "10px",
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
       }}
     >
       <Title>
         <Blind>Blind : {blind}</Blind>
-        <button onClick={() => createRoom(blind)}>랜덤 매칭</button>
-        <button onClick={() => refreshTable(blind)}>새로 고침</button>
+        <BtnDiv>
+          <QuickJoinBtn onClick={() => createRoom(blind)}>
+            빠른 참가
+          </QuickJoinBtn>
+          <QuickJoinBtn onClick={() => refreshTable(blind)}>
+            새로고침
+          </QuickJoinBtn>
+        </BtnDiv>
       </Title>
       <div
         style={{
           maxHeight: "25vh",
           height: "25vh",
-          width: "35vw",
+          width: "30vw",
           overflowY: "auto",
         }}
       >
         <Table striped bordered hover variant="dark">
           <thead>
             <tr>
-              <th>NO</th>
-              <th>인원</th>
-              <th>게임 상태</th>
-              <th>입장 여부</th>
+              <BoardTitle>NO</BoardTitle>
+              <BoardTitle>인원</BoardTitle>
+              <BoardTitle>게임 상태</BoardTitle>
+              <BoardTitle>입장 여부</BoardTitle>
             </tr>
           </thead>
           <tbody>

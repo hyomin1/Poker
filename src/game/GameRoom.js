@@ -60,7 +60,14 @@ function GameRoom() {
         function (message) {
           const decoder = new TextDecoder();
           const text = decoder.decode(message.binaryBody);
-          console.log("queue/error 에러", text);
+          const parseText = JSON.parse(text);
+          console.log("queue/error 에러", parseText);
+          if (parseText.messageType === "ERROR-EXIT-BOARD") {
+            alert(parseText.data);
+            window.close();
+          } else if (parseText.messageType === "ERROR") {
+            alert(parseText.data);
+          }
         }
       );
     };
