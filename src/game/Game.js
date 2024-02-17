@@ -167,24 +167,17 @@ function GameMenu() {
 
   useEffect(() => {
     if (existBoard && existBoard.length >= 1) {
-      client.onConnect = function (message) {
-        existBoard.forEach(async (board, index) => {
-          const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
-          const subscription = client.subscribe(
-            `/topic/${res.data.id}`,
-            function (message) {}
-          );
-          console.log("이전 게임 정보 데이터", res.data);
-
-          const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
-          const sendData = {
-            userData: userData,
-            userId: userId,
-            boardData: res.data,
-          };
-          goGame.name = JSON.stringify(sendData);
-        });
-      };
+      //이전 게임 존재 할 경우 들어가기
+      existBoard.forEach(async (board, index) => {
+        const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
+        const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
+        const sendData = {
+          userData: userData,
+          userId: userId,
+          boardData: res.data,
+        };
+        goGame.name = JSON.stringify(sendData);
+      });
     }
     //blind단위로 보드 받아오기
     const getBoardList = async () => {

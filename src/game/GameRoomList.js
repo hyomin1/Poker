@@ -17,7 +17,6 @@ const TableComponent = styled.div`
   width: 30vw;
   overflow-y: auto;
   border-radius: 10px;
-
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;

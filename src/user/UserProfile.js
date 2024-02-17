@@ -8,12 +8,10 @@ import "./user.css";
 
 const UserContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  background-color: #2c3e50;
+  margin-bottom: 20px;
 `;
 
 const UserImageWrapper = styled.div`
@@ -58,15 +56,28 @@ const ProfileSubmitButton = styled.label`
     background-color: #2980b9; /* 호버 시 변경될 배경색 */
   }
 `;
+const UserInfo = styled.div`
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+`;
+const Label = styled.label`
+  color: #15202b;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+`;
 
-const labelStyle = {
-  color: "#dcdde1",
-  fontWeight: "bold",
-  fontSize: 20,
-};
-const inputStyle = {
-  backgroundColor: "#343A40",
-};
+const Input = styled.input`
+  background-color: #f0f2f5;
+  color: #15202b;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+`;
 
 function UserProfile() {
   const [user, setUser] = useState({});
@@ -78,7 +89,6 @@ function UserProfile() {
       let res;
       try {
         res = await axios.get(`${BASE_URL}/api/user/profile`);
-        console.log("유저 정보", res.data);
 
         setUser(res.data);
       } catch (error) {
@@ -92,6 +102,7 @@ function UserProfile() {
           `${BASE_URL}/api/user/image/${res.data.id}`,
           { responseType: "blob" }
         );
+
         setImage(res2.data);
       } catch (error) {
         console.error("프로필 사진 가져오기 에러", error);
@@ -104,7 +115,6 @@ function UserProfile() {
   }, []);
 
   const handleFileChange = async (e) => {
-    console.log("작동");
     const formData = new FormData();
     formData.append("file", e.currentTarget.files[0]);
     try {
@@ -120,7 +130,6 @@ function UserProfile() {
         }
       );
       setImage(res2.data);
-      console.log("사진 전송", res.data);
     } catch (error) {
       console.log("사진전송에러", error);
       if (error.response) {
@@ -132,7 +141,9 @@ function UserProfile() {
   return (
     <UserContainer>
       <UserImageWrapper>
-        <UserImage src={image ? URL.createObjectURL(image) : img} />
+        <UserImage
+          src={image && image.size !== 0 ? URL.createObjectURL(image) : img}
+        />
         <ProfileForm>
           <ProfileSubmitButton htmlFor="image">
             이미지 업로드
@@ -141,30 +152,18 @@ function UserProfile() {
         </ProfileForm>
       </UserImageWrapper>
 
-      <Form.Group className="mb-3">
-        <Form.Label style={labelStyle}>유저 아이디</Form.Label>
-        <Form.Control
-          className="inputStyle"
-          placeholder={user.userId}
-          disabled
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label style={labelStyle}>유저명</Form.Label>
-        <Form.Control
-          className="inputStyle"
-          placeholder={user.userName}
-          disabled
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label style={labelStyle}>보유 금액</Form.Label>
-        <Form.Control
-          className="inputStyle"
-          placeholder={user.money}
-          disabled
-        />
-      </Form.Group>
+      <UserInfo>
+        <Label>아이디</Label>
+        <Input value={user.userId || ""} disabled />
+      </UserInfo>
+      <UserInfo>
+        <Label>이름</Label>
+        <Input value={user.userName || ""} disabled />
+      </UserInfo>
+      <UserInfo>
+        <Label>보유 금액</Label>
+        <Input value={user.money || ""} disabled />
+      </UserInfo>
     </UserContainer>
   );
 }

@@ -216,6 +216,43 @@ const Chip = styled.div`
   color: white;
   font-weight: bold;
 `;
+const UserProfileContainer = styled.div`
+  display: flex;
+`;
+const UserProfileBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+const PlayerName = styled.span`
+  color: gray;
+  font-weight: bold;
+  font-size: 24px;
+`;
+const PlayerImg = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const UserMoneyBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 10px 10px;
+  border-radius: 10px;
+`;
+const UserMoney = styled.span`
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+`;
 
 const winnerVar = {
   start: {
@@ -275,6 +312,15 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [result, setResult] = useState([]);
   const [current, setCurrent] = useState(0);
   const [exit, setExit] = useState(false);
+  const [playerArray, setPlayerArray] = useState([]);
+
+  const img = "/images/defaultProfile.png";
+  const [img1, setImg1] = useState();
+  const [img2, setImg2] = useState();
+  const [img3, setImg3] = useState();
+  const [img4, setImg4] = useState();
+  const [img5, setImg5] = useState();
+  const [img6, setImg6] = useState();
 
   useEffect(() => {
     if (myPlayer) {
@@ -286,9 +332,87 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     }
   }, [board.totalPlayer, myPlayer]); //postion 배치
 
-  const playerArray = others.map((position) =>
-    board.players.find((player) => player.position === position)
-  );
+  useEffect(() => {
+    const updatedPlayerArray = others.map((position) =>
+      board.players.find((player) => player.position === position)
+    );
+    setPlayerArray(updatedPlayerArray);
+
+    const getUser1Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${myPlayer.userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImg1(res.data);
+    };
+    const getUser2Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${updatedPlayerArray[0].userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      console.log(res.data);
+      setImg2(res.data);
+    };
+    const getUser3Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${updatedPlayerArray[1].userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImg3(res.data);
+    };
+    const getUser4Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${updatedPlayerArray[2].userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImg4(res.data);
+    };
+    const getUser5Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${updatedPlayerArray[3].userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImg5(res.data);
+    };
+    const getUser6Img = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${updatedPlayerArray[4].userId}`,
+        {
+          responseType: "blob",
+        }
+      );
+      setImg6(res.data);
+    };
+
+    if (myPlayer) {
+      getUser1Img();
+    }
+    if (updatedPlayerArray[0]) {
+      getUser2Img();
+    }
+    if (updatedPlayerArray[1]) {
+      getUser3Img();
+    }
+    if (updatedPlayerArray[2]) {
+      getUser4Img();
+    }
+    if (updatedPlayerArray[3]) {
+      getUser5Img();
+    }
+    if (updatedPlayerArray[4]) {
+      getUser6Img();
+    }
+  }, [others, board.players]);
 
   const testStart = async () => {
     //테스트용 게임 시작
@@ -389,24 +513,22 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       headers: { board_id: board.id },
     });
   };
-  const testImg = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/api/user/image/${board.players[0].userId}`
-      );
-      const res1 = await axios.get(
-        `${BASE_URL}/api/user/image/${board.players[1].userId}`
-      );
-      console.log(res.data);
-      console.log(res1.data);
-    } catch (error) {}
+
+  const viewHud = async (userId) => {
+    const goHud = window.open("/hud", "_blank", "width=500,height=300");
+    const res = await axios.get(`${BASE_URL}/api/hud/${userId}`);
+    const sendData = {
+      hudData: res.data,
+    };
+    goHud.name = JSON.stringify(sendData);
   };
 
   return (
     <TableContainer>
       <PlayerCount>
-        {board.totalPlayer}/6
-        <button onClick={testImg}>이미지 </button>
+        <div> NO. {board.id}</div>
+        <div> {board.totalPlayer}/6</div>
+
         <button onClick={testStart}>게임시작</button>
         <button onClick={testShowDown}>쇼다운</button>
         <button onClick={testExit}>나가기</button>
@@ -423,7 +545,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               key={player.userId}
             >
               <VictoryMessage>
-                {player.playerName} {player.gameResult.earnedMoney} 얻었습니다!!
+                {player.playerName} {player.gameResult.earnedMoney}BB
+                얻었습니다!!
               </VictoryMessage>
             </VictoryContainer>
           ))}
@@ -540,7 +663,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             playerArray[2] &&
             playerArray[2].phaseCallSize !== 0 &&
             board.phaseStatus >= 1 && (
-              <ChipContainer style={{}}>
+              <ChipContainer>
                 <PiPokerChipBold />
                 <Chip>{playerArray[2].phaseCallSize / board.blind}BB</Chip>
               </ChipContainer>
@@ -562,7 +685,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             playerArray[3] &&
             playerArray[3].phaseCallSize !== 0 &&
             board.phaseStatus >= 1 && (
-              <ChipContainer style={{}}>
+              <ChipContainer>
                 <PiPokerChipBold />
                 <Chip>{playerArray[3].phaseCallSize / board.blind}BB</Chip>
               </ChipContainer>
@@ -702,7 +825,22 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       <PlayerContainer position="bottom">
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[0] ? (
-            <PlayerInfo>
+            <UserProfileContainer>
+              <UserProfileBox>
+                <PlayerImg
+                  onClick={() => viewHud(playerArray[0].userId)}
+                  src={
+                    img2 && img2.size !== 0 ? URL.createObjectURL(img2) : img
+                  }
+                />
+                <UserMoneyBox>
+                  <PlayerName>{playerArray[0].playerName}</PlayerName>
+                  <UserMoney>
+                    {(playerArray[0].money / board.blind).toFixed(1)}BB
+                  </UserMoney>
+                </UserMoneyBox>
+              </UserProfileBox>
+
               <Player
                 boardData={board}
                 player1={playerArray[0]}
@@ -711,44 +849,95 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 userData={userData}
                 userId={userId}
               />
-            </PlayerInfo>
+            </UserProfileContainer>
           ) : (
             <EmptyBox></EmptyBox>
           )}
-          <Player
-            boardData={board}
-            myPlayer={myPlayer}
-            message={message}
-            winnerPlayers={winnerPlayers}
-            userData={userData}
-            userId={userId}
-          />
+          {myPlayer && (
+            <UserProfileContainer>
+              <UserProfileBox>
+                <PlayerImg
+                  onClick={() => viewHud(myPlayer.userId)}
+                  src={
+                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                  }
+                />
+                <UserMoneyBox>
+                  <PlayerName>{myPlayer.playerName}</PlayerName>
+                  <UserMoney>
+                    {(myPlayer.money / board.blind).toFixed(1)}BB
+                  </UserMoney>
+                </UserMoneyBox>
+              </UserProfileBox>
+
+              <Player
+                boardData={board}
+                myPlayer={myPlayer}
+                message={message}
+                winnerPlayers={winnerPlayers}
+                userData={userData}
+                userId={userId}
+              />
+            </UserProfileContainer>
+          )}
         </SubPlayerContainer>
       </PlayerContainer>
 
       <PlayerContainer position="top">
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[2] ? (
-            <Player
-              boardData={board}
-              player3={playerArray[2]}
-              message={message}
-              winnerPlayers={winnerPlayers}
-              userData={userData}
-              userId={userId}
-            />
+            <UserProfileContainer>
+              <UserProfileBox>
+                <PlayerImg
+                  onClick={() => viewHud(playerArray[2].userId)}
+                  src={
+                    img4 && img4.size !== 0 ? URL.createObjectURL(img4) : img
+                  }
+                />
+                <UserMoneyBox>
+                  <PlayerName>{playerArray[2].playerName}</PlayerName>
+                  <UserMoney>
+                    {(playerArray[2].money / board.blind).toFixed(1)}BB
+                  </UserMoney>
+                </UserMoneyBox>
+              </UserProfileBox>
+              <Player
+                boardData={board}
+                player3={playerArray[2]}
+                message={message}
+                winnerPlayers={winnerPlayers}
+                userData={userData}
+                userId={userId}
+              />
+            </UserProfileContainer>
           ) : (
             <EmptyBox></EmptyBox>
           )}
           {board.totalPlayer >= 2 && playerArray[3] ? (
-            <Player
-              boardData={board}
-              player4={playerArray[3]}
-              message={message}
-              winnerPlayers={winnerPlayers}
-              userData={userData}
-              userId={userId}
-            />
+            <UserProfileContainer>
+              <UserProfileBox>
+                <PlayerImg
+                  onClick={() => viewHud(playerArray[3].userId)}
+                  src={
+                    img5 && img5.size !== 0 ? URL.createObjectURL(img5) : img
+                  }
+                />
+                <UserMoneyBox>
+                  <PlayerName>{playerArray[3].playerName}</PlayerName>
+                  <UserMoney>
+                    {(playerArray[3].money / board.blind).toFixed(1)}BB
+                  </UserMoney>
+                </UserMoneyBox>
+              </UserProfileBox>
+              <Player
+                boardData={board}
+                player4={playerArray[3]}
+                message={message}
+                winnerPlayers={winnerPlayers}
+                userData={userData}
+                userId={userId}
+              />
+            </UserProfileContainer>
           ) : (
             <EmptyBox></EmptyBox>
           )}
@@ -756,29 +945,57 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       </PlayerContainer>
 
       <PlayerContainer position="left">
-        {board.totalPlayer >= 2 && playerArray[1] ? (
-          <Player
-            boardData={board}
-            player2={playerArray[1]}
-            message={message}
-            winnerPlayers={winnerPlayers}
-            userData={userData}
-            userId={userId}
-          />
-        ) : null}
+        {board.totalPlayer >= 2 && playerArray[1] && (
+          <UserProfileContainer>
+            <UserProfileBox>
+              <PlayerImg
+                onClick={() => viewHud(playerArray[1].userId)}
+                src={img3 && img3.size !== 0 ? URL.createObjectURL(img3) : img}
+              />
+              <UserMoneyBox>
+                <PlayerName>{playerArray[1].playerName}</PlayerName>
+                <UserMoney>
+                  {(playerArray[1].money / board.blind).toFixed(1)}BB
+                </UserMoney>
+              </UserMoneyBox>
+            </UserProfileBox>
+            <Player
+              boardData={board}
+              player2={playerArray[1]}
+              message={message}
+              winnerPlayers={winnerPlayers}
+              userData={userData}
+              userId={userId}
+            />
+          </UserProfileContainer>
+        )}
       </PlayerContainer>
 
       <PlayerContainer position="right">
-        {board.totalPlayer >= 2 && playerArray[4] ? (
-          <Player
-            boardData={board}
-            player5={playerArray[4]}
-            message={message}
-            winnerPlayers={winnerPlayers}
-            userData={userData}
-            userId={userId}
-          />
-        ) : null}
+        {board.totalPlayer >= 2 && playerArray[4] && (
+          <UserProfileContainer>
+            <UserProfileBox>
+              <PlayerImg
+                onClick={() => viewHud(playerArray[4].userId)}
+                src={img6 && img6.size !== 0 ? URL.createObjectURL(img6) : img}
+              />
+              <UserMoneyBox>
+                <PlayerName>{playerArray[4].playerName}</PlayerName>
+                <UserMoney>
+                  {(playerArray[4].money / board.blind).toFixed(1)}BB
+                </UserMoney>
+              </UserMoneyBox>
+            </UserProfileBox>
+            <Player
+              boardData={board}
+              player5={playerArray[4]}
+              message={message}
+              winnerPlayers={winnerPlayers}
+              userData={userData}
+              userId={userId}
+            />
+          </UserProfileContainer>
+        )}
       </PlayerContainer>
     </TableContainer>
   );

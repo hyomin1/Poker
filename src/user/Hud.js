@@ -1,6 +1,8 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import { styled } from "styled-components";
+import { BASE_URL } from "../api";
 
 const HudContainer = styled.div`
   display: flex;
@@ -13,7 +15,7 @@ const HudContainer = styled.div`
   //padding: 10px 20px;
 `;
 
-const UserImg = styled.div`
+const UserImg = styled.img`
   width: 130px;
   height: 130px;
   border-radius: 50%;
@@ -63,6 +65,18 @@ const HudPercent = styled.div`
   font-weight: bold;
   font-size: 15px;
 `;
+const Subscription = styled.span`
+  background-color: #444345;
+  padding: 10px;
+  font-weight: bolder;
+  position: absolute;
+  color: white;
+  transition: opacity 0.3s ease-in-out; /* opacity 변화에 대한 애니메이션 효과 */
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1; /* 다른 요소 위에 보이도록 z-index 설정 */
+`;
 
 function Hud() {
   const receivedData = JSON.parse(window.name);
@@ -70,12 +84,41 @@ function Hud() {
   const { hudData } = receivedData;
 
   const [hud, setHud] = useState({});
+  const [image, setImage] = useState();
+  const [vpip, setVpip] = useState(false);
+  const [pfr, setPFR] = useState(false);
+  const [cbet, setCBet] = useState(false);
+  const [threeBet, setThreeBet] = useState(false);
+  const [wtsd, setWTSD] = useState(false);
+  const [wsd, setWsd] = useState(false);
+  const img = "/images/defaultProfile.png";
+  const handleVpipEnter = () => {
+    setVpip((prev) => !prev);
+  };
+
+  const handleMouseLeave = (event) => {
+    setVpip(false);
+    setPFR(false);
+    setCBet(false);
+    setThreeBet(false);
+    setWTSD(false);
+    setWsd(false);
+  };
 
   useEffect(() => {
     setHud(hudData);
-  }, []);
-  console.log(hudData);
+    const getUserImg = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/image/${hudData.userId}`,
+        {
+          responseType: "blob",
+        }
+      );
 
+      setImage(res.data);
+    };
+    getUserImg();
+  }, []);
   return (
     <HudContainer>
       <div>
@@ -96,14 +139,22 @@ function Hud() {
             justifyContent: "center",
           }}
         >
-          <UserImg>사진</UserImg>
+          <UserImg
+            src={image && image.size !== 0 ? URL.createObjectURL(image) : img}
+          />
         </div>
 
         <InformBox>
           <PlayCount>{hud.totalHands} GAME</PlayCount>
           <HudInform>
-            <HudBox>
+            <HudBox
+              onMouseEnter={() => setVpip(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>VPIP</HudText>
+              {vpip && (
+                <Subscription>프리플랍에서 베팅하거나 콜하는 비율</Subscription>
+              )}
               <CircularProgressbarWithChildren
                 value={
                   hud.totalHands !== 0 ? (hud.vpip / hud.totalHands) * 100 : 0
@@ -130,8 +181,17 @@ function Hud() {
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
-            <HudBox>
+
+            <HudBox
+              onMouseEnter={() => setPFR(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>PFR</HudText>
+              {pfr && (
+                <Subscription>
+                  프리플랍에서 베팅 또는 레이즈하는 비율
+                </Subscription>
+              )}
               <CircularProgressbarWithChildren
                 value={
                   hud.totalHands !== 0 ? (hud.pfr / hud.totalHands) * 100 : 0
@@ -158,8 +218,16 @@ function Hud() {
               </CircularProgressbarWithChildren>
             </HudBox>
 
-            <HudBox>
+            <HudBox
+              onMouseEnter={() => setCBet(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>CBET</HudText>
+              {cbet && (
+                <Subscription>
+                  프리플랍에서 레이즈 또는 콜에 대한 응답
+                </Subscription>
+              )}
               <CircularProgressbarWithChildren
                 value={
                   hud.pfAggressiveCnt !== 0 ? hud.cbet / hud.pfAggressiveCnt : 0
@@ -186,8 +254,14 @@ function Hud() {
               </CircularProgressbarWithChildren>
             </HudBox>
 
-            <HudBox>
+            <HudBox
+              onMouseEnter={() => setThreeBet(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>3BET</HudText>
+              {threeBet && (
+                <Subscription>상대 베팅에 대한 리레이즈 비율</Subscription>
+              )}
               <CircularProgressbarWithChildren
                 value={hud.wtf !== 0 ? hud.threeBet / hud.wtf : 0}
                 styles={{
@@ -208,8 +282,13 @@ function Hud() {
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
-            <HudBox>
+
+            <HudBox
+              onMouseEnter={() => setWTSD(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>WTSD</HudText>
+              {wtsd && <Subscription>리버에서 쇼다운 참여한 비율</Subscription>}
               <CircularProgressbarWithChildren
                 value={hud.wtf !== 0 ? hud.wtsd / hud.wtf : 0}
                 styles={{
@@ -230,8 +309,13 @@ function Hud() {
                 </HudPercent>
               </CircularProgressbarWithChildren>
             </HudBox>
-            <HudBox>
+
+            <HudBox
+              onMouseEnter={() => setWsd(true)}
+              onMouseLeave={handleMouseLeave}
+            >
               <HudText>WSD</HudText>
+              {wsd && <Subscription>쇼다운에서 이긴 비율</Subscription>}
               <CircularProgressbarWithChildren
                 value={hud.wtsd !== 0 ? hud.wsd / hud.wtsd : 0}
                 styles={{

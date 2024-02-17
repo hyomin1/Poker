@@ -124,35 +124,7 @@ const RaiseInputContainer = styled.div`
   justify-content: center;
   border: 1px solid black;
 `;
-const PlayerImg = styled.div`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
-const ChipContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.4);
-  padding: 10px 10px;
-  border-radius: 10px;
-`;
-const PlayerName = styled.span`
-  color: gray;
-  font-weight: bold;
-  font-size: 24px;
-`;
-const Chip = styled.span`
-  color: white;
-  font-weight: bold;
-  font-size: 24px;
-`;
 const Time = styled.div`
   color: white;
   font-weight: bold;
@@ -571,11 +543,10 @@ function Player({
       hudData: res.data,
     };
     goHud.name = JSON.stringify(sendData);
-
-    console.log(res.data);
   };
-  const viewMyHud = (userId) => {};
-  //console.log(userId);
+  const clickImg = (userId) => {
+    console.log(userId);
+  };
 
   const bettingMethod = (
     bettingSize,
@@ -774,22 +745,6 @@ function Player({
 
     return (
       <React.Fragment key={player.id}>
-        {/* {board &&
-          board.actionPos === player.position &&
-          board.phaseStatus >= 1 &&
-          board.phaseStatus <= 4 && (
-            <>
-              <Timer>
-                <ProgressBar
-                  variant="danger"
-                  now={progressValue}
-                  label={`${remainTimeView}초`}
-                  animated
-                />
-              </Timer>
-            </>
-          )} */}
-
         <PlayerInfo>
           <PlayerProfileInfo>
             {board &&
@@ -823,22 +778,6 @@ function Player({
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                marginRight: "10px",
-              }}
-            >
-              <PlayerImg onClick={() => viewOtherHud(player.userId)}>
-                사진
-              </PlayerImg>
-              <div style={{ display: "flex" }}>
-                <ChipContainer>
-                  <PlayerName>{player.playerName}</PlayerName>
-                  <Chip>{(player.money / board.blind).toFixed(1)}BB</Chip>
-                </ChipContainer>
-              </div>
-            </div>
-
             <CardComponent
               board={boardData}
               player={player}

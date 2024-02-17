@@ -8,6 +8,7 @@ import GameRoom from "./game/GameRoom";
 import UserProfile from "./user/UserProfile";
 import HandHistory from "./handHistory/HandHistory";
 import Hud from "./user/Hud";
+import Main from "./login/Main";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -25,6 +26,11 @@ const router = createBrowserRouter([
         path: "/join",
         element: <Join />,
       },
+      {
+        path: "/main",
+        element: <Main />,
+      },
+
       {
         path: "/game",
         element: <Game />,

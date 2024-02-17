@@ -3,9 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { BASE_URL, api } from "../api";
-import { client } from "../client";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { BASE_URL } from "../api";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -14,10 +12,6 @@ const LoginContainer = styled.div`
   height: 100vh;
   width: 100vw;
   background-color: #15202b; /* Dark background color */
-  /* background-image: url("/images/pokerBack.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center; */
 `;
 
 const LoginForm = styled(motion.form)`
@@ -25,30 +19,23 @@ const LoginForm = styled(motion.form)`
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  //margin-bottom: 100px;
   width: 18vw;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.9
-  ); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
 `;
 
 const LoginInput = styled.input`
   width: 100%;
-  border-radius: 10px;
+  border-radius: 15px;
   margin: 10px 0;
   padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #f0f2f5; /* Light gray background color */
+  background-color: #f0f2f5;
   font-size: 16px;
   outline: none;
+  border: none;
+  color: #15202b;
   font-weight: bold;
-  //border: 2px solid #e1b12c;
   &::placeholder {
     color: #2f3640;
     font-weight: bold;
@@ -127,51 +114,16 @@ function Login() {
           password,
         },
       });
-      // const res = await api.post("/login", null, {
-      //   params: {
-      //     username: userId,
-      //     password,
-      //   },
-      // });
+
       const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
       const playerId = parseInt(subId, 10);
       const res2 = await axios.get(`${BASE_URL}/api/board/context`);
 
       //재접속시 필요한 보드 데이터
-      console.log("context", res2.data);
 
-      // await Promise.all(
-      //   res2.data.map(async (board) => {
-      //     await Promise.all(
-      //       board.players.map(async (player) => {
-      //         console.log(playerId, player.userId);
-      //         if (player.userId === playerId) {
-      //           // await을 사용하여 비동기 처리를 기다린 후에 다음 코드 실행
-      //           await axios.post(`${BASE_URL}/api/player/connect/${playerId}`);
-      //         }
-      //       })
-      //     );
-      //   })
-      // );
-
-      console.log("로그인 성공", res.data);
-
-      // client.connectHeaders = {
-      //   userId,
-      //   password,
-      // };
-
-      navigate("/game", {
+      navigate("/main", {
         state: { userData: data, userId: subId, existBoard: res2.data },
       });
-      // client.activate();
-      // client.onConnect = function (message) {
-      //   //console.log("웹소켓 구독완료1");
-      //   client.subscribe(`/queue/${subId}`, function (message) {}); //로그인 시 개인 큐 구독
-      //   // client.subscribe(`/queue/error/${subId}`, function (message) {
-      //   //   console.log("queue/error 에러메시지", message);
-      //   // });
-      // };
     } catch (error) {
       console.log("로그인 에러", error);
       if (error.response) {
