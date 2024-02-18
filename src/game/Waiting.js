@@ -8,7 +8,6 @@ const WaitingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid red;
 `;
 const SpinnerOverlay = styled.div`
   display: flex;

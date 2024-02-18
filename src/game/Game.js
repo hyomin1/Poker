@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { BiUserCircle } from "react-icons/bi";
-import { RiFileHistoryLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "../api";
-import { client } from "../client";
 import GameRoomList from "./GameRoomList";
 
 const GameContainer = styled.div`
@@ -17,11 +14,10 @@ const GameContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 45px 45px;
-  //justify-content: space-around;
 `;
 
 const TitleBox = styled.div`
-  height: 5%;
+  height: 10%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -33,54 +29,12 @@ const Title = styled.span`
   font-size: 48px;
 `;
 
-const SettingBox = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-bottom: 20px;
-  svg {
-    fill: #fff;
-    height: 50px;
-    width: 50px;
-    margin-right: 10px;
-    &:hover {
-      fill: #e5e5e5;
-    }
-  }
-`;
 const GameList = styled.div`
-  height: 70%;
-`;
-const BoardInform = styled.div`
-  width: 400px;
-  height: 200px;
-  background-color: green;
-`;
-
-const PlayBox = styled.div`
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-const PlayBtn = styled.button`
-  height: 40px;
-  width: 150px;
-  background-color: #27ae60;
-  border: 2px solid #2ecc71;
-  border-radius: 10px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  &:hover {
-    background-color: #2ecc71;
-  }
+  height: 60%;
 `;
 
 const InputBox = styled(motion.div)`
-  background-color: rgba(44, 62, 80, 0.9); /* 투명한 배경 색상 */
+  background-color: rgba(44, 62, 80, 0.9);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -90,8 +44,6 @@ const InputBox = styled(motion.div)`
   color: #ecf0f1;
   position: fixed;
 `;
-
-// 나머지 코드는 그대로 유지
 
 const MoneyInput = styled.input`
   width: 80%;
@@ -200,16 +152,11 @@ function GameMenu() {
       }
     };
     getBoardList();
-    // const intervalId = setInterval(() => {
-    //   getBoardList();
-    // }, 10000);
-    // return () => clearInterval(intervalId);
   }, []);
   const getBlind1 = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
       setBlind1000(res.data);
-      console.log("체크", res.data);
     } catch (error) {
       console.error("새로고침 search board error", error);
     }
@@ -248,14 +195,6 @@ function GameMenu() {
         },
       });
 
-      // if (!client.connected) {
-      //   client.connectHeaders = {
-      //     userId: userData.userId,
-      //     password: userData.password,
-      //   };
-      //   client.activate();
-      // }
-
       const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
       const sendData = {
         userData: userData,
@@ -275,9 +214,6 @@ function GameMenu() {
     window.open("/profile", "_blank", "width=500,height=500");
   };
   const goHandHistory = () => {
-    // const width = window.screen.availWidth / 2;
-    // const height = window.screen.availHeight;
-    // window.open("/handHistory", "_blank", `width=${width},height=${height}`);
     navigate("/handHistory");
   };
 
@@ -286,12 +222,6 @@ function GameMenu() {
       <TitleBox>
         <Title>포커 게임</Title>
       </TitleBox>
-
-      <SettingBox>
-        <BiUserCircle onClick={viewProfile} />
-
-        <RiFileHistoryLine onClick={goHandHistory} />
-      </SettingBox>
 
       <GameList>
         <GameRoomList
@@ -307,9 +237,6 @@ function GameMenu() {
           getBlind4={getBlind4}
         />
       </GameList>
-
-      {/* <PlayBtn onClick={searchRoom}>방 찾기</PlayBtn>
-      <PlayBtn onClick={playGame}>게임 시작</PlayBtn> */}
 
       <AnimatePresence>
         {isPlay ? (

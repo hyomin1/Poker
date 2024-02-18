@@ -18,10 +18,6 @@ const PlayContainer = styled.div`
 
   z-index: 2;
 `;
-const Timer = styled.div`
-  margin-bottom: 10px;
-`;
-
 const PlayerInfo = styled.div`
   display: flex;
   justify-content: center;
@@ -35,42 +31,48 @@ const PlayerProfileInfo = styled.div`
 `;
 
 const BettingButtonContainer = styled.div`
-  position: absolute;
-  bottom: 0%;
-  right: 0%;
-  transform: translateX(50%);
+  border-radius: 20px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  transform: translateX(50%, 50%);
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 25px;
   flex-direction: ${(props) => (props.$batch === "raise" ? "column" : "row")};
-  z-index: 3;
+  width: 18vw;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5); /* 수정된 부분 */
 `;
 const AddInformBetting = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   width: 100%;
   align-items: center;
+  padding: 10px; /* 수정된 부분 */
+  border-radius: 10px; /* 수정된 부분 */
+  border: 1px solid #fff; /* 수정된 부분 */
 `;
 const AmountWrapper = styled.div`
-  width: 20%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 50px;
   background-color: #353b48;
-  border: 1px solid black;
 `;
 const Amount = styled.span`
   color: #e1b12c;
   font-weight: bold;
-  font-size: 24px;
-  width: 90%;
+  font-size: 26px;
+  width: 100%;
   height: 50%;
   text-align: center;
 `;
 const PercentWrapper = styled(AmountWrapper)`
-  width: 45%;
+  width: 100%;
 `;
 
 const QuarterBtn = styled.button`
@@ -78,8 +80,10 @@ const QuarterBtn = styled.button`
   color: ${(props) => (props.$quarter ? "black" : "white")};
   font-weight: bold;
   font-size: 18px;
-  width: 33%;
-  height: 80%;
+  width: 50%;
+  height: 40px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 `;
 const HalfBtn = styled(QuarterBtn)`
   background-color: ${(props) => (props.$half ? "#718093" : "#353b48")};
@@ -93,10 +97,12 @@ const FullBtn = styled(QuarterBtn)`
 const BettingButton = styled.button`
   background-color: #353b48;
   color: white;
-  width: 190px;
+  width: 50%;
   height: 45px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
+  border-radius: 5px;
+  margin-top: 10px;
   ${(props) => {
     if (props.status === "fold") {
       return "color : #f5f6fa;";
@@ -113,9 +119,10 @@ const BettingButton = styled.button`
 `;
 const RaiseContainer = styled.div`
   display: flex;
+  width: 100%;
 `;
 const RaiseInputContainer = styled.div`
-  width: 35%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

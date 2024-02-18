@@ -51,7 +51,9 @@ function Main(props) {
     });
   };
   const goHandHistory = () => {
-    navigate("/handHistory");
+    navigate("/handHistory", {
+      state: { userData: userData, userId, userId },
+    });
   };
   return (
     <MainContainer>

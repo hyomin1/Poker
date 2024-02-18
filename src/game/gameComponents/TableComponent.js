@@ -598,7 +598,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer style={{}}>
                 <PiPokerChipBold />
-                <Chip>{myPlayer.phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(myPlayer.phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
@@ -620,7 +622,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer style={{}}>
                 <PiPokerChipBold />
-                <Chip>{playerArray[0].phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(playerArray[0].phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
@@ -643,7 +647,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer style={{}}>
                 <PiPokerChipBold />
-                <Chip>{playerArray[1].phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(playerArray[1].phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
@@ -665,7 +671,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer>
                 <PiPokerChipBold />
-                <Chip>{playerArray[2].phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(playerArray[2].phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
@@ -687,7 +695,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer>
                 <PiPokerChipBold />
-                <Chip>{playerArray[3].phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(playerArray[3].phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
@@ -710,7 +720,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer style={{}}>
                 <PiPokerChipBold />
-                <Chip>{playerArray[4].phaseCallSize / board.blind}BB</Chip>
+                <Chip>
+                  {(playerArray[4].phaseCallSize / board.blind).toFixed(1)}BB
+                </Chip>
               </ChipContainer>
             )}
         </div>
