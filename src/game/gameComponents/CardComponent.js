@@ -1,6 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { BsHeart } from "react-icons/bs";
 import { styled } from "styled-components";
 
 const CardContainer = styled.div`
@@ -38,8 +37,18 @@ const getCardNum = (num) => {
     }
   }
 };
-
+const CardBorder = styled.div`
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border: 2px solid #fbc531;
+  box-shadow: 0 0 10px rgba(251, 197, 49, 0.7);
+  border-radius: 8px;
+`;
 const Card1 = styled(motion.div)`
+  position: relative;
   width: 80px;
   height: 120px;
   background-image: ${(props) =>
@@ -52,6 +61,7 @@ const Card1 = styled(motion.div)`
   border-radius: 10px;
 `;
 const Card2 = styled(motion.div)`
+  position: relative;
   border-radius: 10px;
   width: 80px;
   height: 120px;
@@ -100,7 +110,6 @@ function CardComponent({ board, player, myPlayer, message }) {
         (player) => player.gameResult && player.gameResult.winner === true
       );
 
-      console.log("카드 쇼다운 승자", winnerPlayerList);
       const sortedHandValuePlayer = winnerPlayerList.sort(
         (a, b) => b.gameResult.handValue - a.gameResult.handValue
       ); //handValue 큰 순서대로 정렬(내림차순)
@@ -113,8 +122,6 @@ function CardComponent({ board, player, myPlayer, message }) {
           setCurrent(i);
         }, i * 2000);
       }
-
-      console.log("카드 확인", resultArray);
     }
   }, [message]);
 
@@ -159,28 +166,44 @@ function CardComponent({ board, player, myPlayer, message }) {
                 {winners[current].userId === player.userId &&
                 current === index ? (
                   <React.Fragment>
-                    <Card1
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[0] ? 1.3 : 1,
-                        border: playerResult[0] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card1shape={card1Shape}
-                      $card1num={card1Num}
-                    />
-                    <Card2
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[1] ? 1.3 : 1,
-                        border: playerResult[1] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card2shape={card2Shape}
-                      $card2num={card2Num}
-                    />
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card1
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[0] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card1shape={card1Shape}
+                        $card1num={card1Num}
+                      >
+                        {playerResult[0] && <CardBorder />}
+                      </Card1>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card2
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[1] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card2shape={card2Shape}
+                        $card2num={card2Num}
+                      >
+                        {playerResult[1] && <CardBorder />}
+                      </Card2>
+                    </motion.div>
                   </React.Fragment>
                 ) : (
                   <>

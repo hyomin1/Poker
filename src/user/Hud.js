@@ -12,7 +12,6 @@ const HudContainer = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: black;
-  //padding: 10px 20px;
 `;
 
 const UserImg = styled.img`
@@ -71,11 +70,11 @@ const Subscription = styled.span`
   font-weight: bolder;
   position: absolute;
   color: white;
-  transition: opacity 0.3s ease-in-out; /* opacity 변화에 대한 애니메이션 효과 */
+  transition: opacity 0.3s ease-in-out;
   padding: 8px;
   border-radius: 4px;
   font-size: 14px;
-  z-index: 1; /* 다른 요소 위에 보이도록 z-index 설정 */
+  z-index: 1;
 `;
 
 function Hud() {
@@ -92,9 +91,6 @@ function Hud() {
   const [wtsd, setWTSD] = useState(false);
   const [wsd, setWsd] = useState(false);
   const img = "/images/defaultProfile.png";
-  const handleVpipEnter = () => {
-    setVpip((prev) => !prev);
-  };
 
   const handleMouseLeave = (event) => {
     setVpip(false);

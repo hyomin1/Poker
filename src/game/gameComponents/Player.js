@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { BsEmojiSunglasses } from "react-icons/bs";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import CardComponent from "./CardComponent";
 import { client } from "../../client";
 import axios from "axios";
@@ -43,7 +41,7 @@ const BettingButtonContainer = styled.div`
   flex-direction: ${(props) => (props.$batch === "raise" ? "column" : "row")};
   width: 18vw;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.5); /* 수정된 부분 */
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 const AddInformBetting = styled.div`
   display: flex;
@@ -51,9 +49,9 @@ const AddInformBetting = styled.div`
   flex-direction: column;
   width: 100%;
   align-items: center;
-  padding: 10px; /* 수정된 부분 */
-  border-radius: 10px; /* 수정된 부분 */
-  border: 1px solid #fff; /* 수정된 부분 */
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #fff;
 `;
 const AmountWrapper = styled.div`
   width: 100%;
@@ -148,8 +146,6 @@ function Player({
   boardData,
   message,
   winnerPlayers,
-  userData,
-  userId,
 }) {
   const players = [myPlayer, player1, player2, player3, player4, player5];
 
@@ -159,8 +155,6 @@ function Player({
   const [isQuarter, setIsQuarter] = useState(false);
   const [isHalf, setIsHalf] = useState(false);
   const [isFull, setIsFull] = useState(false);
-
-  const navigate = useNavigate();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isTimeOut, setIsTimeOut] = useState(true);
@@ -543,17 +537,6 @@ function Player({
     setIsHalf(false);
     setIsQuarter(false);
   };
-  const viewOtherHud = async (userId) => {
-    const goHud = window.open("/hud", "_blank", "width=500,height=300");
-    const res = await axios.get(`${BASE_URL}/api/hud/${userId}`);
-    const sendData = {
-      hudData: res.data,
-    };
-    goHud.name = JSON.stringify(sendData);
-  };
-  const clickImg = (userId) => {
-    console.log(userId);
-  };
 
   const bettingMethod = (
     bettingSize,
@@ -569,7 +552,6 @@ function Player({
       isTimeOut
     ) {
       setIsTimeOut((prev) => !prev);
-      console.log("타임 아웃", remainTimeView);
       timeOut(player);
     }
 
@@ -761,16 +743,21 @@ function Player({
                 <CircularProgressbarWithChildren
                   value={100 - progressValue}
                   styles={{
-                    root: { height: "50px" },
+                    root: { height: "65px" },
                     path: {
-                      stroke: "red",
+                      stroke: `hsl(${100 - progressValue}, 100%, 50%)`,
                       strokeLinecap: "butt",
-                      transition: "stroke-dashoffset 0.5s ease 0s",
-                      strokeWidth: "10px",
+                      transition: "stroke 0.5s ease 0s",
+                      strokeWidth: "20px",
                     },
-
                     trail: {
                       stroke: "#d7d7d7",
+                    },
+                    text: {
+                      fill: `hsl(${100 - progressValue}, 100%, 50%)`, // 텍스트의 색상을 경로와 일치하도록 설정
+                      fontSize: "2rem", // 텍스트의 크기 조정
+                      dominantBaseline: "middle", // 텍스트를 경로의 중앙에 위치시키기 위해 추가
+                      textAnchor: "middle", // 텍스트를 경로의 중앙에 위치시키기 위해 추가
                     },
                   }}
                 >

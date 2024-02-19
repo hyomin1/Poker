@@ -11,7 +11,7 @@ const LoginContainer = styled.div`
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #15202b; /* Dark background color */
+  background-color: #15202b;
 `;
 
 const LoginForm = styled(motion.form)`
@@ -22,7 +22,7 @@ const LoginForm = styled(motion.form)`
   width: 18vw;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
 `;
 
 const LoginInput = styled.input`
@@ -55,7 +55,7 @@ const LoginBtn = styled.button`
   margin-top: 20px;
   font-weight: bold;
   font-size: 18px;
-  background-color: #1e88e5; /* Blue color */
+  background-color: #1e88e5;
   border: none;
   border-radius: 5px;
   color: white;
@@ -64,19 +64,8 @@ const LoginBtn = styled.button`
   outline: none;
 
   &:hover {
-    background-color: #1565c0; /* Darker blue on hover */
+    background-color: #1565c0;
   }
-  /* width: 40%;
-  height: 30px;
-  font-weight: bold;
-  font-size: 16px;
-  background-color: #fbc531;
-  border-radius: 10px;
-  border: 2px solid #e1b12c;
-  color: #dcdde1;
-  &:hover {
-    background-color: #e1b12c;
-  } */
 `;
 
 const loginVar = {
@@ -116,7 +105,7 @@ function Login() {
       });
 
       const subId = res.headers["subscribe-id"]; //웹소켓 구독 + board에서 본인 찾기위함
-      const playerId = parseInt(subId, 10);
+
       const res2 = await axios.get(`${BASE_URL}/api/board/context`);
 
       //재접속시 필요한 보드 데이터

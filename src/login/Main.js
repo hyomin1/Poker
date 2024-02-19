@@ -9,7 +9,7 @@ const MainContainer = styled.div`
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #15202b; /* Dark background color */
+  background-color: #15202b;
 `;
 const MainWrapper = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const MainWrapper = styled.div`
 `;
 const Button = styled.button`
   padding: 10px 20px;
-  background-color: #3498db; /* 변경된 배경색 */
+  background-color: #3498db;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -33,7 +33,7 @@ const Button = styled.button`
   transition: background-color 0.3s ease;
   font-weight: bold;
   &:hover {
-    background-color: #2980b9; /* 호버 시 변경될 배경색 */
+    background-color: #2980b9;
   }
   margin-bottom: 10px;
   width: 30%;

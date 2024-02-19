@@ -2,7 +2,6 @@ import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
-import { IoMdRefresh } from "react-icons/io";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 
@@ -29,7 +28,7 @@ const TableComponent = styled.div`
     border-radius: 6px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: #adb5bd; /* 스크롤바 호버 시 색상 */
+    background: #adb5bd;
   }
 `;
 const Title = styled.div`
@@ -206,12 +205,12 @@ function GameRoomList({
           },
         }
       );
-      console.log("확인", res.data);
+
       const userIdInt = parseInt(userId, 10);
       const isExistUser = board.players.some(
         (player) => player.userId === userIdInt
       );
-      //console.log(isExistUser);
+
       if (!isExistUser) {
         const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
         const sendData = {

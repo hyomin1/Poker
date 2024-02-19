@@ -78,7 +78,6 @@ const Card1 = styled.div`
       : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
-  // margin: 0 5x;
 `;
 const Card2 = styled.div`
   border-radius: 10px;
@@ -92,7 +91,6 @@ const Card2 = styled.div`
       : 'url("/images/cardBack.jpg")'};
   background-size: cover;
   background-repeat: no-repeat;
-  //margin: 0 5px;
 `;
 const Card3 = styled.div`
   border-radius: 10px;

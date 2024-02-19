@@ -1,7 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
-import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import { BASE_URL } from "../api";
 import { client } from "../client";
@@ -64,8 +62,6 @@ function GameRoom() {
     client.activate();
 
     client.onConnect = function (frame) {
-      console.log("웹소켓 연결완료");
-
       window.addEventListener("beforeunload", windowClose); //게임중에 창 닫을시 실행
       client.subscribe(
         `/topic/board/${boardData.id}`,
@@ -112,34 +108,7 @@ function GameRoom() {
         console.log("새로고침시 최신 보드 받기 에러", error);
       }
     };
-    const getUserImg = async () => {
-      try {
-        const userDataPromises = board.players.map((player) => {
-          return axios
-            .get(`${BASE_URL}/api/user/image/${player.userId}`, {
-              responseType: "blob",
-            })
-            .then((res) => ({
-              userId: player.userId,
-              imageData: res.data,
-            }));
-        });
-
-        const userDataResponses = await Promise.all(userDataPromises);
-
-        const userData = userDataResponses.map((res) => ({
-          userId: res.userId,
-          imageData: res.imageData,
-        }));
-
-        console.log("각 플레이어의 유저 데이터z:", userData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     updatedBoard();
-    //getUserImg();
   }, []);
 
   return (

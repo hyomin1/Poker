@@ -1,8 +1,7 @@
 import axios from "axios";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { css, keyframes, styled } from "styled-components";
+import { styled } from "styled-components";
 import { BASE_URL } from "../../api";
 import { client } from "../../client";
 import Player from "./Player";
@@ -14,18 +13,17 @@ const TableContainer = styled.div`
   height: 100vh;
   display: grid;
   grid-template-areas:
-    "playerCount top ."
+    "boardNumber top playerCount"
     "left table right"
     ". bottom .";
 
-  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누어 간격 조정 */
-  grid-template-rows: repeat(3, 1fr); /* 3개의 행으로 나누어 간격 조정 */
-  //gap: 20px; /* 열과 행 사이의 간격 조정 */
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 `;
 const PlayerCount = styled.span`
   color: white;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 38px;
   height: 5%;
   display: flex;
   align-items: center;
@@ -40,7 +38,7 @@ const Table = styled.div`
   height: 50vh;
   border-radius: 250px;
   background-image: linear-gradient(135deg, #6e1410 0%, #a71f17 100%);
-  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.75); /* 검정색 그림자 */
+  box-shadow: 0 0 50px 0px rgba(0, 0, 0, 0.75);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -73,11 +71,9 @@ const CardContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  //border: 1px solid lightgray;
   border-radius: 250px;
   width: 100%;
   height: 100%;
-  //padding: 5vw 10vw;
 `;
 const getCardShape = (shape) => {
   switch (shape) {
@@ -111,8 +107,19 @@ const getCardNum = (num) => {
     }
   }
 };
+const CardBorder = styled.div`
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border: 2px solid #fbc531;
+  box-shadow: 0 0 10px rgba(251, 197, 49, 0.7); /* 후광 효과 지정 */
+  border-radius: 8px; /* 테두리 모서리를 둥글게 만듦 */
+`;
 
 const Card1 = styled(motion.div)`
+  position: relative;
   border-radius: 10px;
   width: 100px;
   height: 150px;
@@ -127,6 +134,7 @@ const Card1 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card2 = styled(motion.div)`
+  position: relative;
   border-radius: 10px;
   width: 100px;
   height: 150px;
@@ -141,6 +149,7 @@ const Card2 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card3 = styled(motion.div)`
+  position: relative;
   border-radius: 10px;
   width: 100px;
   height: 150px;
@@ -155,6 +164,7 @@ const Card3 = styled(motion.div)`
   margin: 0 10px;
 `;
 const Card4 = styled(motion.div)`
+  position: relative;
   width: 100px;
   height: 150px;
   background-image: ${(props) =>
@@ -169,6 +179,7 @@ const Card4 = styled(motion.div)`
   border-radius: 10px;
 `;
 const Card5 = styled(motion.div)`
+  position: relative;
   border-radius: 10px;
   width: 100px;
   height: 150px;
@@ -191,9 +202,7 @@ const SubPlayerContainer = styled.div`
 
 const EmptyBox = styled.div``;
 
-const PotContainer = styled.div`
-  //margin-bottom: 50px;
-`;
+const PotContainer = styled.div``;
 
 const Pot = styled.span`
   color: white;
@@ -201,7 +210,7 @@ const Pot = styled.span`
   font-size: 24px;
   color: yellow;
 `;
-const PlayerInfo = styled.div``;
+
 const ChipContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -270,21 +279,25 @@ const winnerVar = {
 };
 
 const VictoryContainer = styled(motion.div)`
-  grid-area: table;
-`;
-
-const VictoryMessage = styled.div`
-  position: absolute;
+  position: fixed;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 36px;
-  font-weight: bold;
-  color: white;
-  background-color: green;
-  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
   border-radius: 10px;
   z-index: 999;
+  width: 20vw;
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const VictoryMessage = styled.div`
+  color: #154734;
+  font-size: 30px;
+  font-weight: bold;
 `;
 const PositionButton = styled.button`
   background-color: white;
@@ -292,6 +305,19 @@ const PositionButton = styled.button`
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+`;
+
+const BoardNumber = styled.div`
+  color: white;
+  font-weight: bold;
+  font-size: 38px;
+  height: 5%;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  margin-top: 10px;
+  grid-area: boardNumber;
+  padding-top: 10px;
 `;
 
 function TableComponent({ board, myPlayer, message, userData, userId }) {
@@ -321,6 +347,72 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [img4, setImg4] = useState();
   const [img5, setImg5] = useState();
   const [img6, setImg6] = useState();
+
+  const [cardImages, setCardImages] = useState({
+    card1: { shape: null, num: null },
+    card2: { shape: null, num: null },
+    card3: { shape: null, num: null },
+    card4: { shape: null, num: null },
+    card5: { shape: null, num: null },
+  });
+
+  const cardControls = {
+    card1: useAnimation(),
+    card2: useAnimation(),
+    card3: useAnimation(),
+    card4: useAnimation(),
+    card5: useAnimation(),
+  };
+
+  const startCardAnimation = async () => {
+    await cardControls.card1.start({ y: 0 });
+    await cardControls.card2.start({ y: 0 });
+    await cardControls.card3.start({ y: 0 });
+    await cardControls.card4.start({ y: 0 });
+    await cardControls.card5.start({ y: 0 });
+
+    if (board.phaseStatus === 2) {
+      const animations = [
+        cardControls.card1.start({ scale: 0 }),
+        cardControls.card2.start({ scale: 0 }),
+        cardControls.card3.start({ scale: 0 }),
+      ];
+      await Promise.all(animations);
+
+      setCardImages({
+        ...cardImages,
+        card1: { shape: card1Shape, num: card1Num },
+        card2: { shape: card2Shape, num: card2Num },
+        card3: { shape: card3Shape, num: card3Num },
+      });
+      await Promise.all([
+        cardControls.card1.start({ scale: 1 }),
+        cardControls.card2.start({ scale: 1 }),
+        cardControls.card3.start({ scale: 1 }),
+      ]);
+    }
+    if (board.phaseStatus === 3) {
+      await cardControls.card4.start({ scale: 0 });
+      setCardImages({
+        ...cardImages,
+        card4: { shape: card4Shape, num: card4Shape },
+      });
+      await cardControls.card4.start({ scale: 1 });
+    }
+    if (board.phaseStatus === 4) {
+      await cardControls.card5.start({ scale: 0 });
+      setCardImages({
+        ...cardImages,
+        card5: { shape: card5Shape, num: card5Shape },
+      });
+      await cardControls.card5.start({ scale: 1 });
+      //await cardControls.card5.start({ rotateY: 180 });
+    }
+  };
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 카드 애니메이션을 시작합니다.
+    startCardAnimation();
+  }, [board.phaseStatus]); // phaseStatus 값이 변경될 때마다 애니메이션을 재생합니다
 
   useEffect(() => {
     if (myPlayer) {
@@ -354,7 +446,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           responseType: "blob",
         }
       );
-      console.log(res.data);
+
       setImg2(res.data);
     };
     const getUser3Img = async () => {
@@ -525,27 +617,28 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
   return (
     <TableContainer>
+      <BoardNumber> NO. {board.id}</BoardNumber>
       <PlayerCount>
-        <div> NO. {board.id}</div>
-        <div> {board.totalPlayer}/6</div>
-
+        {board.totalPlayer}/6
         <button onClick={testStart}>게임시작</button>
         <button onClick={testShowDown}>쇼다운</button>
         <button onClick={testExit}>나가기</button>
         <button onClick={test}>ㅌㅅㅌ</button>
       </PlayerCount>
+
       <AnimatePresence>
         {message === "GAME_END" &&
           winnerPlayers.length >= 1 &&
           winnerPlayers.map((player, index) => (
             <VictoryContainer
               variants={winnerVar}
-              initial="start"
-              animate="visible"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
               key={player.userId}
             >
               <VictoryMessage>
-                {player.playerName} {player.gameResult.earnedMoney}BB
+                플레이어 {player.playerName} {player.gameResult.earnedMoney}BB
                 얻었습니다!!
               </VictoryMessage>
             </VictoryContainer>
@@ -559,11 +652,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               key={index}
               initial={{ opacity: 0 }}
               animate={{ opacity: index === current ? 1 : 0 }}
-              transition={{ duration: 0.5, delay: index * 2 }}
+              transition={{ duration: 0.5, delay: index * 2, ease: "easeOut" }}
             >
               <VictoryMessage>
-                {player.playerName} {player.gameResult.earnedMoney} 얻었습니다
-                rank : {player.gameResult.handContext}
+                플레이어 {player.playerName} {player.gameResult.earnedMoney}BB
+                얻었습니다!! {}
+                랭크 : {player.gameResult.handContext}
               </VictoryMessage>
             </VictoryContainer>
           ))}
@@ -596,7 +690,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           {myPlayer &&
             myPlayer.phaseCallSize !== 0 &&
             board.phaseStatus >= 1 && (
-              <ChipContainer style={{}}>
+              <ChipContainer>
                 <PiPokerChipBold />
                 <Chip>
                   {(myPlayer.phaseCallSize / board.blind).toFixed(1)}BB
@@ -620,7 +714,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             playerArray[0] &&
             playerArray[0].phaseCallSize &&
             board.phaseStatus >= 1 && (
-              <ChipContainer style={{}}>
+              <ChipContainer>
                 <PiPokerChipBold />
                 <Chip>
                   {(playerArray[0].phaseCallSize / board.blind).toFixed(1)}BB
@@ -735,26 +829,56 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             }}
           >
             <React.Fragment>
-              <Card1
-                $card1shape={board.phaseStatus >= 2 ? card1Shape : null}
-                $card1num={board.phaseStatus >= 2 ? card1Num : null}
-              />
-              <Card2
-                $card2shape={board.phaseStatus >= 2 ? card2Shape : null}
-                $card2num={board.phaseStatus >= 2 ? card2Num : null}
-              />
-              <Card3
-                $card3shape={board.phaseStatus >= 2 ? card3Shape : null}
-                $card3num={board.phaseStatus >= 2 ? card3Num : null}
-              />
-              <Card4
-                $card4shape={board.phaseStatus >= 3 ? card4Shape : null}
-                $card4num={board.phaseStatus >= 3 ? card4Num : null}
-              />
-              <Card5
-                $card5shape={board.phaseStatus === 4 ? card5Shape : null}
-                $card5num={board.phaseStatus === 4 ? card5Num : null}
-              />
+              <motion.div
+                initial={{ y: -100 }}
+                animate={cardControls.card1}
+                transition={{ delay: 0.05 }}
+              >
+                <Card1
+                  $card1shape={cardImages.card1.shape}
+                  $card1num={cardImages.card1.num}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ y: -100 }}
+                animate={cardControls.card2}
+                transition={{ delay: 0.05 }}
+              >
+                <Card2
+                  $card2shape={cardImages.card2.shape}
+                  $card2num={cardImages.card2.num}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ y: -100 }}
+                animate={cardControls.card3}
+                transition={{ delay: 0.05 }}
+              >
+                <Card3
+                  $card3shape={cardImages.card3.shape}
+                  $card3num={cardImages.card3.num}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ y: -100 }}
+                animate={cardControls.card4}
+                transition={{ delay: 0.05 }}
+              >
+                <Card4
+                  $card4shape={cardImages.card4.shape}
+                  $card4num={cardImages.card4.num}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ y: -100 }}
+                animate={cardControls.card5}
+                transition={{ delay: 0.05 }}
+              >
+                <Card5
+                  $card5shape={cardImages.card5.shape}
+                  $card5num={cardImages.card5.num}
+                />
+              </motion.div>
             </React.Fragment>
           </CardContainer>
         ) : null}
@@ -767,65 +891,101 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               >
                 {index === current ? (
                   <React.Fragment>
-                    <Card1
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[0] ? 1.3 : 1,
-                        border: playerResult[0] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card1shape={card1Shape}
-                      $card1num={card1Num}
-                    />
-
-                    <Card2
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[1] ? 1.3 : 1,
-                        border: playerResult[1] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card2shape={card2Shape}
-                      $card2num={card2Num}
-                    />
-
-                    <Card3
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[2] ? 1.3 : 1,
-                        border: playerResult[2] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card3shape={card3Shape}
-                      $card3num={card3Num}
-                    />
-
-                    <Card4
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[3] ? 1.3 : 1,
-                        border: playerResult[3] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card4shape={card4Shape}
-                      $card4num={card4Num}
-                    />
-
-                    <Card5
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{
-                        opacity: 1,
-                        scale: playerResult[4] ? 1.3 : 1,
-                        border: playerResult[4] ? "6px solid #fbc531" : "none",
-                      }}
-                      transition={{ duration: 0.5, delay: index * 2 }}
-                      $card5shape={card5Shape}
-                      $card5num={card5Num}
-                    />
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }} // 애니메이션 추가: 초기 상태
+                      animate={{ opacity: 1, scale: 1 }} // 애니메이션 추가: 최종 상태
+                      transition={{ duration: 0.5 }} // 애니메이션 추가: 지속 시간
+                      style={{ marginRight: "10px" }} // 카드 사이의 간격 조정
+                    >
+                      <Card1
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[0] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card1shape={card1Shape}
+                        $card1num={card1Num}
+                      >
+                        {playerResult[0] && <CardBorder />}
+                      </Card1>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card2
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[1] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card2shape={card2Shape}
+                        $card2num={card2Num}
+                      >
+                        {playerResult[1] && <CardBorder />}
+                      </Card2>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card3
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[2] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card3shape={card3Shape}
+                        $card3num={card3Num}
+                      >
+                        {playerResult[2] && <CardBorder />}
+                      </Card3>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card4
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[3] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card4shape={card4Shape}
+                        $card4num={card4Num}
+                      >
+                        {playerResult[3] && <CardBorder />}
+                      </Card4>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <Card5
+                        initial={{ opacity: 1, y: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: playerResult[4] ? 1.3 : 1,
+                        }}
+                        transition={{ duration: 0.5, delay: index * 2 }}
+                        $card5shape={card5Shape}
+                        $card5num={card5Num}
+                      >
+                        {playerResult[4] && <CardBorder />}
+                      </Card5>
+                    </motion.div>
                   </React.Fragment>
                 ) : null}
               </CardContainer>

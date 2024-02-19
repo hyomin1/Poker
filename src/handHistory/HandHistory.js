@@ -95,6 +95,19 @@ const MyBetDetail = styled(BetDetail)`
   background-color: gold;
   color: red;
 `;
+const NoHandContainer = styled.div`
+  background-color: #15202b;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const NoHandText = styled.span`
+  color: whitesmoke;
+  font-weight: bold;
+  font-size: 30px;
+`;
 function HandHistory() {
   const [hand, setHand] = useState([]);
   const {
@@ -149,156 +162,164 @@ function HandHistory() {
     return positionColor;
   };
   const userIdInt = parseInt(userId, 10);
-  //console.log(hand);
+
   return (
-    <CustomCarousel interval={null}>
-      {hand &&
-        hand.map((data, index) => (
-          <Carousel.Item key={index}>
-            <Container>
-              <HandHistoryTable hand={data} userId={userId} />
-              <Row>
-                <Col>
-                  <Phase>
-                    <PhaseText>프리 플랍</PhaseText>
-                    {data.potAmountPf !== 0 && (
-                      <PhaseBB>{data.potAmountPf}BB</PhaseBB>
-                    )}
-                  </Phase>
+    <React.Fragment>
+      {hand.length !== 0 ? (
+        <CustomCarousel interval={null}>
+          {hand &&
+            hand.map((data, index) => (
+              <Carousel.Item key={index}>
+                <Container>
+                  <HandHistoryTable hand={data} userId={userId} />
+                  <Row>
+                    <Col>
+                      <Phase>
+                        <PhaseText>프리 플랍</PhaseText>
+                        {data.potAmountPf !== 0 && (
+                          <PhaseBB>{data.potAmountPf}BB</PhaseBB>
+                        )}
+                      </Phase>
 
-                  <Content>
-                    {data.actionList.map(
-                      (action, index) =>
-                        action.phaseStatus == 1 && (
-                          <DetailContainer key={index + "pf"}>
-                            <Postion
-                              $position={positionBackgroundColor(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            >
-                              {playerPosition(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            </Postion>
-                            {userIdInt === action.userId ? (
-                              <MyBetDetail>{action.detail}</MyBetDetail>
-                            ) : (
-                              <BetDetail>{action.detail}</BetDetail>
-                            )}
-                          </DetailContainer>
-                        )
-                    )}
-                  </Content>
-                </Col>
-                <Col>
-                  <Phase>
-                    <PhaseText>플랍</PhaseText>
-                    {data.potAmountFlop !== 0 && (
-                      <PhaseBB>{data.potAmountFlop}BB</PhaseBB>
-                    )}
-                  </Phase>
+                      <Content>
+                        {data.actionList.map(
+                          (action, index) =>
+                            action.phaseStatus == 1 && (
+                              <DetailContainer key={index + "pf"}>
+                                <Postion
+                                  $position={positionBackgroundColor(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                >
+                                  {playerPosition(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                </Postion>
+                                {userIdInt === action.userId ? (
+                                  <MyBetDetail>{action.detail}</MyBetDetail>
+                                ) : (
+                                  <BetDetail>{action.detail}</BetDetail>
+                                )}
+                              </DetailContainer>
+                            )
+                        )}
+                      </Content>
+                    </Col>
+                    <Col>
+                      <Phase>
+                        <PhaseText>플랍</PhaseText>
+                        {data.potAmountFlop !== 0 && (
+                          <PhaseBB>{data.potAmountFlop}BB</PhaseBB>
+                        )}
+                      </Phase>
 
-                  <Content>
-                    {data.actionList.map(
-                      (action, index) =>
-                        action.phaseStatus == 2 && (
-                          <DetailContainer key={index + "flop"}>
-                            <Postion
-                              $position={positionBackgroundColor(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            >
-                              {playerPosition(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            </Postion>
-                            {userIdInt === action.userId ? (
-                              <MyBetDetail>{action.detail}</MyBetDetail>
-                            ) : (
-                              <BetDetail>{action.detail}</BetDetail>
-                            )}
-                          </DetailContainer>
-                        )
-                    )}
-                  </Content>
-                </Col>
-                <Col>
-                  <Phase>
-                    <PhaseText>턴</PhaseText>
-                    {data.potAmountTurn !== 0 && (
-                      <PhaseBB>{data.potAmountTurn}BB</PhaseBB>
-                    )}
-                  </Phase>
+                      <Content>
+                        {data.actionList.map(
+                          (action, index) =>
+                            action.phaseStatus == 2 && (
+                              <DetailContainer key={index + "flop"}>
+                                <Postion
+                                  $position={positionBackgroundColor(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                >
+                                  {playerPosition(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                </Postion>
+                                {userIdInt === action.userId ? (
+                                  <MyBetDetail>{action.detail}</MyBetDetail>
+                                ) : (
+                                  <BetDetail>{action.detail}</BetDetail>
+                                )}
+                              </DetailContainer>
+                            )
+                        )}
+                      </Content>
+                    </Col>
+                    <Col>
+                      <Phase>
+                        <PhaseText>턴</PhaseText>
+                        {data.potAmountTurn !== 0 && (
+                          <PhaseBB>{data.potAmountTurn}BB</PhaseBB>
+                        )}
+                      </Phase>
 
-                  <Content>
-                    {data.actionList.map(
-                      (action, index) =>
-                        action.phaseStatus == 3 && (
-                          <DetailContainer key={index + "turn"}>
-                            <Postion
-                              $position={positionBackgroundColor(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            >
-                              {playerPosition(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            </Postion>
-                            {userIdInt === action.userId ? (
-                              <MyBetDetail>{action.detail}</MyBetDetail>
-                            ) : (
-                              <BetDetail>{action.detail}</BetDetail>
-                            )}
-                          </DetailContainer>
-                        )
-                    )}
-                  </Content>
-                </Col>
-                <Col>
-                  <Phase>
-                    <PhaseText>리버</PhaseText>
-                    {data.potAmountRiver !== 0 && (
-                      <PhaseBB>{data.potAmountRiver}BB</PhaseBB>
-                    )}
-                  </Phase>
+                      <Content>
+                        {data.actionList.map(
+                          (action, index) =>
+                            action.phaseStatus == 3 && (
+                              <DetailContainer key={index + "turn"}>
+                                <Postion
+                                  $position={positionBackgroundColor(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                >
+                                  {playerPosition(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                </Postion>
+                                {userIdInt === action.userId ? (
+                                  <MyBetDetail>{action.detail}</MyBetDetail>
+                                ) : (
+                                  <BetDetail>{action.detail}</BetDetail>
+                                )}
+                              </DetailContainer>
+                            )
+                        )}
+                      </Content>
+                    </Col>
+                    <Col>
+                      <Phase>
+                        <PhaseText>리버</PhaseText>
+                        {data.potAmountRiver !== 0 && (
+                          <PhaseBB>{data.potAmountRiver}BB</PhaseBB>
+                        )}
+                      </Phase>
 
-                  <Content>
-                    {data.actionList.map(
-                      (action, index) =>
-                        action.phaseStatus == 4 && (
-                          <DetailContainer key={index + "river"}>
-                            <Postion
-                              $position={positionBackgroundColor(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            >
-                              {playerPosition(
-                                action.actPosition,
-                                data.btnPosition
-                              )}
-                            </Postion>
-                            {userIdInt === action.userId ? (
-                              <MyBetDetail>{action.detail}</MyBetDetail>
-                            ) : (
-                              <BetDetail>{action.detail}</BetDetail>
-                            )}
-                          </DetailContainer>
-                        )
-                    )}
-                  </Content>
-                </Col>
-              </Row>
-            </Container>
-          </Carousel.Item>
-        ))}
-    </CustomCarousel>
+                      <Content>
+                        {data.actionList.map(
+                          (action, index) =>
+                            action.phaseStatus == 4 && (
+                              <DetailContainer key={index + "river"}>
+                                <Postion
+                                  $position={positionBackgroundColor(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                >
+                                  {playerPosition(
+                                    action.actPosition,
+                                    data.btnPosition
+                                  )}
+                                </Postion>
+                                {userIdInt === action.userId ? (
+                                  <MyBetDetail>{action.detail}</MyBetDetail>
+                                ) : (
+                                  <BetDetail>{action.detail}</BetDetail>
+                                )}
+                              </DetailContainer>
+                            )
+                        )}
+                      </Content>
+                    </Col>
+                  </Row>
+                </Container>
+              </Carousel.Item>
+            ))}
+        </CustomCarousel>
+      ) : (
+        <NoHandContainer>
+          <NoHandText>핸드 히스토리 기록이 없습니다</NoHandText>
+        </NoHandContainer>
+      )}
+    </React.Fragment>
   );
 }
 
