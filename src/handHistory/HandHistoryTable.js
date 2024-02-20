@@ -223,7 +223,6 @@ const PlayerName = styled.span`
 const EmptyBox = styled.div``;
 
 function HandHistoryTable({ hand, userId }) {
-  console.log("hand", hand);
   const card1Shape = Math.floor(hand.communityCard1 / 13);
   const card2Shape = Math.floor(hand.communityCard2 / 13);
   const card3Shape = Math.floor(hand.communityCard3 / 13);
@@ -238,6 +237,11 @@ function HandHistoryTable({ hand, userId }) {
   const [myPlayer, setMyPlayer] = useState({});
   const [playerArray, setPlayerArray] = useState([]);
   const [myIndex, setMyIndex] = useState();
+  const [player0Index, setPlayer0Index] = useState();
+  const [player1Index, setPlayer1Index] = useState();
+  const [player2Index, setPlayer2Index] = useState();
+  const [player3Index, setPlayer3Index] = useState();
+  const [player4Index, setPlayer4Index] = useState();
 
   useEffect(() => {
     const foundUser = hand.userList.find((user) => user.id === userIdInt);
@@ -252,6 +256,28 @@ function HandHistoryTable({ hand, userId }) {
     const updatedPlayerArray = updatedOthers.map((position) =>
       hand.posList.find((player) => player === position)
     );
+
+    const player0Idx = hand.posList.findIndex(
+      (pos) => pos === updatedPlayerArray[0]
+    );
+    setPlayer0Index(player0Idx);
+    const player1Idx = hand.posList.findIndex(
+      (pos) => pos === updatedPlayerArray[1]
+    );
+    setPlayer1Index(player1Idx);
+    const player2Idx = hand.posList.findIndex(
+      (pos) => pos === updatedPlayerArray[2]
+    );
+    setPlayer2Index(player2Idx);
+    const player3Idx = hand.posList.findIndex(
+      (pos) => pos === updatedPlayerArray[3]
+    );
+    setPlayer3Index(player3Idx);
+    const player4Idx = hand.posList.findIndex(
+      (pos) => pos === updatedPlayerArray[4]
+    );
+    setPlayer4Index(player4Idx);
+
     setPlayerArray(updatedPlayerArray);
   }, []);
 
@@ -318,6 +344,10 @@ function HandHistoryTable({ hand, userId }) {
   const mycard1num = myCard1 % 13;
   const mycard2num = myCard2 % 13;
 
+  const isShowDownUser = (userId) => {
+    return hand.showDownUserIdList.includes(userId);
+  };
+
   return (
     <Container>
       <Table>
@@ -331,43 +361,103 @@ function HandHistoryTable({ hand, userId }) {
       </Table>
       <PlayerContainer position="top">
         {playerArray[2] ? (
-          <PlayerInfo>
-            <Player
-              onClick={() => viewHud(playerArray[2])}
-              $position={positionBackgroundColor(playerArray[2])}
-            >
-              {playerPosition(playerArray[2])}
-              <PlayerName>{findName(playerArray[2])}</PlayerName>
-            </Player>
-          </PlayerInfo>
+          <PlayerBox>
+            <PlayerInfo>
+              <Player
+                onClick={() => viewHud(playerArray[2])}
+                $position={positionBackgroundColor(playerArray[2])}
+              >
+                {playerPosition(playerArray[2])}
+                <PlayerName>{findName(playerArray[2])}</PlayerName>
+              </Player>
+            </PlayerInfo>
+            {hand &&
+              player2Index !== -1 &&
+              isShowDownUser(hand.userList[player2Index].id) && (
+                <PlayerCardContainer>
+                  <PlayerCard1
+                    $mycard1shape={Math.floor(
+                      hand.cardList[player2Index * 2] / 13
+                    )}
+                    $mycard1num={hand.cardList[player2Index * 2] % 13}
+                  />
+                  <PlayerCard2
+                    $mycard2shape={Math.floor(
+                      hand.cardList[player2Index * 2 + 1] / 13
+                    )}
+                    $mycard2num={hand.cardList[player2Index * 2 + 1] % 13}
+                  />
+                </PlayerCardContainer>
+              )}
+          </PlayerBox>
         ) : (
           <EmptyBox />
         )}
         {playerArray[3] ? (
-          <PlayerInfo>
-            <Player
-              onClick={() => viewHud(playerArray[3])}
-              $position={positionBackgroundColor(playerArray[3])}
-            >
-              {playerPosition(playerArray[3])}
-            </Player>
-            <PlayerName>{findName(playerArray[3])}</PlayerName>
-          </PlayerInfo>
+          <PlayerBox>
+            <PlayerInfo>
+              <Player
+                onClick={() => viewHud(playerArray[3])}
+                $position={positionBackgroundColor(playerArray[3])}
+              >
+                {playerPosition(playerArray[3])}
+              </Player>
+              <PlayerName>{findName(playerArray[3])}</PlayerName>
+            </PlayerInfo>
+            {hand &&
+              player3Index !== -1 &&
+              isShowDownUser(hand.userList[player3Index].id) && (
+                <PlayerCardContainer>
+                  <PlayerCard1
+                    $mycard1shape={Math.floor(
+                      hand.cardList[player3Index * 2] / 13
+                    )}
+                    $mycard1num={hand.cardList[player3Index * 2] % 13}
+                  />
+                  <PlayerCard2
+                    $mycard2shape={Math.floor(
+                      hand.cardList[player3Index * 2 + 1] / 13
+                    )}
+                    $mycard2num={hand.cardList[player3Index * 2 + 1] % 13}
+                  />
+                </PlayerCardContainer>
+              )}
+          </PlayerBox>
         ) : (
           <EmptyBox />
         )}
       </PlayerContainer>
       <PlayerContainer position="bottom">
         {playerArray[0] ? (
-          <PlayerInfo>
-            <Player
-              onClick={() => viewHud(playerArray[0])}
-              $position={positionBackgroundColor(playerArray[0])}
-            >
-              {playerPosition(playerArray[0])}
-            </Player>
-            <PlayerName>{findName(playerArray[0])}</PlayerName>
-          </PlayerInfo>
+          <PlayerBox>
+            <PlayerInfo>
+              <Player
+                onClick={() => viewHud(playerArray[0])}
+                $position={positionBackgroundColor(playerArray[0])}
+              >
+                {playerPosition(playerArray[0])}
+              </Player>
+              <PlayerName>{findName(playerArray[0])}</PlayerName>
+            </PlayerInfo>
+            {hand &&
+              player0Index !== -1 &&
+              isShowDownUser(hand.userList[player0Index].id) && (
+                <PlayerCardContainer>
+                  <PlayerCard1
+                    $mycard1shape={Math.floor(
+                      hand.cardList[player0Index * 2] / 13
+                    )}
+                    $mycard1num={hand.cardList[player0Index * 2] % 13}
+                  />
+                  <PlayerCard2
+                    $mycard2shape={Math.floor(
+                      hand.cardList[player0Index * 2 + 1] / 13
+                    )}
+                    $mycard2num={hand.cardList[player0Index * 2 + 1] % 13}
+                  />
+                </PlayerCardContainer>
+              )}
+          </PlayerBox>
         ) : (
           <EmptyBox />
         )}
@@ -398,28 +488,68 @@ function HandHistoryTable({ hand, userId }) {
       </PlayerContainer>
       <PlayerContainer position="left">
         {playerArray[1] && (
-          <PlayerInfo>
-            <Player
-              onClick={() => viewHud(playerArray[1])}
-              $position={positionBackgroundColor(playerArray[1])}
-            >
-              {playerPosition(playerArray[1])}
-            </Player>
-            <PlayerName>{findName(playerArray[1])}</PlayerName>
-          </PlayerInfo>
+          <PlayerBox>
+            <PlayerInfo>
+              <Player
+                onClick={() => viewHud(playerArray[1])}
+                $position={positionBackgroundColor(playerArray[1])}
+              >
+                {playerPosition(playerArray[1])}
+              </Player>
+              <PlayerName>{findName(playerArray[1])}</PlayerName>
+            </PlayerInfo>
+            {hand &&
+              player1Index !== -1 &&
+              isShowDownUser(hand.userList[player1Index].id) && (
+                <PlayerCardContainer>
+                  <PlayerCard1
+                    $mycard1shape={Math.floor(
+                      hand.cardList[player1Index * 2] / 13
+                    )}
+                    $mycard1num={hand.cardList[player1Index * 2] % 13}
+                  />
+                  <PlayerCard2
+                    $mycard2shape={Math.floor(
+                      hand.cardList[player1Index * 2 + 1] / 13
+                    )}
+                    $mycard2num={hand.cardList[player1Index * 2 + 1] % 13}
+                  />
+                </PlayerCardContainer>
+              )}
+          </PlayerBox>
         )}
       </PlayerContainer>
       <PlayerContainer position="right">
         {playerArray[4] && (
-          <PlayerInfo>
-            <Player
-              onClick={() => viewHud(playerArray[4])}
-              $position={positionBackgroundColor(playerArray[4])}
-            >
-              {playerPosition(playerArray[4])}
-            </Player>
-            <PlayerName>{findName(playerArray[4])}</PlayerName>
-          </PlayerInfo>
+          <PlayerBox>
+            <PlayerInfo>
+              <Player
+                onClick={() => viewHud(playerArray[4])}
+                $position={positionBackgroundColor(playerArray[4])}
+              >
+                {playerPosition(playerArray[4])}
+              </Player>
+              <PlayerName>{findName(playerArray[4])}</PlayerName>
+            </PlayerInfo>
+            {hand &&
+              player4Index !== -1 &&
+              isShowDownUser(hand.userList[player4Index].id) && (
+                <PlayerCardContainer>
+                  <PlayerCard1
+                    $mycard1shape={Math.floor(
+                      hand.cardList[player4Index * 2] / 13
+                    )}
+                    $mycard1num={hand.cardList[player4Index * 2] % 13}
+                  />
+                  <PlayerCard2
+                    $mycard2shape={Math.floor(
+                      hand.cardList[player4Index * 2 + 1] / 13
+                    )}
+                    $mycard2num={hand.cardList[player4Index * 2 + 1] % 13}
+                  />
+                </PlayerCardContainer>
+              )}
+          </PlayerBox>
         )}
       </PlayerContainer>
     </Container>
