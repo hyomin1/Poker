@@ -1,3 +1,4 @@
+import { duration } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
@@ -161,58 +162,55 @@ function CardComponent({ board, player, myPlayer, message }) {
         player.status !== 3 &&
         winners.length >= 1 && (
           <>
-            {result.map((playerResult, index) => (
-              <React.Fragment key={index}>
-                {winners[current].userId === player.userId &&
-                current === index ? (
-                  <React.Fragment>
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+            <React.Fragment>
+              {winners[current].userId === player.userId ? (
+                <React.Fragment>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ marginRight: "10px" }}
+                  >
+                    <Card1
+                      initial={{ opacity: 1, y: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: result[current][0] ? 1.3 : 1,
+                      }}
+                      transition={{ duration: 0.5, delay: current * 2 }}
+                      $card1shape={card1Shape}
+                      $card1num={card1Num}
                     >
-                      <Card1
-                        initial={{ opacity: 1, y: 0 }}
-                        animate={{
-                          opacity: 1,
-                          scale: playerResult[0] ? 1.3 : 1,
-                        }}
-                        transition={{ duration: 0.5, delay: index * 2 }}
-                        $card1shape={card1Shape}
-                        $card1num={card1Num}
-                      >
-                        {playerResult[0] && <CardBorder />}
-                      </Card1>
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+                      {result[current][0] && <CardBorder />}
+                    </Card1>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ marginRight: "10px" }}
+                  >
+                    <Card2
+                      initial={{ opacity: 1, y: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: result[current][1] ? 1.3 : 1,
+                      }}
+                      transition={{ duration: 0.5, delay: current * 2 }}
+                      $card2shape={card2Shape}
+                      $card2num={card2Num}
                     >
-                      <Card2
-                        initial={{ opacity: 1, y: 0 }}
-                        animate={{
-                          opacity: 1,
-                          scale: playerResult[1] ? 1.3 : 1,
-                        }}
-                        transition={{ duration: 0.5, delay: index * 2 }}
-                        $card2shape={card2Shape}
-                        $card2num={card2Num}
-                      >
-                        {playerResult[1] && <CardBorder />}
-                      </Card2>
-                    </motion.div>
-                  </React.Fragment>
-                ) : (
-                  <>
-                    <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-                    <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-                  </>
-                )}
-              </React.Fragment>
-            ))}
+                      {result[current][1] && <CardBorder />}
+                    </Card2>
+                  </motion.div>
+                </React.Fragment>
+              ) : (
+                <>
+                  <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+                  <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+                </>
+              )}
+            </React.Fragment>
           </>
         )}
     </CardContainer>

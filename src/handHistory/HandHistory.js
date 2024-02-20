@@ -8,11 +8,11 @@ import { useLocation } from "react-router-dom";
 
 const CustomCarousel = styled(Carousel)`
   .carousel-control-prev {
-    left: -5%; // 이전 버튼을 왼쪽으로 조정
+    left: -5%;
   }
 
   .carousel-control-next {
-    right: -5%; // 다음 버튼을 오른쪽으로 조정
+    right: -5%;
   }
   overflow: hidden;
 `;
