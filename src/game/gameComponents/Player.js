@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import CardComponent from "./CardComponent";
 import { client } from "../../client";
-import axios from "axios";
-import { BASE_URL } from "../../api";
-import { useNavigate } from "react-router-dom";
-import { CircularProgressbarWithChildren } from "react-circular-progressbar";
+
 const PlayContainer = styled.div`
   display: flex;
   svg {
@@ -160,15 +157,13 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 1000;
+  const actionTime = 20;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +
       actionTime -
       currentTime.getTime() / 1000
   );
-
-  const progressValue = (remainTimeView / actionTime) * 100;
 
   useEffect(() => {
     setBoard(boardData);
@@ -735,36 +730,7 @@ function Player({
     return (
       <React.Fragment key={player.id}>
         <PlayerInfo>
-          <PlayerProfileInfo>
-            {board &&
-              board.actionPos === player.position &&
-              board.phaseStatus >= 1 &&
-              board.phaseStatus <= 4 && (
-                <CircularProgressbarWithChildren
-                  value={100 - progressValue}
-                  styles={{
-                    root: { height: "65px" },
-                    path: {
-                      stroke: `hsl(${100 - progressValue}, 100%, 50%)`,
-                      strokeLinecap: "butt",
-                      transition: "stroke 0.5s ease 0s",
-                      strokeWidth: "20px",
-                    },
-                    trail: {
-                      stroke: "#d7d7d7",
-                    },
-                    text: {
-                      fill: `hsl(${100 - progressValue}, 100%, 50%)`, // 텍스트의 색상을 경로와 일치하도록 설정
-                      fontSize: "2rem", // 텍스트의 크기 조정
-                      dominantBaseline: "middle", // 텍스트를 경로의 중앙에 위치시키기 위해 추가
-                      textAnchor: "middle", // 텍스트를 경로의 중앙에 위치시키기 위해 추가
-                    },
-                  }}
-                >
-                  <Time>{remainTimeView}초</Time>
-                </CircularProgressbarWithChildren>
-              )}
-          </PlayerProfileInfo>
+          <PlayerProfileInfo></PlayerProfileInfo>
           <div
             style={{
               display: "flex",

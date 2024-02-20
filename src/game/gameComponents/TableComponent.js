@@ -6,6 +6,8 @@ import { BASE_URL } from "../../api";
 import { client } from "../../client";
 import Player from "./Player";
 import { PiPokerChipBold } from "react-icons/pi";
+import { CircularProgress } from "@mui/material";
+import Box from "@mui/material/Box";
 
 const TableContainer = styled.div`
   position: relative;
@@ -339,6 +341,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [current, setCurrent] = useState(0);
   const [exit, setExit] = useState(false);
   const [playerArray, setPlayerArray] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const img = "/images/defaultProfile.png";
   const [img1, setImg1] = useState();
@@ -614,6 +617,24 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     };
     goHud.name = JSON.stringify(sendData);
   };
+  const actionTime = 20;
+
+  const remainTimeView = Math.floor(
+    new Date(board.lastActionTime).getTime() / 1000 +
+      actionTime -
+      currentTime.getTime() / 1000
+  );
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  const progressValue = (remainTimeView / actionTime) * 100;
 
   return (
     <TableContainer>
@@ -999,12 +1020,35 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           {board.totalPlayer >= 2 && playerArray[0] ? (
             <UserProfileContainer>
               <UserProfileBox>
-                <PlayerImg
-                  onClick={() => viewHud(playerArray[0].userId)}
-                  src={
-                    img2 && img2.size !== 0 ? URL.createObjectURL(img2) : img
-                  }
-                />
+                {board &&
+                board.actionPos === playerArray[0].position &&
+                board.phaseStatus >= 1 &&
+                board.phaseStatus <= 4 ? (
+                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <CircularProgress
+                      variant="determinate"
+                      value={100 - progressValue}
+                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      size={100}
+                    />
+
+                    <PlayerImg
+                      onClick={() => viewHud(playerArray[0].userId)}
+                      src={
+                        img1 && img1.size !== 0
+                          ? URL.createObjectURL(img1)
+                          : img
+                      }
+                    />
+                  </Box>
+                ) : (
+                  <PlayerImg
+                    onClick={() => viewHud(playerArray[0].userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                )}
                 <UserMoneyBox>
                   <PlayerName>{playerArray[0].playerName}</PlayerName>
                   <UserMoney>
@@ -1028,12 +1072,36 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           {myPlayer && (
             <UserProfileContainer>
               <UserProfileBox>
-                <PlayerImg
-                  onClick={() => viewHud(myPlayer.userId)}
-                  src={
-                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
-                  }
-                />
+                {board &&
+                board.actionPos === myPlayer.position &&
+                board.phaseStatus >= 1 &&
+                board.phaseStatus <= 4 ? (
+                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <CircularProgress
+                      variant="determinate"
+                      value={100 - progressValue}
+                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      size={100}
+                    />
+
+                    <PlayerImg
+                      onClick={() => viewHud(myPlayer.userId)}
+                      src={
+                        img1 && img1.size !== 0
+                          ? URL.createObjectURL(img1)
+                          : img
+                      }
+                    />
+                  </Box>
+                ) : (
+                  <PlayerImg
+                    onClick={() => viewHud(myPlayer.userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                )}
+
                 <UserMoneyBox>
                   <PlayerName>{myPlayer.playerName}</PlayerName>
                   <UserMoney>
@@ -1060,12 +1128,35 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           {board.totalPlayer >= 2 && playerArray[2] ? (
             <UserProfileContainer>
               <UserProfileBox>
-                <PlayerImg
-                  onClick={() => viewHud(playerArray[2].userId)}
-                  src={
-                    img4 && img4.size !== 0 ? URL.createObjectURL(img4) : img
-                  }
-                />
+                {board &&
+                board.actionPos === playerArray[2].position &&
+                board.phaseStatus >= 1 &&
+                board.phaseStatus <= 4 ? (
+                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <CircularProgress
+                      variant="determinate"
+                      value={100 - progressValue}
+                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      size={100}
+                    />
+
+                    <PlayerImg
+                      onClick={() => viewHud(playerArray[2].userId)}
+                      src={
+                        img1 && img1.size !== 0
+                          ? URL.createObjectURL(img1)
+                          : img
+                      }
+                    />
+                  </Box>
+                ) : (
+                  <PlayerImg
+                    onClick={() => viewHud(playerArray[2].userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                )}
                 <UserMoneyBox>
                   <PlayerName>{playerArray[2].playerName}</PlayerName>
                   <UserMoney>
@@ -1088,12 +1179,35 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
           {board.totalPlayer >= 2 && playerArray[3] ? (
             <UserProfileContainer>
               <UserProfileBox>
-                <PlayerImg
-                  onClick={() => viewHud(playerArray[3].userId)}
-                  src={
-                    img5 && img5.size !== 0 ? URL.createObjectURL(img5) : img
-                  }
-                />
+                {board &&
+                board.actionPos === playerArray[3].position &&
+                board.phaseStatus >= 1 &&
+                board.phaseStatus <= 4 ? (
+                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <CircularProgress
+                      variant="determinate"
+                      value={100 - progressValue}
+                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      size={100}
+                    />
+
+                    <PlayerImg
+                      onClick={() => viewHud(playerArray[3].userId)}
+                      src={
+                        img1 && img1.size !== 0
+                          ? URL.createObjectURL(img1)
+                          : img
+                      }
+                    />
+                  </Box>
+                ) : (
+                  <PlayerImg
+                    onClick={() => viewHud(playerArray[3].userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                )}
                 <UserMoneyBox>
                   <PlayerName>{playerArray[3].playerName}</PlayerName>
                   <UserMoney>
@@ -1120,10 +1234,33 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         {board.totalPlayer >= 2 && playerArray[1] && (
           <UserProfileContainer>
             <UserProfileBox>
-              <PlayerImg
-                onClick={() => viewHud(playerArray[1].userId)}
-                src={img3 && img3.size !== 0 ? URL.createObjectURL(img3) : img}
-              />
+              {board &&
+              board.actionPos === playerArray[1].position &&
+              board.phaseStatus >= 1 &&
+              board.phaseStatus <= 4 ? (
+                <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <CircularProgress
+                    variant="determinate"
+                    value={100 - progressValue}
+                    sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                    size={100}
+                  />
+
+                  <PlayerImg
+                    onClick={() => viewHud(playerArray[1].userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                </Box>
+              ) : (
+                <PlayerImg
+                  onClick={() => viewHud(playerArray[1].userId)}
+                  src={
+                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                  }
+                />
+              )}
               <UserMoneyBox>
                 <PlayerName>{playerArray[1].playerName}</PlayerName>
                 <UserMoney>
@@ -1147,10 +1284,33 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         {board.totalPlayer >= 2 && playerArray[4] && (
           <UserProfileContainer>
             <UserProfileBox>
-              <PlayerImg
-                onClick={() => viewHud(playerArray[4].userId)}
-                src={img6 && img6.size !== 0 ? URL.createObjectURL(img6) : img}
-              />
+              {board &&
+              board.actionPos === playerArray[4].position &&
+              board.phaseStatus >= 1 &&
+              board.phaseStatus <= 4 ? (
+                <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <CircularProgress
+                    variant="determinate"
+                    value={100 - progressValue}
+                    sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                    size={100}
+                  />
+
+                  <PlayerImg
+                    onClick={() => viewHud(playerArray[4].userId)}
+                    src={
+                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    }
+                  />
+                </Box>
+              ) : (
+                <PlayerImg
+                  onClick={() => viewHud(playerArray[4].userId)}
+                  src={
+                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                  }
+                />
+              )}
               <UserMoneyBox>
                 <PlayerName>{playerArray[4].playerName}</PlayerName>
                 <UserMoney>
