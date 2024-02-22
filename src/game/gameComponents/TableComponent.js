@@ -8,6 +8,7 @@ import Player from "./Player";
 import { PiPokerChipBold } from "react-icons/pi";
 import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 const TableContainer = styled.div`
   position: relative;
@@ -509,21 +510,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     }
   }, [others, board.players]);
 
-  const testStart = async () => {
-    //테스트용 게임 시작
-    try {
-      axios.post(`${BASE_URL}/api/board/start/${board.id}`);
-    } catch (error) {}
-  };
-  const testShowDown = async () => {
-    //쇼다운 테스트
-    try {
-      axios.post(`${BASE_URL}/api/board/end/${board.id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const testExit = async () => {
+  const clickExit = async () => {
     try {
       const userResponse = window.confirm("게임에서 나가시겠습니까?");
       if (userResponse) {
@@ -638,14 +625,11 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
   return (
     <TableContainer>
-      <BoardNumber> NO. {board.id}</BoardNumber>
-      <PlayerCount>
-        {board.totalPlayer}/6
-        <button onClick={testStart}>게임시작</button>
-        <button onClick={testShowDown}>쇼다운</button>
-        <button onClick={testExit}>나가기</button>
-        <button onClick={test}>ㅌㅅㅌ</button>
-      </PlayerCount>
+      <BoardNumber>
+        <IoArrowBackOutline onClick={clickExit} />
+        <span style={{ marginLeft: "10px" }}>NO. {board.id}</span>
+      </BoardNumber>
+      <PlayerCount>{board.totalPlayer}/6</PlayerCount>
 
       <AnimatePresence>
         {message === "GAME_END" &&

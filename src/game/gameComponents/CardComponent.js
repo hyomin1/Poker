@@ -1,4 +1,3 @@
-import { duration } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";

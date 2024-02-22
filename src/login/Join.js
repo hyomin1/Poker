@@ -108,7 +108,7 @@ function Join() {
           userName,
           password,
         });
-        console.log("회원가입 성공", res.data);
+
         navigate("/login");
       } catch (error) {
         console.log("회원가입 에러", error);

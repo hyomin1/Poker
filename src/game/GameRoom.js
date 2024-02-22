@@ -39,7 +39,6 @@ function GameRoom() {
 
     setMessage(webSocketBoard.messageType); // GAME_START, PLAYER_JOIN... 저장
     setBoard(webSocketBoard.data); //갱신되는 boardData 저장
-    console.log("web", webSocketBoard.messageType, webSocketBoard.data);
   };
 
   const headers = {
@@ -98,7 +97,7 @@ function GameRoom() {
       //새로고침시 최신 board 받아오는 것 필요
       try {
         const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
-        console.log("새로고침", res.data);
+
         setBoard(res.data);
       } catch (error) {
         if (error.response) {

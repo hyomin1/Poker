@@ -300,7 +300,7 @@ function HandHistoryTable({ hand, userId }) {
     const index = hand.posList.findIndex((value) => value === playerPos);
     return hand.userList[index].userName;
   };
-  console.log("d", phaseStatus);
+
   const playerPosition = (position) => {
     if (position === hand.btnPosition) {
       return "BTN";

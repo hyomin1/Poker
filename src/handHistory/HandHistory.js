@@ -144,7 +144,6 @@ function HandHistory() {
     }
   };
   const positionBackgroundColor = (position, btnPosition) => {
-    console.log(position, btnPosition);
     let positionColor = "";
     if (position === btnPosition) {
       positionColor = "#443125";
