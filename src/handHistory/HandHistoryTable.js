@@ -134,6 +134,16 @@ const Card5 = styled.div`
   background-repeat: no-repeat;
   // margin: 0 5px;
 `;
+const Card = styled.div`
+  border-radius: 10px;
+  width: 100px;
+  height: 150px;
+  background-image: url("/images/cardBack.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  // margin: 0 5px;
+`;
+
 const PlayerContainer = styled.div`
   display: flex;
   align-items: center;
@@ -242,6 +252,7 @@ function HandHistoryTable({ hand, userId }) {
   const [player2Index, setPlayer2Index] = useState();
   const [player3Index, setPlayer3Index] = useState();
   const [player4Index, setPlayer4Index] = useState();
+  const [phaseStatus, setPhaseStatus] = useState();
 
   useEffect(() => {
     const foundUser = hand.userList.find((user) => user.id === userIdInt);
@@ -279,13 +290,17 @@ function HandHistoryTable({ hand, userId }) {
     setPlayer4Index(player4Idx);
 
     setPlayerArray(updatedPlayerArray);
+    const phaseList = hand.actionList.map((item) => item.phaseStatus);
+    const maxPhase = Math.max(...phaseList);
+
+    setPhaseStatus(maxPhase);
   }, []);
 
   const findName = (playerPos) => {
     const index = hand.posList.findIndex((value) => value === playerPos);
     return hand.userList[index].userName;
   };
-
+  console.log("d", phaseStatus);
   const playerPosition = (position) => {
     if (position === hand.btnPosition) {
       return "BTN";
@@ -352,11 +367,29 @@ function HandHistoryTable({ hand, userId }) {
     <Container>
       <Table>
         <CardContainer>
-          <Card1 $card1shape={card1Shape} $card1num={card1Num} />
-          <Card2 $card2shape={card2Shape} $card2num={card2Num} />
-          <Card3 $card3shape={card3Shape} $card3num={card3Num} />
-          <Card4 $card4shape={card4Shape} $card4num={card4Num} />
-          <Card5 $card5shape={card5Shape} $card5num={card5Num} />
+          {hand && phaseStatus >= 2 ? (
+            <React.Fragment>
+              <Card1 $card1shape={card1Shape} $card1num={card1Num} />
+              <Card2 $card2shape={card2Shape} $card2num={card2Num} />
+              <Card3 $card3shape={card3Shape} $card3num={card3Num} />
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Card />
+              <Card />
+              <Card />
+            </React.Fragment>
+          )}
+          {hand && phaseStatus >= 3 ? (
+            <Card4 $card4shape={card4Shape} $card4num={card4Num} />
+          ) : (
+            <Card />
+          )}
+          {hand && phaseStatus >= 4 ? (
+            <Card5 $card5shape={card5Shape} $card5num={card5Num} />
+          ) : (
+            <Card />
+          )}
         </CardContainer>
       </Table>
       <PlayerContainer position="top">
