@@ -46,7 +46,7 @@ function GameRoom() {
     player_id: boardData.id,
   };
   const windowClose = (e) => {
-    e.preventDefault();
+    e.defaultPrevented = false;
     client.disconnectHeaders = {
       disconnect_option: "disconnect",
       player_id: boardData.id,
@@ -109,6 +109,9 @@ function GameRoom() {
       }
     };
     updatedBoard();
+    return () => {
+      window.removeEventListener("beforeunload", windowClose);
+    };
   }, []);
 
   return (

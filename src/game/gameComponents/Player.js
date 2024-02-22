@@ -157,7 +157,7 @@ function Player({
   const [isTimeOut, setIsTimeOut] = useState(true);
   const [exit, setExit] = useState(false);
 
-  const actionTime = 2000;
+  const actionTime = 20;
 
   const remainTimeView = Math.floor(
     new Date(board.lastActionTime).getTime() / 1000 +

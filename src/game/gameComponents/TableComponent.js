@@ -398,7 +398,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       await cardControls.card4.start({ scale: 0 });
       setCardImages({
         ...cardImages,
-        card4: { shape: card4Shape, num: card4Shape },
+        card4: { shape: card4Shape, num: card4Num },
       });
       await cardControls.card4.start({ scale: 1 });
     }
@@ -406,7 +406,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       await cardControls.card5.start({ scale: 0 });
       setCardImages({
         ...cardImages,
-        card5: { shape: card5Shape, num: card5Shape },
+        card5: { shape: card5Shape, num: card5Num },
       });
       await cardControls.card5.start({ scale: 1 });
       //await cardControls.card5.start({ rotateY: 180 });
@@ -659,8 +659,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               key={player.userId}
             >
               <VictoryMessage>
-                플레이어 {player.playerName} {player.gameResult.earnedMoney}BB
-                얻었습니다!!
+                플레이어 {player.playerName}{" "}
+                {player.gameResult.earnedMoney / board.blind}BB 얻었습니다!!
               </VictoryMessage>
             </VictoryContainer>
           ))}
@@ -676,8 +676,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               transition={{ duration: 0.5, delay: index * 2, ease: "easeOut" }}
             >
               <VictoryMessage>
-                플레이어 {player.playerName} {player.gameResult.earnedMoney}BB
-                얻었습니다!! {}
+                플레이어 {player.playerName}{" "}
+                {player.gameResult.earnedMoney / board.blind}BB 얻었습니다!!
                 랭크 : {player.gameResult.handContext}
               </VictoryMessage>
             </VictoryContainer>
@@ -737,9 +737,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer>
                 <PiPokerChipBold />
-                <Chip>
-                  {(playerArray[0].phaseCallSize / board.blind).toFixed(1)}BB
-                </Chip>
+                <Chip>{playerArray[0].phaseCallSize / board.blind}BB</Chip>
               </ChipContainer>
             )}
         </div>
@@ -762,9 +760,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             board.phaseStatus >= 1 && (
               <ChipContainer style={{}}>
                 <PiPokerChipBold />
-                <Chip>
-                  {(playerArray[1].phaseCallSize / board.blind).toFixed(1)}BB
-                </Chip>
+                <Chip>{playerArray[1].phaseCallSize / board.blind}BB</Chip>
               </ChipContainer>
             )}
         </div>
@@ -853,7 +849,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               <motion.div
                 initial={{ y: -100 }}
                 animate={cardControls.card1}
-                transition={{ delay: 0.05 }}
+                transition={{ delay: 0.02 }}
               >
                 <Card1
                   $card1shape={cardImages.card1.shape}
@@ -863,7 +859,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               <motion.div
                 initial={{ y: -100 }}
                 animate={cardControls.card2}
-                transition={{ delay: 0.05 }}
+                transition={{ delay: 0.02 }}
               >
                 <Card2
                   $card2shape={cardImages.card2.shape}
@@ -873,7 +869,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               <motion.div
                 initial={{ y: -100 }}
                 animate={cardControls.card3}
-                transition={{ delay: 0.05 }}
+                transition={{ delay: 0.02 }}
               >
                 <Card3
                   $card3shape={cardImages.card3.shape}
@@ -883,7 +879,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               <motion.div
                 initial={{ y: -100 }}
                 animate={cardControls.card4}
-                transition={{ delay: 0.05 }}
+                transition={{ delay: 0.02 }}
               >
                 <Card4
                   $card4shape={cardImages.card4.shape}
@@ -893,7 +889,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               <motion.div
                 initial={{ y: -100 }}
                 animate={cardControls.card5}
-                transition={{ delay: 0.05 }}
+                transition={{ delay: 0.02 }}
               >
                 <Card5
                   $card5shape={cardImages.card5.shape}
