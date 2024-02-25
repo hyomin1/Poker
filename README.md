@@ -1,23 +1,48 @@
 # Poker Game
+> **개발기간: 2024.01 ~ 2024.02**
 
-## 개발기간
-- 2024.01.02 ~ 2024.02.04
+## 참여자
+|      이효민       |          정찬         |                                                                                                              
 
-## <div>📚 STACKS</div>
+|   [@hyomin1](https://github.com/hyomin1)   |    [@lushlife99](https://github.com/lushlife99)  |
+| 프론트엔드 | 백엔드 | 
+
+## 시작 가이드
+### Requirements
+- [Node.js 18.17.1](https://nodejs.org/en)
+- [Npm 8.19.3](https://www.npmjs.com/package/npm/v/8.19.2)
+
+### Installation
+``` bash
+$ git clone https://github.com/hyomin1/poker.git
+$ cd poker
+```
+#### Frontend
+```
+$ cd poker
+$ npm install 
+$ npm start
+```
+
+## 📚Stacks
 
 ### **Environment**
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=Visual%20Studio%20Code&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white)
+![Github](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white)         
 
-<div style="display: flex;">
-  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
-  <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-</div>
+### Config
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)     
+
+### Development
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=Bootstrap&logoColor=white)
+![styled-components](https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white)
 
 
 
-### **Development**
 
-
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> 
 
   
 
