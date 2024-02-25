@@ -107,7 +107,7 @@ $ npm start
     ├── login
     |   ├── Join.js : 회원가입
     |   ├── Login.js : 로그인
-    |   └── Main.css
+    |   └── Main.js
     ├── user
     |   ├── Hud.js : 플레이어 HUD 정보 확인
     |   ├── UserProfile.js
