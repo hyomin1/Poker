@@ -51,7 +51,7 @@ $ npm start
 
 | 이미지 업로드 |
 | :-------------------------------------------: |
-| <img width="800"/>|
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/213257bb-5cd6-4ff2-b7f2-a087184f238f"/>|
 
 | 메인화면 |
 | :-------------------------------------------: |
@@ -61,11 +61,13 @@ $ npm start
 | :-------------------------------------------: |
 | <img width="800"/>|
 
-| 게임결과 |
+| 게임결과1 |
 | :-------------------------------------------: |
-| <img width="400" src="https://github.com/hyomin1/poker/assets/98298940/726b5241-5725-4911-8a65-c3741935c163"/>|<img width="400"|
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/726b5241-5725-4911-8a65-c3741935c163"/>|
 
-
+| 게임결과2 |
+| :-------------------------------------------: |
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/566665aa-c14e-4d90-a427-acc76c4c2f64"|
 
 | HUD |
 | :-------------------------------------------: |
@@ -78,11 +80,57 @@ $ npm start
 ---
 ## 주요 기능
 
+### 게임 매칭
+
+### 
+
+###
+
 
 ---
 ## 아키텍쳐
 
 ### 디렉토리 구조
+
+```bash
+├── README.md
+├── package-lock.json
+├── package.json
+├── .gitignore
+└── src
+    │   ├── Start.js : 처음 실행시 나타나는 화면
+    │   ├── Router.js : 페이지 경로 정리
+    │   ├── index.js
+    │   ├── client.js : StompJS 객체 생성
+    │   ├── App.js
+    │   └── api.js
+    ├── login
+    |   ├── Join.js : 회원가입
+    |   ├── Login.js : 로그인
+    |   └── Main.css
+    ├── user
+    |   ├── Hud.js : 플레이어 HUD 정보 확인
+    |   ├── UserProfile.js
+    |   └── user.css
+    ├── handHistory
+    |   ├── HandHistory.js : 플레이어의 핸드히스토리 확인
+    |   └── HandHistoryTable.js : 핸드히스토리에 필요한 테이블
+    ├── game
+    │   ├── Game.js
+    │   ├── GameRoom.js : 게임방 입장시 화면
+    │   ├── GameRoomList.js : 블라인드 별 화면 구성
+    │   ├── Playing.js : 게임중 화면
+    │   ├── Waiting.js : 대기중 화면
+    │   └── gameComponents
+    │       ├── CardComponent.js : 커뮤니티 카드 
+    │       ├── Player.js : 게임에 입장하는 플레이어
+    │       └── TableComponent.js : 게임 화면에서 사용하는 포커 테이블
+    └──public
+       └── images : 52장 카드 이미지 
+  
+    
+
+```
 
 
 
