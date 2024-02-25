@@ -3,7 +3,8 @@
 
 ## 참여자
 |      이효민       |          정찬         |                                                                                                              
-
+| :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="160px" src="https://avatars.githubusercontent.com/hyomin1"/> | <img width="160px" src="https://avatars.githubusercontent.com/lushlife99"/> |
 |   [@hyomin1](https://github.com/hyomin1)   |    [@lushlife99](https://github.com/lushlife99)  |
 | 프론트엔드 | 백엔드 | 
 
