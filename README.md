@@ -63,15 +63,17 @@ $ npm start
 
 | 게임결과 |
 | :-------------------------------------------: |
-| <img width="800"/>|
+| <img width="400" src="https://github.com/hyomin1/poker/assets/98298940/726b5241-5725-4911-8a65-c3741935c163"/>|<img width="400"|
+
+
 
 | HUD |
 | :-------------------------------------------: |
-| <img width="800"/>|
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/f9768842-c59c-43be-84e5-03001602d415"/>|
 
 | 핸드히스토리 |
 | :-------------------------------------------: |
-| <img width="800"/>|
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/34c25555-29bb-4299-b1f2-9af0e8116c60"/>|
 
 ---
 ## 주요 기능
