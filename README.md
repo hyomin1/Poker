@@ -67,7 +67,7 @@ $ npm start
 
 | 게임결과2 |
 | :-------------------------------------------: |
-| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/566665aa-c14e-4d90-a427-acc76c4c2f64"|
+| <img width="800" src="https://github.com/hyomin1/poker/assets/98298940/566665aa-c14e-4d90-a427-acc76c4c2f64"/>|
 
 | HUD |
 | :-------------------------------------------: |
