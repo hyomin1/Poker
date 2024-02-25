@@ -45,9 +45,12 @@ $ npm start
 
 ---
 ### 주요 화면
-| 로그인 | 메인 화면 |
-| :-------------------------------------------: | :------------: |
-| <img width="600" src="https://github.com/hyomin1/poker/assets/98298940/1fb29e2f-5ef1-47e7-976b-8e0ab52666e1"/>|<img width="600" src="https://github.com/hyomin1/poker/assets/98298940/f093b095-fd50-48ca-baa8-dcab0c5fa3e1">|
+| 로그인 | 
+| :-------------------------------------------: |
+| <img width="600" src="https://github.com/hyomin1/poker/assets/98298940/1fb29e2f-5ef1-47e7-976b-8e0ab52666e1"/>|
+| 메인화면 |
+| :-------------------------------------------: |
+|<img width="600" src="https://github.com/hyomin1/poker/assets/98298940/f093b095-fd50-48ca-baa8-dcab0c5fa3e1">|
 
 
 
