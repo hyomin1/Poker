@@ -1015,8 +1015,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     <PlayerImg
                       onClick={() => viewHud(playerArray[0].userId)}
                       src={
-                        img1 && img1.size !== 0
-                          ? URL.createObjectURL(img1)
+                        img2 && img2.size !== 0
+                          ? URL.createObjectURL(img2)
                           : img
                       }
                     />
@@ -1025,7 +1025,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   <PlayerImg
                     onClick={() => viewHud(playerArray[0].userId)}
                     src={
-                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                      img2 && img2.size !== 0 ? URL.createObjectURL(img2) : img
                     }
                   />
                 )}
@@ -1123,8 +1123,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     <PlayerImg
                       onClick={() => viewHud(playerArray[2].userId)}
                       src={
-                        img1 && img1.size !== 0
-                          ? URL.createObjectURL(img1)
+                        img4 && img4.size !== 0
+                          ? URL.createObjectURL(img4)
                           : img
                       }
                     />
@@ -1133,7 +1133,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   <PlayerImg
                     onClick={() => viewHud(playerArray[2].userId)}
                     src={
-                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                      img4 && img4.size !== 0 ? URL.createObjectURL(img4) : img
                     }
                   />
                 )}
@@ -1174,8 +1174,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     <PlayerImg
                       onClick={() => viewHud(playerArray[3].userId)}
                       src={
-                        img1 && img1.size !== 0
-                          ? URL.createObjectURL(img1)
+                        img5 && img5.size !== 0
+                          ? URL.createObjectURL(img5)
                           : img
                       }
                     />
@@ -1184,7 +1184,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   <PlayerImg
                     onClick={() => viewHud(playerArray[3].userId)}
                     src={
-                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                      img5 && img5.size !== 0 ? URL.createObjectURL(img5) : img
                     }
                   />
                 )}
@@ -1229,7 +1229,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   <PlayerImg
                     onClick={() => viewHud(playerArray[1].userId)}
                     src={
-                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                      img3 && img3.size !== 0 ? URL.createObjectURL(img3) : img
                     }
                   />
                 </Box>
@@ -1237,7 +1237,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 <PlayerImg
                   onClick={() => viewHud(playerArray[1].userId)}
                   src={
-                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    img3 && img3.size !== 0 ? URL.createObjectURL(img3) : img
                   }
                 />
               )}
@@ -1279,7 +1279,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   <PlayerImg
                     onClick={() => viewHud(playerArray[4].userId)}
                     src={
-                      img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                      img6 && img6.size !== 0 ? URL.createObjectURL(img6) : img
                     }
                   />
                 </Box>
@@ -1287,7 +1287,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 <PlayerImg
                   onClick={() => viewHud(playerArray[4].userId)}
                   src={
-                    img1 && img1.size !== 0 ? URL.createObjectURL(img1) : img
+                    img6 && img6.size !== 0 ? URL.createObjectURL(img6) : img
                   }
                 />
               )}
