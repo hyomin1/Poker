@@ -298,6 +298,7 @@ function HandHistoryTable({ hand, userId }) {
 
   const findName = (playerPos) => {
     const index = hand.posList.findIndex((value) => value === playerPos);
+    console.log(hand.userList[index].userName);
     return hand.userList[index].userName;
   };
 
@@ -362,6 +363,7 @@ function HandHistoryTable({ hand, userId }) {
   const isShowDownUser = (userId) => {
     return hand.showDownUserIdList.includes(userId);
   };
+  console.log(hand);
 
   return (
     <Container>
@@ -401,8 +403,8 @@ function HandHistoryTable({ hand, userId }) {
                 $position={positionBackgroundColor(playerArray[2])}
               >
                 {playerPosition(playerArray[2])}
-                <PlayerName>{findName(playerArray[2])}</PlayerName>
               </Player>
+              <PlayerName>{findName(playerArray[2])}</PlayerName>
             </PlayerInfo>
             {hand &&
               player2Index !== -1 &&

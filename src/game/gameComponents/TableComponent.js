@@ -1004,7 +1004,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.actionPos === playerArray[0].position &&
                 board.phaseStatus >= 1 &&
                 board.phaseStatus <= 4 ? (
-                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <Box
+                    onClick={() => viewHud(playerArray[0].userId)}
+                    sx={{ position: "relative", display: "inline-block" }}
+                  >
                     <CircularProgress
                       variant="determinate"
                       value={100 - progressValue}
@@ -1013,7 +1016,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     />
 
                     <PlayerImg
-                      onClick={() => viewHud(playerArray[0].userId)}
                       src={
                         img2 && img2.size !== 0
                           ? URL.createObjectURL(img2)
@@ -1056,7 +1058,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.actionPos === myPlayer.position &&
                 board.phaseStatus >= 1 &&
                 board.phaseStatus <= 4 ? (
-                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <Box
+                    onClick={() => viewHud(myPlayer.userId)}
+                    sx={{ position: "relative", display: "inline-block" }}
+                  >
                     <CircularProgress
                       variant="determinate"
                       value={100 - progressValue}
@@ -1065,7 +1070,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     />
 
                     <PlayerImg
-                      onClick={() => viewHud(myPlayer.userId)}
                       src={
                         img1 && img1.size !== 0
                           ? URL.createObjectURL(img1)
@@ -1112,7 +1116,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.actionPos === playerArray[2].position &&
                 board.phaseStatus >= 1 &&
                 board.phaseStatus <= 4 ? (
-                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <Box
+                    onClick={() => viewHud(playerArray[2].userId)}
+                    sx={{ position: "relative", display: "inline-block" }}
+                  >
                     <CircularProgress
                       variant="determinate"
                       value={100 - progressValue}
@@ -1121,7 +1128,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     />
 
                     <PlayerImg
-                      onClick={() => viewHud(playerArray[2].userId)}
                       src={
                         img4 && img4.size !== 0
                           ? URL.createObjectURL(img4)
@@ -1163,7 +1169,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.actionPos === playerArray[3].position &&
                 board.phaseStatus >= 1 &&
                 board.phaseStatus <= 4 ? (
-                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                  <Box
+                    onClick={() => viewHud(playerArray[3].userId)}
+                    sx={{ position: "relative", display: "inline-block" }}
+                  >
                     <CircularProgress
                       variant="determinate"
                       value={100 - progressValue}
@@ -1172,7 +1181,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                     />
 
                     <PlayerImg
-                      onClick={() => viewHud(playerArray[3].userId)}
                       src={
                         img5 && img5.size !== 0
                           ? URL.createObjectURL(img5)
@@ -1218,7 +1226,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               board.actionPos === playerArray[1].position &&
               board.phaseStatus >= 1 &&
               board.phaseStatus <= 4 ? (
-                <Box sx={{ position: "relative", display: "inline-block" }}>
+                <Box
+                  onClick={() => viewHud(playerArray[1].userId)}
+                  sx={{ position: "relative", display: "inline-block" }}
+                >
                   <CircularProgress
                     variant="determinate"
                     value={100 - progressValue}
@@ -1227,7 +1238,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   />
 
                   <PlayerImg
-                    onClick={() => viewHud(playerArray[1].userId)}
                     src={
                       img3 && img3.size !== 0 ? URL.createObjectURL(img3) : img
                     }
@@ -1268,7 +1278,10 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               board.actionPos === playerArray[4].position &&
               board.phaseStatus >= 1 &&
               board.phaseStatus <= 4 ? (
-                <Box sx={{ position: "relative", display: "inline-block" }}>
+                <Box
+                  onClick={() => viewHud(playerArray[4].userId)}
+                  sx={{ position: "relative", display: "inline-block" }}
+                >
                   <CircularProgress
                     variant="determinate"
                     value={100 - progressValue}
@@ -1277,7 +1290,6 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                   />
 
                   <PlayerImg
-                    onClick={() => viewHud(playerArray[4].userId)}
                     src={
                       img6 && img6.size !== 0 ? URL.createObjectURL(img6) : img
                     }
