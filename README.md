@@ -25,6 +25,8 @@ $ npm install
 $ npm start
 ```
 
+---
+
 ## 📚Stacks
 
 ### **Environment**
@@ -41,6 +43,23 @@ $ npm start
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=Bootstrap&logoColor=white)
 ![styled-components](https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white)
 
+---
+### 주요 화면
+| 로그인 | 메인 화면 |
+| :-------------------------------------------: | :------------: |
+| <img width="329" src="https://github.com/hyomin1/poker/assets/98298940/1fb29e2f-5ef1-47e7-976b-8e0ab52666e1"/>|<img/>|
+
+
+
+
+---
+## 주요 기능
+
+
+---
+## 아키텍쳐
+
+### 디렉토리 구조
 
 
 
