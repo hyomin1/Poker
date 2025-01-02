@@ -1,54 +1,51 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
-import Join from "./login/Join";
-import Login from "./login/Login";
-import Start from "./Start";
-import Game from "./game/Game";
-import GameRoom from "./game/GameRoom";
-import UserProfile from "./user/UserProfile";
-import HandHistory from "./handHistory/HandHistory";
-import Hud from "./user/Hud";
-import Main from "./login/Main";
+import { createBrowserRouter } from 'react-router-dom';
+import App from './App';
+import Game from './game/Game';
+import GameRoom from './game/GameRoom';
+import UserProfile from './user/UserProfile';
+import HandHistory from './handHistory/HandHistory';
+import Hud from './user/Hud';
+import Main from './login/Main';
+import NotFound from './pages/NotFound';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
+    errorElement: <NotFound />,
     children: [
       {
-        path: "",
-        element: <Start />,
-      },
-      {
-        path: "/login",
+        path: '',
         element: <Login />,
       },
       {
-        path: "/join",
-        element: <Join />,
+        path: '/register',
+        element: <Register />,
       },
       {
-        path: "/main",
+        path: '/main',
         element: <Main />,
       },
 
       {
-        path: "/game",
+        path: '/game',
         element: <Game />,
       },
       {
-        path: "/gameRoom",
+        path: '/gameRoom',
         element: <GameRoom />,
       },
       {
-        path: "/profile",
+        path: '/profile',
         element: <UserProfile />,
       },
       {
-        path: "/handHistory",
+        path: '/handHistory',
         element: <HandHistory />,
       },
       {
-        path: "/hud",
+        path: '/hud',
         element: <Hud />,
       },
     ],
