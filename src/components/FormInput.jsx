@@ -2,20 +2,20 @@ import React from 'react';
 
 export default function FormInput({ type, name, register, text, placeholder }) {
   return (
-    <>
+    <div className='mb-6'>
       <label
-        className='mt-10 mb-2 text-xs font-semibold text-gray-400'
         htmlFor={name}
+        className='block mb-2 text-sm font-medium text-gray-700'
       >
         {text}
       </label>
       <input
-        className='mt-2 border-b-2 border-[#000842] focus:outline-none placeholder-[#000842] placeholder:font-semibold pb-2 placeholder:text-sm'
         id={name}
         type={type}
-        {...register(name, { required: true })}
+        {...register(name)}
         placeholder={placeholder}
+        className='w-full px-4 py-3 transition-colors duration-200 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
       />
-    </>
+    </div>
   );
 }

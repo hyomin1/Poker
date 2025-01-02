@@ -7,8 +7,7 @@ import HandHistory from './handHistory/HandHistory';
 import Hud from './user/Hud';
 import Main from './login/Main';
 import NotFound from './pages/NotFound';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import AuthPage from './pages/AuthPage';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -16,12 +15,12 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        path: '',
-        element: <Login />,
+        path: '/',
+        element: <AuthPage type='login' />,
       },
       {
         path: '/register',
-        element: <Register />,
+        element: <AuthPage />,
       },
       {
         path: '/main',
