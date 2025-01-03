@@ -1,6 +1,14 @@
 import React from 'react';
+import ErrorMessage from './ErrorMessage';
 
-export default function FormInput({ type, name, register, text, placeholder }) {
+export default function FormInput({
+  type,
+  name,
+  register,
+  text,
+  placeholder,
+  errors,
+}) {
   return (
     <div className='mb-6'>
       <label
@@ -12,10 +20,11 @@ export default function FormInput({ type, name, register, text, placeholder }) {
       <input
         id={name}
         type={type}
-        {...register(name)}
+        {...register(name, { required: placeholder })}
         placeholder={placeholder}
         className='w-full px-4 py-3 transition-colors duration-200 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
       />
+      {errors[name] && <ErrorMessage text={errors?.[name].message} />}
     </div>
   );
 }

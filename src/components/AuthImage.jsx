@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function AuthImage() {
   return (
     <div className='w-full h-full p-6 shadow-2xl bg-gradient-to-br from-purple-900 to-blue-900 rounded-3xl'>
