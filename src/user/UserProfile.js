@@ -1,10 +1,9 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { styled } from "styled-components";
-import { BASE_URL } from "../api";
-import Form from "react-bootstrap/Form";
-import "./user.css";
+import { styled } from 'styled-components';
+import Form from 'react-bootstrap/Form';
+import './user.css';
+import useUser from '../hooks/useUser';
+import Button from '../components/Button';
+import FormInput from '../components/FormInput';
 
 const UserContainer = styled.div`
   display: flex;
@@ -80,89 +79,53 @@ const Input = styled.input`
 `;
 
 function UserProfile() {
-  const [user, setUser] = useState({});
-  const [image, setImage] = useState();
-  const img = "/images/defaultProfile.png";
+  const img = '/images/defaultProfile.png';
+  const {
+    userQuery: { isLoading: userLoading, error: userError, data: user },
+    imageQuery: { isLoading: imgLoading, error: imgError, data: image },
+    updateImage,
+  } = useUser();
 
-  useEffect(() => {
-    const getProfile = async () => {
-      let res;
-      try {
-        res = await axios.get(`${BASE_URL}/api/user/profile`);
-
-        setUser(res.data);
-      } catch (error) {
-        console.log("유저 정보 가져오기 에러", error);
-        if (error.response) {
-          //alert(error.response.data.message);
-        }
-      }
-      try {
-        const res2 = await axios.get(
-          `${BASE_URL}/api/user/image/${res.data.id}`,
-          { responseType: "blob" }
-        );
-
-        setImage(res2.data);
-      } catch (error) {
-        console.error("프로필 사진 가져오기 에러", error);
-        if (error.response) {
-          // alert(error.response.data.message);
-        }
-      }
-    };
-    getProfile();
-  }, []);
-
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const formData = new FormData();
-    formData.append("file", e.currentTarget.files[0]);
-    try {
-      const res = await axios.post(`${BASE_URL}/api/user/image`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const res2 = await axios.get(
-        `${BASE_URL}/api/user/image/${res.data.id}`,
-        {
-          responseType: "blob",
-        }
-      );
-      setImage(res2.data);
-    } catch (error) {
-      console.log("사진전송에러", error);
-      if (error.response) {
-        //alert(error.response.data.message);
-      }
-    }
+    formData.append('file', e.currentTarget.files[0]);
+    updateImage.mutate(formData);
   };
+  if (userLoading || imgLoading) {
+    return <p>로딩중...</p>;
+  }
 
   return (
     <UserContainer>
       <UserImageWrapper>
-        <UserImage
-          src={image && image.size !== 0 ? URL.createObjectURL(image) : img}
-        />
+        <UserImage src={image ? URL.createObjectURL(image) : img} />
         <ProfileForm>
-          <ProfileSubmitButton htmlFor="image">
+          <Button text='이미지 업로드' />
+          {/* <ProfileSubmitButton htmlFor='image'>
             이미지 업로드
-          </ProfileSubmitButton>
-          <ProfileInput onChange={handleFileChange} type="file" id="image" />
+          </ProfileSubmitButton> */}
+          <ProfileInput onChange={handleFileChange} type='file' id='image' />
         </ProfileForm>
       </UserImageWrapper>
 
       <UserInfo>
+        <FormInput
+          type='text'
+          name='userId'
+          text='아이디'
+          disabled={true}
+          value={user.userId}
+        />
         <Label>아이디</Label>
-        <Input value={user.userId || ""} disabled />
+        <Input value={user.userId || ''} disabled />
       </UserInfo>
       <UserInfo>
         <Label>이름</Label>
-        <Input value={user.userName || ""} disabled />
+        <Input value={user.userName || ''} disabled />
       </UserInfo>
       <UserInfo>
         <Label>보유 금액</Label>
-        <Input value={user.money || ""} disabled />
+        <Input value={user.money || ''} disabled />
       </UserInfo>
     </UserContainer>
   );

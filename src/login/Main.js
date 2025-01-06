@@ -1,7 +1,8 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { styled } from "styled-components";
-import UserProfile from "../user/UserProfile";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
+import UserProfile from '../user/UserProfile';
+import useAuthStore from '../stores/useAuthStroe';
 
 const MainContainer = styled.div`
   display: flex;
@@ -40,19 +41,17 @@ const Button = styled.button`
 `;
 
 function Main(props) {
-  const {
-    state: { userData, userId, existBoard },
-  } = useLocation();
   const navigate = useNavigate();
+  const { subId, userId } = useAuthStore();
 
   const goPlay = () => {
-    navigate("/game", {
-      state: { userData: userData, userId: userId, existBoard: existBoard },
+    navigate('/game', {
+      //state: { userData: userData, userId: userId, existBoard: existBoard },
     });
   };
   const goHandHistory = () => {
-    navigate("/handHistory", {
-      state: { userData: userData, userId, userId },
+    navigate('/handHistory', {
+      // state: { userData: userData, userId, userId },
     });
   };
   return (

@@ -4,7 +4,8 @@ export const login = async ({ userId, password }) => {
   const res = await httpClient.post(
     `/login?username=${userId}&password=${password}`
   );
-  return res.status;
+  const subId = res.headers['subscribe-id'];
+  return { status: res.status, subId, userId };
 };
 
 export const register = async (data) => {

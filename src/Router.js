@@ -8,6 +8,7 @@ import Hud from './user/Hud';
 import Main from './login/Main';
 import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
+import DashBoard from './pages/DashBoard';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -23,10 +24,9 @@ const router = createBrowserRouter([
         element: <AuthPage />,
       },
       {
-        path: '/main',
-        element: <Main />,
+        path: '/dashboard',
+        element: <DashBoard />,
       },
-
       {
         path: '/game',
         element: <Game />,

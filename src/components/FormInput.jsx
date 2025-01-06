@@ -8,6 +8,8 @@ export default function FormInput({
   text,
   placeholder,
   errors,
+  disabled = false,
+  value,
 }) {
   return (
     <div className='mb-6'>
@@ -20,8 +22,9 @@ export default function FormInput({
       <input
         id={name}
         type={type}
-        {...register(name, { required: placeholder })}
+        {...(register ? register(name, { required: placeholder }) : {})}
         placeholder={placeholder}
+        disabled={disabled}
         className='w-full px-4 py-3 transition-colors duration-200 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
       />
       {errors?.[name] && <ErrorMessage text={errors?.[name].message} />}
