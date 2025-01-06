@@ -24,7 +24,7 @@ export default function FormInput({
         placeholder={placeholder}
         className='w-full px-4 py-3 transition-colors duration-200 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
       />
-      {errors[name] && <ErrorMessage text={errors?.[name].message} />}
+      {errors?.[name] && <ErrorMessage text={errors?.[name].message} />}
     </div>
   );
 }

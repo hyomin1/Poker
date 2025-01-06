@@ -33,6 +33,8 @@ describe('FormInput', () => {
 
   it('register가 호출된다.', () => {
     renderFormInput();
-    expect(register).toHaveBeenCalledWith('userId');
+    expect(register).toHaveBeenCalledWith('userId', {
+      required: '아이디를 입력해주세요',
+    });
   });
 });

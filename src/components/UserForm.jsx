@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import useAuth from '../hooks/useAuth';
 import FormInput from './FormInput';
 
-export default function UserForm({ text }) {
+export default function UserForm({ text = '회원가입' }) {
   const {
     register,
     handleSubmit,
@@ -55,6 +55,7 @@ export default function UserForm({ text }) {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className='flex flex-col h-full p-8 overflow-auto'
+      aria-label='auth-form'
     >
       <h3 className='mb-6 text-2xl font-bold text-gray-800'>{text}</h3>
       <p className='mb-8 text-gray-600'>
