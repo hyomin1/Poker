@@ -39,17 +39,6 @@ export default function UserForm({ text = '회원가입' }) {
   useEffect(() => {
     reset();
   }, [navigate, reset]);
-  //  쓸지 말지 생각해보기
-  // useEffect(() => {
-  //   if (watch('password') !== watch('passwordCheck') && watch('passwordCheck')) {
-  //     setError('passwordCheck', {
-  //       type: 'password-mismatch',
-  //       message: '비밀번호가 일치하지 않습니다'
-  //     })
-  //   } else { // 비밀번호 일치시 오류 제거
-  //     clearErrors('passwordCheck');
-  //   }
-  // }, [watch('password'), watch('passwordCheck')])
 
   return (
     <form

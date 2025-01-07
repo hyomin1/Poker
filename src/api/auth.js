@@ -5,7 +5,7 @@ export const login = async ({ userId, password }) => {
     `/login?username=${userId}&password=${password}`
   );
   const subId = res.headers['subscribe-id'];
-  return { status: res.status, subId, userId };
+  return { status: res.status, subId, userId, password };
 };
 
 export const register = async (data) => {

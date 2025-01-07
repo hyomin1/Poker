@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import axios from "axios";
-import { BASE_URL } from "../api";
-import GameRoomList from "./GameRoomList";
+import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import axios from 'axios';
+import { BASE_URL } from '../api';
+import GameRoomList from './GameRoomList';
 
 const GameContainer = styled.div`
   background-color: #2c3e50;
@@ -94,9 +94,9 @@ const inputVar = {
   },
 };
 function GameMenu() {
-  const {
-    state: { userData, userId, existBoard },
-  } = useLocation();
+  // const {
+  //   state: { userData, userId, existBoard },
+  // } = useLocation();
 
   const [bb, setBb] = useState(50);
   const [isPlay, isSetPlay] = useState(false);
@@ -118,19 +118,19 @@ function GameMenu() {
   };
 
   useEffect(() => {
-    if (existBoard && existBoard.length >= 1) {
-      //이전 게임 존재 할 경우 들어가기
-      existBoard.forEach(async (board, index) => {
-        const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
-        const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
-        const sendData = {
-          userData: userData,
-          userId: userId,
-          boardData: res.data,
-        };
-        goGame.name = JSON.stringify(sendData);
-      });
-    }
+    // if (existBoard && existBoard.length >= 1) {
+    //   //이전 게임 존재 할 경우 들어가기
+    //   existBoard.forEach(async (board, index) => {
+    //     const res = await axios.get(`${BASE_URL}/api/board/${board.id}`);
+    //     const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
+    //     const sendData = {
+    //       userData: userData,
+    //       userId: userId,
+    //       boardData: res.data,
+    //     };
+    //     goGame.name = JSON.stringify(sendData);
+    //   });
+    // }
     //blind단위로 보드 받아오기
     const getBoardList = async () => {
       try {
@@ -148,7 +148,7 @@ function GameMenu() {
         if (error.response) {
           alert(error.response.data.message);
         }
-        console.error("방검색 에러", error);
+        console.error('방검색 에러', error);
       }
     };
     getBoardList();
@@ -158,7 +158,7 @@ function GameMenu() {
       const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
       setBlind1000(res.data);
     } catch (error) {
-      console.error("새로고침 search board error", error);
+      console.error('새로고침 search board error', error);
     }
   };
   const getBlind2 = async () => {
@@ -166,7 +166,7 @@ function GameMenu() {
       const res = await axios.get(`${BASE_URL}/api/board/search/${2000}`);
       setBlind2000(res.data);
     } catch (error) {
-      console.error("새로고침 search board error", error);
+      console.error('새로고침 search board error', error);
     }
   };
   const getBlind3 = async () => {
@@ -174,7 +174,7 @@ function GameMenu() {
       const res = await axios.get(`${BASE_URL}/api/board/search/${4000}`);
       setBlind4000(res.data);
     } catch (error) {
-      console.error("새로고침 search board error", error);
+      console.error('새로고침 search board error', error);
     }
   };
   const getBlind4 = async () => {
@@ -182,7 +182,7 @@ function GameMenu() {
       const res = await axios.get(`${BASE_URL}/api/board/search/${10000}`);
       setBlind10000(res.data);
     } catch (error) {
-      console.error("새로고침 search board error", error);
+      console.error('새로고침 search board error', error);
     }
   };
 
@@ -195,26 +195,26 @@ function GameMenu() {
         },
       });
 
-      const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
-      const sendData = {
-        userData: userData,
-        userId: userId,
-        boardData: res.data,
-      };
-      goGame.name = JSON.stringify(sendData);
+      const goGame = window.open('/gameRoom', `gameRoom${res.data.id}`);
+      // const sendData = {
+      //   userData: userData,
+      //   userId: userId,
+      //   boardData: res.data,
+      // };
+      // goGame.name = JSON.stringify(sendData);
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message);
       }
-      console.log("바이인 에러", error);
+      console.log('바이인 에러', error);
     }
   };
 
   const viewProfile = () => {
-    window.open("/profile", "_blank", "width=500,height=500");
+    window.open('/profile', '_blank', 'width=500,height=500');
   };
   const goHandHistory = () => {
-    navigate("/handHistory");
+    navigate('/handHistory');
   };
 
   return (
@@ -225,8 +225,8 @@ function GameMenu() {
 
       <GameList>
         <GameRoomList
-          userData={userData}
-          userId={userId}
+          userData={{}}
+          userId={1}
           blind1={blind1000}
           blind2={blind2000}
           blind3={blind4000}
@@ -242,21 +242,21 @@ function GameMenu() {
         {isPlay ? (
           <InputBox
             variants={inputVar}
-            initial="start"
-            animate="visible"
-            exit="leaving"
+            initial='start'
+            animate='visible'
+            exit='leaving'
           >
             <MoneyInput
-              type="range"
-              id="money"
-              min="50"
-              max="100"
+              type='range'
+              id='money'
+              min='50'
+              max='100'
               value={bb}
               onChange={handleMoneyChange}
             />
             <MoneyStatus>{bb}</MoneyStatus>
             <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
-            <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
+            <MoneyBtn onClick={() => playGame('cancel')}>취소</MoneyBtn>
           </InputBox>
         ) : null}
       </AnimatePresence>

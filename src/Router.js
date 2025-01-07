@@ -5,10 +5,10 @@ import GameRoom from './game/GameRoom';
 import UserProfile from './user/UserProfile';
 import HandHistory from './handHistory/HandHistory';
 import Hud from './user/Hud';
-import Main from './login/Main';
 import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
 import DashBoard from './pages/DashBoard';
+import Lobby from './pages/Lobby';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -26,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <DashBoard />,
+      },
+      {
+        path: '/lobby',
+        element: <Lobby />,
       },
       {
         path: '/game',

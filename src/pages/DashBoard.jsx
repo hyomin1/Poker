@@ -3,6 +3,8 @@ import Button from '../components/Button';
 import FormInput from '../components/FormInput';
 import ProfileImage from '../components/ProfileImage';
 import useUser from '../hooks/useUser';
+import Loading from '../components/Loading';
+import Error from '../components/Error';
 
 export default function DashBoard() {
   const {
@@ -11,10 +13,10 @@ export default function DashBoard() {
     updateImage,
   } = useUser();
   if (userLoading || imgLoading) {
-    return <p>로딩중...</p>;
+    return <Loading />;
   }
   if (userError || imgError) {
-    return <p>에러...</p>;
+    return <Error />;
   }
 
   return (
@@ -41,8 +43,10 @@ export default function DashBoard() {
         disabled={true}
         value={user.money}
       />
-      <Button text='플레이' path='/' />
-      <Button text='핸드히스토리' path='/' />
+      <div className='space-y-4'>
+        <Button text='플레이' path='/lobby' />
+        <Button text='핸드히스토리' path='/' />
+      </div>
     </div>
   );
 }

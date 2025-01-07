@@ -22,6 +22,7 @@ export default function FormInput({
       <input
         id={name}
         type={type}
+        {...(disabled ? { value: value || '' } : {})}
         {...(register ? register(name, { required: placeholder }) : {})}
         placeholder={placeholder}
         disabled={disabled}

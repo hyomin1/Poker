@@ -1,9 +1,9 @@
-import axios from "axios";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
-import Table from "react-bootstrap/Table";
-import { styled } from "styled-components";
-import { BASE_URL } from "../api";
+import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from 'react';
+import Table from 'react-bootstrap/Table';
+import { styled } from 'styled-components';
+import { BASE_URL } from '../api';
 
 const Grid = styled.div`
   display: grid;
@@ -174,6 +174,7 @@ function GameRoomList({
     }
   };
   const f1 = async () => {
+    //빠른참가가
     try {
       const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
         params: {
@@ -181,7 +182,7 @@ function GameRoomList({
           blind,
         },
       });
-      const goGame = window.open("/gameRoom", `gameRoom${res.data.id}`);
+      const goGame = window.open('/gameRoom', `gameRoom${res.data.id}`);
       const sendData = {
         userData: userData,
         userId: userId,
@@ -194,6 +195,7 @@ function GameRoomList({
     }
   };
   const f2 = async () => {
+    //입장장
     try {
       const res = await axios.post(
         `${BASE_URL}/api/board/joinGame/${board.id}`,
@@ -212,7 +214,7 @@ function GameRoomList({
       );
 
       if (!isExistUser) {
-        const goGame = window.open("/gameRoom", `gameRoom${board.id}`);
+        const goGame = window.open('/gameRoom', `gameRoom${board.id}`);
         const sendData = {
           userData: userData,
           userId: userId,
@@ -263,14 +265,14 @@ function GameRoomList({
   const renderTable = (blindData, blind) => (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#34495e", // 게임 배경색
-        padding: "20px",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#34495e', // 게임 배경색
+        padding: '20px',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
       }}
     >
       <Title>
@@ -285,7 +287,7 @@ function GameRoomList({
         </BtnDiv>
       </Title>
       <TableComponent>
-        <Table striped bordered hover variant="dark">
+        <Table striped bordered hover variant='dark'>
           <thead>
             <tr>
               <BoardTitle>NO</BoardTitle>
@@ -318,14 +320,14 @@ function GameRoomList({
   const renderNoTable = (blind) => (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#34495e", // 게임 배경색
-        padding: "20px",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#34495e', // 게임 배경색
+        padding: '20px',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
       }}
     >
       <Title>
@@ -341,13 +343,13 @@ function GameRoomList({
       </Title>
       <div
         style={{
-          maxHeight: "25vh",
-          height: "25vh",
-          width: "30vw",
-          overflowY: "auto",
+          maxHeight: '25vh',
+          height: '25vh',
+          width: '30vw',
+          overflowY: 'auto',
         }}
       >
-        <Table striped bordered hover variant="dark">
+        <Table striped bordered hover variant='dark'>
           <thead>
             <tr>
               <BoardTitle>NO</BoardTitle>
@@ -382,21 +384,21 @@ function GameRoomList({
         {isPlay ? (
           <InputBox
             variants={inputVar}
-            initial="start"
-            animate="visible"
-            exit="leaving"
+            initial='start'
+            animate='visible'
+            exit='leaving'
           >
             <MoneyInput
-              type="range"
-              id="money"
-              min="50"
-              max="100"
+              type='range'
+              id='money'
+              min='50'
+              max='100'
               value={bb}
               onChange={handleMoneyChange}
             />
             <MoneyStatus>{bb}</MoneyStatus>
             <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
-            <MoneyBtn onClick={() => playGame("cancel")}>취소</MoneyBtn>
+            <MoneyBtn onClick={() => playGame('cancel')}>취소</MoneyBtn>
           </InputBox>
         ) : null}
       </AnimatePresence>
