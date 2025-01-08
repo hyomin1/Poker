@@ -1,14 +1,14 @@
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
-import { enterGame, getBoard, quickJoin } from '../api/board';
+import { enterGame, getBlindBoard, quickJoin } from '../api/board';
+import { BLINDS } from '../constants/boardConstants';
 
 export default function useBoard() {
   const queryClient = useQueryClient();
 
-  const blinds = [1000, 2000, 4000, 10000];
   const boardQueries = useQueries({
-    queries: blinds.map((blind) => ({
+    queries: BLINDS.map((blind) => ({
       queryKey: ['board', blind],
-      queryFn: () => getBoard(blind),
+      queryFn: () => getBlindBoard(blind),
       staleTime: 60 * 1000 * 1,
     })),
   });

@@ -1,24 +1,13 @@
-import React, { useEffect } from 'react';
 import useBoard from '../hooks/useBoard';
-import Boards from '../components/Boards';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
-import { createStompClient } from '../api/stompClient';
-import useAuthStore from '../stores/useAuthStroe';
+import Rooms from '../components/Rooms';
 
 export default function Lobby() {
   const { boardQueries, quickJoinMutation, enterGameMutation } = useBoard();
-  const { userId, password } = useAuthStore();
 
   // 쿼리 Loading, Error 처리
-  useEffect(() => {
-    const stompClient = createStompClient({ userId, password });
-    stompClient.activate();
 
-    return () => {
-      stompClient.deactivate();
-    };
-  }, []);
   return (
     <div className='min-h-screen p-6 text-white bg-gray-900'>
       <div className='mx-auto max-w-7xl'>
@@ -35,8 +24,9 @@ export default function Lobby() {
                 {isLoading && <Loading />}
                 {error && <Error />}
                 {boards && (
-                  <Boards
+                  <Rooms
                     key={index}
+                    blindIndex={index}
                     boards={boards}
                     refetch={refetch}
                     quickJoinMutation={quickJoinMutation}

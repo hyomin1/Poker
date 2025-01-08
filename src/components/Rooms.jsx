@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
-import Board from './Board';
 import { BuyInModal } from './BuyInModal';
+import useAuthStore from '../stores/useAuthStroe';
 
-export default function Boards({
+import Room from './Room';
+import { BLINDS } from '../constants/boardConstants';
+
+export default function Rooms({
   boards,
+  blindIndex,
   refetch,
   quickJoinMutation,
   enterGameMutation,
 }) {
+  const { userId, password } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleConfirm = (bb) => {
-    quickJoinMutation.mutate({ blind, bb });
+  const blind = BLINDS[blindIndex];
+
+  const handleConfirm = async (bb) => {
+    const { id: boardId } = await quickJoinMutation.mutateAsync({ blind, bb });
+    const url = `/board/${boardId}`;
+
+    const game = window.open('about:blank', '_blank');
+    game.name = JSON.stringify({ userId, password });
+    game.location = url;
+
     setIsModalOpen(false);
   };
-  const blind = boards[0].blind;
+
   return (
     <div className='flex flex-col h-full'>
       <div className='flex items-center justify-between p-4 border-b border-gray-700'>
@@ -37,7 +50,7 @@ export default function Boards({
       </div>
       <div className='flex-1 p-4 space-y-4 overflow-y-auto'>
         {boards.map((board) => (
-          <Board
+          <Room
             key={board.id}
             board={board}
             enterGameMutation={enterGameMutation}

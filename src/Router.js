@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
 import DashBoard from './pages/DashBoard';
 import Lobby from './pages/Lobby';
+import Board from './pages/Board';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/lobby',
         element: <Lobby />,
+      },
+      {
+        path: '/board/:boardId',
+        element: <Board />,
       },
       {
         path: '/game',

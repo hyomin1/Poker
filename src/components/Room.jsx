@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { BuyInModal } from './BuyInModal';
+import useAuthStore from '../stores/useAuthStroe';
 
-export default function Board({ board, enterGameMutation }) {
+export default function Room({ board, enterGameMutation }) {
+  const { userId, password } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleConfirm = (bb) => {
+    const boardId = board.id;
     enterGameMutation.mutate({
-      boardId: board.id,
+      boardId,
       bb,
       blind: board.blind,
+    });
+    const url = `/board/${boardId}`;
+    const game = window.open(url, '_blank');
+    game.addEventListener('load', () => {
+      game.postMessage({ userId, password }, '*');
     });
     setIsModalOpen(false);
   };
