@@ -13,7 +13,6 @@ export default function useStomp() {
     }
 
     stompClient.onConnect = () => {
-      console.log('연결됨');
       subscriptions.forEach(({ url, callback, player_id }) => {
         const headers = { player_id };
         stompClient.subscribe(url, callback, headers);
@@ -33,7 +32,36 @@ export default function useStomp() {
     });
   };
 
-  const disconnect = () => {};
+  const sendExitMessage = (destination, board, boardId) => {
+    const headers = { board_id: boardId };
+    stompClient.publish({
+      destination,
+      body: JSON.stringify(board),
+      headers,
+    });
+  };
 
-  return { connect, subscribe, sendMessage, disconnect };
+  const disconnect = (subId) => {
+    stompClient.disconnectHeaders = {
+      disconnect_option: 'disconnect',
+      player_id: subId,
+    };
+    stompClient.deactivate();
+  };
+
+  const exitDisconnect = () => {
+    stompClient.disconnectHeaders = {
+      disconnect_option: 'exit',
+    };
+    stompClient.deactivate();
+  };
+
+  return {
+    connect,
+    subscribe,
+    sendMessage,
+    sendExitMessage,
+    disconnect,
+    exitDisconnect,
+  };
 }

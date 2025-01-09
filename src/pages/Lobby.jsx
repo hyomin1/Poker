@@ -2,12 +2,37 @@ import useBoard from '../hooks/useBoard';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
 import Rooms from '../components/Rooms';
+import { useEffect } from 'react';
+import useAuthStore from '../stores/useAuthStroe';
 
 export default function Lobby() {
-  const { boardQueries, quickJoinMutation, enterGameMutation } = useBoard();
+  const { userId, password, subId } = useAuthStore();
 
-  // 쿼리 Loading, Error 처리
+  const {
+    boardQueries,
+    boardContextQuery: { isLoading, error, data: boardContext },
+    quickJoinMutation,
+    enterGameMutation,
+  } = useBoard();
 
+  useEffect(() => {
+    if (boardContext?.length > 0) {
+      boardContext.forEach((board) => {
+        const url = `/board/${board.id}`;
+        const game = window.open('about:blank', '_blank');
+        if (game) {
+          game.name = JSON.stringify({ userId, password, subId });
+          game.location = url;
+        }
+      });
+    }
+  }, [boardContext]);
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    <Error />;
+  }
   return (
     <div className='min-h-screen p-6 text-white bg-gray-900'>
       <div className='mx-auto max-w-7xl'>

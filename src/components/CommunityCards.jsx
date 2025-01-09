@@ -2,7 +2,6 @@ import React from 'react';
 import Card from './Card';
 
 export default function CommunityCards({ communityCards, gameBoard }) {
-  //console.log(communityCards);
   const { phaseStatus } = gameBoard;
   return (
     <div className='flex gap-4'>

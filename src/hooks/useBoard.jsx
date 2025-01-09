@@ -1,5 +1,15 @@
-import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
-import { enterGame, getBlindBoard, quickJoin } from '../api/board';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {
+  enterGame,
+  getBlindBoard,
+  getBoardContext,
+  quickJoin,
+} from '../api/board';
 import { BLINDS } from '../constants/boardConstants';
 
 export default function useBoard() {
@@ -11,6 +21,12 @@ export default function useBoard() {
       queryFn: () => getBlindBoard(blind),
       staleTime: 60 * 1000 * 1,
     })),
+  });
+
+  const boardContextQuery = useQuery({
+    queryKey: ['boardContext'],
+    queryFn: getBoardContext,
+    // staleTime 생각해보기
   });
 
   const quickJoinMutation = useMutation({
@@ -33,5 +49,10 @@ export default function useBoard() {
     },
   });
 
-  return { boardQueries, quickJoinMutation, enterGameMutation };
+  return {
+    boardQueries,
+    boardContextQuery,
+    quickJoinMutation,
+    enterGameMutation,
+  };
 }

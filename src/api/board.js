@@ -12,6 +12,11 @@ export const getBoard = async (boardId) => {
   return res.data;
 };
 
+export const getBoardContext = async () => {
+  const res = await httpClient.get(`${boardURL}/context`);
+  return res.data;
+};
+
 export const quickJoin = async (blind, bb) => {
   const res = await httpClient.post(
     `${boardURL}/joinGame?bb=${bb}&blind=${blind}`

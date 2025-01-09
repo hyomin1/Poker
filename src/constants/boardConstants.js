@@ -7,3 +7,4 @@ export const FOLD = 'fold';
 export const RAISE = 'raise';
 export const ALL_IN_RAISE = 'allInRaise';
 export const ALL_IN_CALL = 'allInCall';
+export const MAX_COMMUNITY_CARDS = 5;

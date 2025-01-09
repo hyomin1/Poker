@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useStompStore from '../stores/useStompStore';
 import useBoardById from '../hooks/useBoardById';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
@@ -9,7 +8,7 @@ import Pot from '../components/Pot';
 import CommunityCards from '../components/CommunityCards';
 import Player from '../components/Player';
 import useAuthStore from '../stores/useAuthStroe';
-import { MAX_PLAYER } from '../constants/boardConstants';
+import { MAX_COMMUNITY_CARDS, MAX_PLAYER } from '../constants/boardConstants';
 
 export default function Board() {
   const { boardId } = useParams();
@@ -20,16 +19,39 @@ export default function Board() {
   const [mainPlayer, setMainPlayer] = useState(null);
   const [players, setPlayers] = useState([]);
   const { subId, setSubId } = useAuthStore();
-  const { connect, subscribe } = useStomp();
+  const { connect, subscribe, disconnect, sendExitMessage, exitDisconnect } =
+    useStomp();
 
   const [gameBoard, setGameBoard] = useState(null);
 
   const handleMessage = (message) => {
     const { messageType, data } = JSON.parse(message.body);
+    console.log(data);
 
     setGameBoard(data);
     //console.log(data);
   };
+
+  const onExit = () => {
+    if (window.confirm('게임에서 나가시겠습니까?')) {
+      sendExitMessage('/pub/board/exit', gameBoard, boardId);
+      exitDisconnect();
+      window.close();
+    }
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      disconnect(subId);
+      const message = '이 창을 닫으시면 변경 사항이 저장되지 않을 수 있습니다.';
+      event.returnValue = message;
+      return message;
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     // 웹소켓 연결
@@ -64,7 +86,7 @@ export default function Board() {
   useEffect(() => {
     // 커뮤니티 카드 번호 저장
     if (gameBoard) {
-      const communityCards = [...Array(5)].map(
+      const communityCards = [...Array(MAX_COMMUNITY_CARDS)].map(
         (_, i) => gameBoard[`communityCard${i + 1}`]
       );
       setCommunityCards(communityCards);
@@ -117,13 +139,16 @@ export default function Board() {
   if (error) {
     return <Error />;
   }
-  //console.log(players, mainPlayer);
 
   return (
     <div className='relative w-full h-screen overflow-hidden bg-gradient-to-b from-green-800 to-green-900'>
       {/* 메인 테이블 */}
       {gameBoard.phaseStatus === 0 && <p>대기중</p>}
-      <p>{gameBoard.totalPlayer}/6</p>
+      <div className='flex items-center justify-between'>
+        <p>{gameBoard.totalPlayer}/6</p>
+        <button onClick={onExit}>나가기</button>
+      </div>
+
       <div
         className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                     w-[900px] h-[500px] bg-green-600 rounded-[200px] 
