@@ -3,7 +3,7 @@ import { BuyInModal } from './BuyInModal';
 import useAuthStore from '../stores/useAuthStroe';
 
 export default function Room({ board, enterGameMutation }) {
-  const { userId, password } = useAuthStore();
+  const { userId, password, subId } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConfirm = (bb) => {
@@ -14,10 +14,9 @@ export default function Room({ board, enterGameMutation }) {
       blind: board.blind,
     });
     const url = `/board/${boardId}`;
-    const game = window.open(url, '_blank');
-    game.addEventListener('load', () => {
-      game.postMessage({ userId, password }, '*');
-    });
+    const game = window.open('about:blank', '_blank');
+    game.name = JSON.stringify({ userId, password, subId });
+    game.location = url;
     setIsModalOpen(false);
   };
   return (

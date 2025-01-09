@@ -12,7 +12,7 @@ export default function Rooms({
   quickJoinMutation,
   enterGameMutation,
 }) {
-  const { userId, password } = useAuthStore();
+  const { userId, password, subId } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const blind = BLINDS[blindIndex];
 
@@ -21,7 +21,7 @@ export default function Rooms({
     const url = `/board/${boardId}`;
 
     const game = window.open('about:blank', '_blank');
-    game.name = JSON.stringify({ userId, password });
+    game.name = JSON.stringify({ userId, password, subId });
     game.location = url;
 
     setIsModalOpen(false);

@@ -7,17 +7,17 @@ export default function useStomp() {
     initializeStompClient(userId, password);
   };
 
-  const isConnected = () => {
-    console.log(stompClient);
-  };
-
-  const subscribe = (url, callback) => {
+  const subscribe = (subscriptions) => {
     if (!stompClient) {
       return;
     }
+
     stompClient.onConnect = () => {
       console.log('연결됨');
-      stompClient.subscribe(url, callback);
+      subscriptions.forEach(({ url, callback, player_id }) => {
+        const headers = { player_id };
+        stompClient.subscribe(url, callback, headers);
+      });
     };
   };
 
@@ -25,5 +25,5 @@ export default function useStomp() {
 
   const disconnect = () => {};
 
-  return { connect, isConnected, subscribe, sendMessage, disconnect };
+  return { connect, subscribe, sendMessage, disconnect };
 }
