@@ -8,9 +8,8 @@ import useStomp from '../hooks/useStomp';
 import Pot from '../components/Pot';
 import CommunityCards from '../components/CommunityCards';
 import Player from '../components/Player';
-import DealerButton from '../components/DealerButton';
-import ActionButton from '../components/ActionButton';
 import useAuthStore from '../stores/useAuthStroe';
+import { MAX_PLAYER } from '../constants/boardConstants';
 
 export default function Board() {
   const { boardId } = useParams();
@@ -18,9 +17,10 @@ export default function Board() {
     boardQuery: { data: board, isLoading, error },
   } = useBoardById(boardId);
   const [communityCards, setCommunityCards] = useState([]);
+  const [mainPlayer, setMainPlayer] = useState(null);
+  const [players, setPlayers] = useState([]);
   const { subId, setSubId } = useAuthStore();
   const { connect, subscribe } = useStomp();
-  console.log(board);
 
   const [gameBoard, setGameBoard] = useState(null);
 
@@ -28,17 +28,8 @@ export default function Board() {
     const { messageType, data } = JSON.parse(message.body);
 
     setGameBoard(data);
-    console.log(data);
+    //console.log(data);
   };
-
-  const findMainPlayer = () => {
-    if (!gameBoard) return;
-
-    return gameBoard.players.find(
-      (player) => player.userId === parseInt(subId)
-    );
-  };
-  const mainPlayer = findMainPlayer();
 
   useEffect(() => {
     // 웹소켓 연결
@@ -51,7 +42,7 @@ export default function Board() {
       connect({ userId, password });
     }
     if (subId) {
-      setSubId(subId);
+      setSubId(Number(subId));
     }
   }, [setSubId]);
 
@@ -62,6 +53,14 @@ export default function Board() {
     return () => {};
   }, [board]);
 
+  const getPlayerPositions = (mainPlayerPosition) => {
+    // 메인 플레이어 제외 플레이어 위치 배열 생성
+    return Array.from(
+      { length: MAX_PLAYER - 1 },
+      (_, i) => (mainPlayerPosition + i + 1) % MAX_PLAYER
+    );
+  };
+
   useEffect(() => {
     // 커뮤니티 카드 번호 저장
     if (gameBoard) {
@@ -69,10 +68,25 @@ export default function Board() {
         (_, i) => gameBoard[`communityCard${i + 1}`]
       );
       setCommunityCards(communityCards);
+      const mainPlayer = gameBoard.players.find(
+        (player) => player.userId === parseInt(subId)
+      );
+      setMainPlayer(mainPlayer);
+    }
+
+    // 나 제외한 플레이어 위치 찾기
+    if (mainPlayer) {
+      const updatedPlayerPositions = getPlayerPositions(mainPlayer.position);
+
+      const updatedPlayers = updatedPlayerPositions.map((position) =>
+        gameBoard.players.find((player) => player.position === position)
+      );
+
+      setPlayers(updatedPlayers);
     }
 
     return () => {};
-  }, [gameBoard]);
+  }, [gameBoard, mainPlayer]);
 
   useEffect(() => {
     if (boardId && subId) {
@@ -103,6 +117,7 @@ export default function Board() {
   if (error) {
     return <Error />;
   }
+  //console.log(players, mainPlayer);
 
   return (
     <div className='relative w-full h-screen overflow-hidden bg-gradient-to-b from-green-800 to-green-900'>
@@ -132,43 +147,40 @@ export default function Board() {
         </div>
 
         {/* 상단 플레이어 */}
-        {/* <div className='absolute top-0 transform -translate-x-1/2 left-1/2 -translate-y-1/4'>
-          <Player />
-        </div> */}
+        <div className='absolute top-0 transform -translate-x-1/2 left-1/2 -translate-y-1/4'>
+          {players[2] && (
+            <Player subId={subId} player={players[2]} gameBoard={gameBoard} />
+          )}
+        </div>
 
         {/* 좌측 상단 플레이어 */}
-        {/* <div className='absolute left-0 transform top-1/4 -translate-x-1/4'>
-          <Player />
-        </div> */}
+        <div className='absolute left-0 transform top-1/4 -translate-x-1/4'>
+          {players[1] && (
+            <Player subId={subId} player={players[1]} gameBoard={gameBoard} />
+          )}
+        </div>
 
         {/* 좌측 하단 플레이어 */}
-        {/* <div className='absolute left-0 transform bottom-1/4 -translate-x-1/4'>
-          <Player />
-        </div> */}
+        <div className='absolute left-0 transform bottom-1/4 -translate-x-1/4'>
+          {players[0] && (
+            <Player subId={subId} player={players[0]} gameBoard={gameBoard} />
+          )}
+        </div>
 
         {/* 우측 상단 플레이어 */}
-        {/* <div className='absolute right-0 transform top-1/4 translate-x-1/4'>
-          <Player />
-        </div> */}
+        <div className='absolute right-0 transform top-1/4 translate-x-1/4'>
+          {players[3] && (
+            <Player subId={subId} player={players[3]} gameBoard={gameBoard} />
+          )}
+        </div>
 
         {/* 우측 하단 플레이어 */}
-        {/* <div className='absolute right-0 transform bottom-1/4 translate-x-1/4'>
-          <Player />
-        </div> */}
-
-        {/* 딜러 버튼 */}
-        {/* <div className='absolute bottom-20 right-32'>
-          <DealerButton />
-        </div> */}
+        <div className='absolute right-0 transform bottom-1/4 translate-x-1/4'>
+          {players[4] && (
+            <Player subId={subId} player={players[4]} gameBoard={gameBoard} />
+          )}
+        </div>
       </div>
-
-      {/* 하단 액션 버튼 */}
-      {/* <div className='absolute flex gap-4 p-6 transform -translate-x-1/2 bg-black bottom-8 left-1/2 bg-opacity-30 rounded-xl backdrop-blur-sm'>
-        <ActionButton label='FOLD' />
-        <ActionButton label='CHECK' />
-        <ActionButton label='CALL' />
-        <ActionButton label='RAISE' />
-      </div> */}
     </div>
   );
 }

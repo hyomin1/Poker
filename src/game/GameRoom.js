@@ -1,10 +1,10 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
-import { BASE_URL } from "../api";
-import { client } from "../client";
-import Playing from "./Playing";
-import Waiting from "./Waiting";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
+import { BASE_URL } from '../api';
+import { client } from '../client';
+import Playing from './Playing';
+import Waiting from './Waiting';
 
 const GameContainer = styled.div`
   background: linear-gradient(135deg, #2a2624 0%, #2f2627 100%);
@@ -18,7 +18,7 @@ function GameRoom() {
 
   const { boardData, userData, userId } = receivedData;
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const [board, setBoard] = useState(boardData);
 
@@ -47,7 +47,7 @@ function GameRoom() {
   const windowClose = (e) => {
     e.defaultPrevented = false;
     client.disconnectHeaders = {
-      disconnect_option: "disconnect",
+      disconnect_option: 'disconnect',
       player_id: boardData.id,
     };
     client.deactivate();
@@ -61,31 +61,31 @@ function GameRoom() {
     client.activate();
 
     client.onConnect = function (frame) {
-      window.addEventListener("beforeunload", windowClose); //게임중에 창 닫을시 실행
-      client.subscribe(
-        `/topic/board/${boardData.id}`,
-        handleGameStart,
-        headers
-      );
-      client.subscribe(`/queue/${userId}`, function (message) {}, headers);
+      window.addEventListener('beforeunload', windowClose); //게임중에 창 닫을시 실행
+      // client.subscribe(
+      //   `/topic/board/${boardData.id}`,
+      //   handleGameStart,
+      //   headers
+      // );
+      //client.subscribe(`/queue/${userId}`, function (message) {}, headers);
       client.subscribe(
         `/queue/error/${boardData.id}/${userId}`,
         function (message) {
           const decoder = new TextDecoder();
           const text = decoder.decode(message.binaryBody);
           const parseText = JSON.parse(text);
-          console.log("queue/error 에러", parseText);
-          if (parseText.messageType === "ERROR-EXIT-BOARD") {
+          console.log('queue/error 에러', parseText);
+          if (parseText.messageType === 'ERROR-EXIT-BOARD') {
             alert(parseText.data);
             client.disconnectHeaders = {
-              disconnect_option: "exit",
+              disconnect_option: 'exit',
             };
 
             client.deactivate();
             client.onDisconnect = () => {
               window.close();
             };
-          } else if (parseText.messageType === "ERROR") {
+          } else if (parseText.messageType === 'ERROR') {
             alert(parseText.data);
           }
         },
@@ -104,12 +104,12 @@ function GameRoom() {
           alert(error.response.data.message);
         }
         alert(error.response.data.message);
-        console.log("새로고침시 최신 보드 받기 에러", error);
+        console.log('새로고침시 최신 보드 받기 에러', error);
       }
     };
     updatedBoard();
     return () => {
-      window.removeEventListener("beforeunload", windowClose);
+      window.removeEventListener('beforeunload', windowClose);
     };
   }, []);
 

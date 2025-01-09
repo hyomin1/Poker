@@ -1,14 +1,14 @@
-import axios from "axios";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
-import { BASE_URL } from "../../api";
-import { client } from "../../client";
-import Player from "./Player";
-import { PiPokerChipBold } from "react-icons/pi";
-import { CircularProgress } from "@mui/material";
-import Box from "@mui/material/Box";
-import { IoArrowBackOutline } from "react-icons/io5";
+import axios from 'axios';
+import { AnimatePresence, motion, useAnimation } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
+import { BASE_URL } from '../../api';
+import { client } from '../../client';
+import Player from './Player';
+import { PiPokerChipBold } from 'react-icons/pi';
+import { CircularProgress } from '@mui/material';
+import Box from '@mui/material/Box';
+import { IoArrowBackOutline } from 'react-icons/io5';
 
 const TableContainer = styled.div`
   position: relative;
@@ -16,9 +16,9 @@ const TableContainer = styled.div`
   height: 100vh;
   display: grid;
   grid-template-areas:
-    "boardNumber top playerCount"
-    "left table right"
-    ". bottom .";
+    'boardNumber top playerCount'
+    'left table right'
+    '. bottom .';
 
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -58,14 +58,14 @@ const PlayerContainer = styled.div`
   justify-content: space-around;
 
   ${(props) => {
-    if (props.position === "bottom") {
-      return "grid-area : bottom;";
-    } else if (props.position === "top") {
-      return "grid-area : top;";
-    } else if (props.position === "left") {
-      return "grid-area : left;";
-    } else if (props.position === "right") {
-      return "grid-area : right;";
+    if (props.position === 'bottom') {
+      return 'grid-area : bottom;';
+    } else if (props.position === 'top') {
+      return 'grid-area : top;';
+    } else if (props.position === 'left') {
+      return 'grid-area : left;';
+    } else if (props.position === 'right') {
+      return 'grid-area : right;';
     }
   }}
 `;
@@ -81,15 +81,15 @@ const CardContainer = styled.div`
 const getCardShape = (shape) => {
   switch (shape) {
     case 0:
-      return "spades";
+      return 'spades';
     case 1:
-      return "diamonds";
+      return 'diamonds';
     case 2:
-      return "hearts";
+      return 'hearts';
     case 3:
-      return "clubs";
+      return 'clubs';
     default:
-      return "";
+      return '';
   }
 };
 const getCardNum = (num) => {
@@ -98,15 +98,15 @@ const getCardNum = (num) => {
   } else {
     switch (num) {
       case 9:
-        return "jack";
+        return 'jack';
       case 10:
-        return "queen";
+        return 'queen';
       case 11:
-        return "king";
+        return 'king';
       case 12:
-        return "ace";
+        return 'ace';
       default:
-        return "";
+        return '';
     }
   }
 };
@@ -344,7 +344,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   const [playerArray, setPlayerArray] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const img = "/images/defaultProfile.png";
+  const img = '/images/defaultProfile.png';
   const [img1, setImg1] = useState();
   const [img2, setImg2] = useState();
   const [img3, setImg3] = useState();
@@ -421,7 +421,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
   useEffect(() => {
     if (myPlayer) {
       const updatedOthers = Array.from(
-        { length: numOfOtherPlayers },
+        { length: 5 },
         (_, i) => (myPlayer.position + i + 1) % 6
       );
       setOthers(updatedOthers);
@@ -438,7 +438,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${myPlayer.userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
       setImg1(res.data);
@@ -447,7 +447,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${updatedPlayerArray[0].userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
 
@@ -457,7 +457,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${updatedPlayerArray[1].userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
       setImg3(res.data);
@@ -466,7 +466,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${updatedPlayerArray[2].userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
       setImg4(res.data);
@@ -475,7 +475,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${updatedPlayerArray[3].userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
       setImg5(res.data);
@@ -484,7 +484,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       const res = await axios.get(
         `${BASE_URL}/api/user/image/${updatedPlayerArray[4].userId}`,
         {
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
       setImg6(res.data);
@@ -512,17 +512,17 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
   const clickExit = async () => {
     try {
-      const userResponse = window.confirm("게임에서 나가시겠습니까?");
+      const userResponse = window.confirm('게임에서 나가시겠습니까?');
       if (userResponse) {
         client.publish({
-          destination: "/pub/board/exit",
+          destination: '/pub/board/exit',
           body: JSON.stringify(board),
           headers: {
             board_id: board.id,
           },
         });
         client.disconnectHeaders = {
-          disconnect_option: "exit",
+          disconnect_option: 'exit',
         };
         setTimeout(() => {
           client.deactivate();
@@ -535,7 +535,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
       if (error.response) {
         alert(error.response.data.message);
       }
-      console.log("나가기 에러", error);
+      console.log('나가기 에러', error);
     }
   };
 
@@ -561,13 +561,13 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
   const [winnerPlayers, setWinnerPlayers] = useState([]);
   useEffect(() => {
-    if (message === "GAME_END") {
+    if (message === 'GAME_END') {
       const winnerPlayerList = board.players.filter(
         (player) => player.gameResult && player.gameResult.winner === true
       );
 
       setWinnerPlayers(winnerPlayerList);
-    } else if (message === "SHOW_DOWN") {
+    } else if (message === 'SHOW_DOWN') {
       const winnerPlayerList = board.players.filter(
         (player) => player.gameResult && player.gameResult.winner === true
       );
@@ -591,13 +591,13 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
 
   const test = () => {
     client.publish({
-      destination: "/pub/errorTest",
+      destination: '/pub/errorTest',
       headers: { board_id: board.id },
     });
   };
 
   const viewHud = async (userId) => {
-    const goHud = window.open("/hud", "_blank", "width=500,height=300");
+    const goHud = window.open('/hud', '_blank', 'width=500,height=300');
     const res = await axios.get(`${BASE_URL}/api/hud/${userId}`);
     const sendData = {
       hudData: res.data,
@@ -627,12 +627,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
     <TableContainer>
       <BoardNumber>
         <IoArrowBackOutline onClick={clickExit} />
-        <span style={{ marginLeft: "10px" }}>NO. {board.id}</span>
+        <span style={{ marginLeft: '10px' }}>NO. {board.id}</span>
       </BoardNumber>
       <PlayerCount>{board.totalPlayer}/6</PlayerCount>
 
       <AnimatePresence>
-        {message === "GAME_END" &&
+        {message === 'GAME_END' &&
           winnerPlayers.length >= 1 &&
           winnerPlayers.map((player, index) => (
             <VictoryContainer
@@ -643,24 +643,24 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               key={player.userId}
             >
               <VictoryMessage>
-                플레이어 {player.playerName}{" "}
+                플레이어 {player.playerName}{' '}
                 {player.gameResult.earnedMoney / board.blind}BB 얻었습니다!!
               </VictoryMessage>
             </VictoryContainer>
           ))}
       </AnimatePresence>
       <AnimatePresence>
-        {message === "SHOW_DOWN" &&
+        {message === 'SHOW_DOWN' &&
           winnerPlayers.length >= 1 &&
           winnerPlayers.map((player, index) => (
             <VictoryContainer
               key={index}
               initial={{ opacity: 0 }}
               animate={{ opacity: index === current ? 1 : 0 }}
-              transition={{ duration: 0.5, delay: index * 2, ease: "easeOut" }}
+              transition={{ duration: 0.5, delay: index * 2, ease: 'easeOut' }}
             >
               <VictoryMessage>
-                플레이어 {player.playerName}{" "}
+                플레이어 {player.playerName}{' '}
                 {player.gameResult.earnedMoney / board.blind}BB 얻었습니다!!
                 랭크 : {player.gameResult.handContext}
               </VictoryMessage>
@@ -672,9 +672,9 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         {board.phaseStatus >= 1 ? (
           <PotContainer
             style={{
-              gridColumn: "2 / span 1",
-              gridRow: "1 / span 1",
-              alignSelf: "flex-start",
+              gridColumn: '2 / span 1',
+              gridRow: '1 / span 1',
+              alignSelf: 'flex-start',
             }}
           >
             <Pot>Pot : {board.pot}BB</Pot>
@@ -682,11 +682,11 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         ) : null}
         <div
           style={{
-            display: "flex",
-            gridColumn: "3 / span 1",
-            gridRow: "3 / span 1",
-            alignSelf: "flex-end",
-            justifySelf: "flex-start",
+            display: 'flex',
+            gridColumn: '3 / span 1',
+            gridRow: '3 / span 1',
+            alignSelf: 'flex-end',
+            justifySelf: 'flex-start',
           }}
         >
           {myPlayer && myPlayer.position === board.btn && (
@@ -705,11 +705,11 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </div>
         <div
           style={{
-            display: "flex",
-            gridColumn: "1 / span 1",
-            gridRow: "3 / span 1",
-            alignSelf: "flex-end",
-            justifySelf: "flex-end",
+            display: 'flex',
+            gridColumn: '1 / span 1',
+            gridRow: '3 / span 1',
+            alignSelf: 'flex-end',
+            justifySelf: 'flex-end',
           }}
         >
           {playerArray[0] && playerArray[0].position === board.btn && (
@@ -727,12 +727,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </div>
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gridColumn: "1 / span 1",
-            gridRow: "2 / span 1",
-            justifySelf: "flex-start",
-            alignSelf: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            gridColumn: '1 / span 1',
+            gridRow: '2 / span 1',
+            justifySelf: 'flex-start',
+            alignSelf: 'center',
           }}
         >
           {playerArray[1] && playerArray[1].position === board.btn && (
@@ -750,11 +750,11 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </div>
         <div
           style={{
-            display: "flex",
-            gridColumn: "1 / span 1",
-            gridRow: "1 / span 1",
-            alignSelf: "flex-start",
-            justifySelf: "flex-end",
+            display: 'flex',
+            gridColumn: '1 / span 1',
+            gridRow: '1 / span 1',
+            alignSelf: 'flex-start',
+            justifySelf: 'flex-end',
           }}
         >
           {playerArray[2] && playerArray[2].position === board.btn && (
@@ -774,11 +774,11 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </div>
         <div
           style={{
-            gridColumn: "3 / span 1",
-            gridRow: "1 / span 1",
-            alignSelf: "flex-start",
-            justifySelf: "flex-start",
-            display: "flex",
+            gridColumn: '3 / span 1',
+            gridRow: '1 / span 1',
+            alignSelf: 'flex-start',
+            justifySelf: 'flex-start',
+            display: 'flex',
           }}
         >
           {playerArray[3] && playerArray[3].position === board.btn && (
@@ -798,12 +798,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </div>
         <div
           style={{
-            gridColumn: "3 / span 1",
-            gridRow: "2 / span 1",
-            justifySelf: "flex-end",
-            alignSelf: "center",
-            display: "flex",
-            flexDirection: "column",
+            gridColumn: '3 / span 1',
+            gridRow: '2 / span 1',
+            justifySelf: 'flex-end',
+            alignSelf: 'center',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           {playerArray[4] && playerArray[4].position === board.btn && (
@@ -825,8 +825,8 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         {board.phaseStatus >= 2 && board.phaseStatus <= 4 ? (
           <CardContainer
             style={{
-              gridColumn: "2 / span 1",
-              gridRow: "2 / span 1",
+              gridColumn: '2 / span 1',
+              gridRow: '2 / span 1',
             }}
           >
             <React.Fragment>
@@ -888,7 +888,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
             {result.map((playerResult, index) => (
               <CardContainer
                 key={index}
-                style={{ gridColumn: "2 / span 1", gridRow: "2 / span 1" }}
+                style={{ gridColumn: '2 / span 1', gridRow: '2 / span 1' }}
               >
                 {index === current ? (
                   <React.Fragment>
@@ -896,7 +896,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                       initial={{ opacity: 0, scale: 0.5 }} // 애니메이션 추가: 초기 상태
                       animate={{ opacity: 1, scale: 1 }} // 애니메이션 추가: 최종 상태
                       transition={{ duration: 0.5 }} // 애니메이션 추가: 지속 시간
-                      style={{ marginRight: "10px" }} // 카드 사이의 간격 조정
+                      style={{ marginRight: '10px' }} // 카드 사이의 간격 조정
                     >
                       <Card1
                         initial={{ opacity: 1, y: 0 }}
@@ -915,7 +915,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                     >
                       <Card2
                         initial={{ opacity: 1, y: 0 }}
@@ -934,7 +934,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                     >
                       <Card3
                         initial={{ opacity: 1, y: 0 }}
@@ -953,7 +953,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                     >
                       <Card4
                         initial={{ opacity: 1, y: 0 }}
@@ -972,7 +972,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5 }}
-                      style={{ marginRight: "10px" }}
+                      style={{ marginRight: '10px' }}
                     >
                       <Card5
                         initial={{ opacity: 1, y: 0 }}
@@ -995,7 +995,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         ) : null}
       </Table>
 
-      <PlayerContainer position="bottom">
+      <PlayerContainer position='bottom'>
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[0] ? (
             <UserProfileContainer>
@@ -1006,12 +1006,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.phaseStatus <= 4 ? (
                   <Box
                     onClick={() => viewHud(playerArray[0].userId)}
-                    sx={{ position: "relative", display: "inline-block" }}
+                    sx={{ position: 'relative', display: 'inline-block' }}
                   >
                     <CircularProgress
-                      variant="determinate"
+                      variant='determinate'
                       value={100 - progressValue}
-                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                       size={100}
                     />
 
@@ -1060,12 +1060,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.phaseStatus <= 4 ? (
                   <Box
                     onClick={() => viewHud(myPlayer.userId)}
-                    sx={{ position: "relative", display: "inline-block" }}
+                    sx={{ position: 'relative', display: 'inline-block' }}
                   >
                     <CircularProgress
-                      variant="determinate"
+                      variant='determinate'
                       value={100 - progressValue}
-                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                       size={100}
                     />
 
@@ -1107,7 +1107,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </SubPlayerContainer>
       </PlayerContainer>
 
-      <PlayerContainer position="top">
+      <PlayerContainer position='top'>
         <SubPlayerContainer>
           {board.totalPlayer >= 2 && playerArray[2] ? (
             <UserProfileContainer>
@@ -1118,12 +1118,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.phaseStatus <= 4 ? (
                   <Box
                     onClick={() => viewHud(playerArray[2].userId)}
-                    sx={{ position: "relative", display: "inline-block" }}
+                    sx={{ position: 'relative', display: 'inline-block' }}
                   >
                     <CircularProgress
-                      variant="determinate"
+                      variant='determinate'
                       value={100 - progressValue}
-                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                       size={100}
                     />
 
@@ -1171,12 +1171,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
                 board.phaseStatus <= 4 ? (
                   <Box
                     onClick={() => viewHud(playerArray[3].userId)}
-                    sx={{ position: "relative", display: "inline-block" }}
+                    sx={{ position: 'relative', display: 'inline-block' }}
                   >
                     <CircularProgress
-                      variant="determinate"
+                      variant='determinate'
                       value={100 - progressValue}
-                      sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                      sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                       size={100}
                     />
 
@@ -1218,7 +1218,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         </SubPlayerContainer>
       </PlayerContainer>
 
-      <PlayerContainer position="left">
+      <PlayerContainer position='left'>
         {board.totalPlayer >= 2 && playerArray[1] && (
           <UserProfileContainer>
             <UserProfileBox>
@@ -1228,12 +1228,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               board.phaseStatus <= 4 ? (
                 <Box
                   onClick={() => viewHud(playerArray[1].userId)}
-                  sx={{ position: "relative", display: "inline-block" }}
+                  sx={{ position: 'relative', display: 'inline-block' }}
                 >
                   <CircularProgress
-                    variant="determinate"
+                    variant='determinate'
                     value={100 - progressValue}
-                    sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                    sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                     size={100}
                   />
 
@@ -1270,7 +1270,7 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
         )}
       </PlayerContainer>
 
-      <PlayerContainer position="right">
+      <PlayerContainer position='right'>
         {board.totalPlayer >= 2 && playerArray[4] && (
           <UserProfileContainer>
             <UserProfileBox>
@@ -1280,12 +1280,12 @@ function TableComponent({ board, myPlayer, message, userData, userId }) {
               board.phaseStatus <= 4 ? (
                 <Box
                   onClick={() => viewHud(playerArray[4].userId)}
-                  sx={{ position: "relative", display: "inline-block" }}
+                  sx={{ position: 'relative', display: 'inline-block' }}
                 >
                   <CircularProgress
-                    variant="determinate"
+                    variant='determinate'
                     value={100 - progressValue}
-                    sx={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+                    sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
                     size={100}
                   />
 

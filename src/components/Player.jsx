@@ -5,9 +5,11 @@ import ActionButton from './ActionButton';
 import Chip from './Chip';
 
 export default function Player({ subId, player, gameBoard }) {
-  console.log(player);
-  console.log(gameBoard);
+  // console.log(player);
+  // console.log(gameBoard);
   const isDealer = player.position === gameBoard.btn;
+  const isMyCard = subId === player.userId;
+  const chip = (player.phaseCallSize / gameBoard.blind).toFixed(1);
 
   return (
     <div className='relative flex flex-col items-center gap-2'>
@@ -20,30 +22,25 @@ export default function Player({ subId, player, gameBoard }) {
           </div>
           {/* 칩 표시 - 아바타 우측 상단에 위치 */}
           <div className='absolute -top-2 -right-4'>
-            <Chip amount={player.chips || 0} />
+            <Chip amount={chip} />
           </div>
         </div>
-
-        {/* 베팅 금액이 있는 경우 테이블 중앙을 향해 표시 */}
-        {player.currentBet > 0 && (
-          <div className='absolute -top-8'>
-            <Chip amount={player.currentBet} />
-          </div>
-        )}
 
         {/* 플레이어 이름 */}
         <div className='absolute w-full text-center -bottom-6'>
           <span className='px-2 py-1 text-sm text-white bg-black bg-opacity-50 rounded-full'>
-            {player.name}
+            {player.playerName}
           </span>
         </div>
       </div>
 
       {/* 카드 영역 */}
-      <div className='flex gap-2 mt-2'>
-        <Card card={player.card1} />
-        <Card card={player.card2} />
-      </div>
+      {isMyCard && (
+        <div className='flex gap-2 mt-2'>
+          <Card card={player.card1} />
+          <Card card={player.card2} />
+        </div>
+      )}
 
       {/* 딜러 버튼 */}
       {isDealer && (

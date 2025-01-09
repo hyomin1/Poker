@@ -106,16 +106,16 @@ function GameMenu() {
   const [blind4000, setBlind4000] = useState([]);
   const [blind10000, setBlind10000] = useState([]);
 
-  const handleMoneyChange = (e) => {
-    setBb(parseInt(e.target.value, 10));
-  };
+  // const handleMoneyChange = (e) => {
+  //   setBb(parseInt(e.target.value, 10));
+  // };
 
-  const playGame = (cancel) => {
-    isSetPlay((prev) => !prev);
-    if (cancel) {
-      setBb(50);
-    }
-  };
+  // const playGame = (cancel) => {
+  //   isSetPlay((prev) => !prev);
+  //   if (cancel) {
+  //     setBb(50);
+  //   }
+  // };
 
   useEffect(() => {
     // if (existBoard && existBoard.length >= 1) {
@@ -133,81 +133,80 @@ function GameMenu() {
     // }
     //blind단위로 보드 받아오기
     const getBoardList = async () => {
-      try {
-        const [res1, res2, res3, res4] = await Promise.all([
-          await axios.get(`${BASE_URL}/api/board/search/${1000}`),
-          await axios.get(`${BASE_URL}/api/board/search/${2000}`),
-          await axios.get(`${BASE_URL}/api/board/search/${4000}`),
-          await axios.get(`${BASE_URL}/api/board/search/${10000}`),
-        ]);
-        setBlind1000(res1.data);
-        setBlind2000(res2.data);
-        setBlind4000(res3.data);
-        setBlind10000(res4.data);
-      } catch (error) {
-        if (error.response) {
-          alert(error.response.data.message);
-        }
-        console.error('방검색 에러', error);
-      }
+      // try {
+      //   const [res1, res2, res3, res4] = await Promise.all([
+      //     await axios.get(`${BASE_URL}/api/board/search/${1000}`),
+      //     await axios.get(`${BASE_URL}/api/board/search/${2000}`),
+      //     await axios.get(`${BASE_URL}/api/board/search/${4000}`),
+      //     await axios.get(`${BASE_URL}/api/board/search/${10000}`),
+      //   ]);
+      //   setBlind1000(res1.data);
+      //   setBlind2000(res2.data);
+      //   setBlind4000(res3.data);
+      //   setBlind10000(res4.data);
+      // } catch (error) {
+      //   if (error.response) {
+      //     alert(error.response.data.message);
+      //   }
+      //   console.error('방검색 에러', error);
+      // }
     };
     getBoardList();
   }, []);
-  const getBlind1 = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
-      setBlind1000(res.data);
-    } catch (error) {
-      console.error('새로고침 search board error', error);
-    }
-  };
-  const getBlind2 = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/board/search/${2000}`);
-      setBlind2000(res.data);
-    } catch (error) {
-      console.error('새로고침 search board error', error);
-    }
-  };
-  const getBlind3 = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/board/search/${4000}`);
-      setBlind4000(res.data);
-    } catch (error) {
-      console.error('새로고침 search board error', error);
-    }
-  };
-  const getBlind4 = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/board/search/${10000}`);
-      setBlind10000(res.data);
-    } catch (error) {
-      console.error('새로고침 search board error', error);
-    }
-  };
+  // const getBlind1 = async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/board/search/${1000}`);
+  //     setBlind1000(res.data);
+  //   } catch (error) {
+  //     console.error('새로고침 search board error', error);
+  //   }
+  // };
+  // const getBlind2 = async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/board/search/${2000}`);
+  //     setBlind2000(res.data);
+  //   } catch (error) {
+  //     console.error('새로고침 search board error', error);
+  //   }
+  // };
+  // const getBlind3 = async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/board/search/${4000}`);
+  //     setBlind4000(res.data);
+  //   } catch (error) {
+  //     console.error('새로고침 search board error', error);
+  //   }
+  // };
+  // const getBlind4 = async () => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/api/board/search/${10000}`);
+  //     setBlind10000(res.data);
+  //   } catch (error) {
+  //     console.error('새로고침 search board error', error);
+  //   }
+  // };
 
   const buyIn = async () => {
-    try {
-      const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
-        params: {
-          bb,
-          blind: 1000,
-        },
-      });
-
-      const goGame = window.open('/gameRoom', `gameRoom${res.data.id}`);
-      // const sendData = {
-      //   userData: userData,
-      //   userId: userId,
-      //   boardData: res.data,
-      // };
-      // goGame.name = JSON.stringify(sendData);
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message);
-      }
-      console.log('바이인 에러', error);
-    }
+    // try {
+    //   const res = await axios.post(`${BASE_URL}/api/board/joinGame`, null, {
+    //     params: {
+    //       bb,
+    //       blind: 1000,
+    //     },
+    //   });
+    //  const goGame = window.open('/gameRoom', `gameRoom${res.data.id}`);
+    // const sendData = {
+    //   userData: userData,
+    //   userId: userId,
+    //   boardData: res.data,
+    // };
+    // goGame.name = JSON.stringify(sendData);
+    // } catch (error) {
+    //   if (error.response) {
+    //     alert(error.response.data.message);
+    //   }
+    //   console.log('바이인 에러', error);
+    // }
   };
 
   const viewProfile = () => {
@@ -231,10 +230,10 @@ function GameMenu() {
           blind2={blind2000}
           blind3={blind4000}
           blind4={blind10000}
-          getBlind1={getBlind1}
-          getBlind2={getBlind2}
-          getBlind3={getBlind3}
-          getBlind4={getBlind4}
+          //getBlind1={getBlind1}
+          // getBlind2={getBlind2}
+          //  getBlind3={getBlind3}
+          // getBlind4={getBlind4}
         />
       </GameList>
 
@@ -252,11 +251,11 @@ function GameMenu() {
               min='50'
               max='100'
               value={bb}
-              onChange={handleMoneyChange}
+              // onChange={handleMoneyChange}
             />
             <MoneyStatus>{bb}</MoneyStatus>
             <MoneyBtn onClick={buyIn}>바이인</MoneyBtn>
-            <MoneyBtn onClick={() => playGame('cancel')}>취소</MoneyBtn>
+            {/* <MoneyBtn onClick={() => playGame('cancel')}>취소</MoneyBtn> */}
           </InputBox>
         ) : null}
       </AnimatePresence>
