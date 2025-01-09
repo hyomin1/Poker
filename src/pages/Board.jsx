@@ -134,7 +134,10 @@ export default function Board() {
         <div className='absolute flex flex-col items-center gap-8 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
           <Pot />
           {gameBoard.phaseStatus > 0 && (
-            <CommunityCards communityCards={communityCards} />
+            <CommunityCards
+              communityCards={communityCards}
+              gameBoard={gameBoard}
+            />
           )}
         </div>
 
@@ -142,42 +145,72 @@ export default function Board() {
         {/* 하단 플레이어 (메인) */}
         <div className='absolute bottom-0 transform -translate-x-1/2 left-1/2 translate-y-1/4'>
           {mainPlayer && (
-            <Player subId={subId} player={mainPlayer} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={mainPlayer}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
 
         {/* 상단 플레이어 */}
         <div className='absolute top-0 transform -translate-x-1/2 left-1/2 -translate-y-1/4'>
           {players[2] && (
-            <Player subId={subId} player={players[2]} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={players[2]}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
 
         {/* 좌측 상단 플레이어 */}
         <div className='absolute left-0 transform top-1/4 -translate-x-1/4'>
           {players[1] && (
-            <Player subId={subId} player={players[1]} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={players[1]}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
 
         {/* 좌측 하단 플레이어 */}
         <div className='absolute left-0 transform bottom-1/4 -translate-x-1/4'>
           {players[0] && (
-            <Player subId={subId} player={players[0]} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={players[0]}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
 
         {/* 우측 상단 플레이어 */}
         <div className='absolute right-0 transform top-1/4 translate-x-1/4'>
           {players[3] && (
-            <Player subId={subId} player={players[3]} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={players[3]}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
 
         {/* 우측 하단 플레이어 */}
         <div className='absolute right-0 transform bottom-1/4 translate-x-1/4'>
           {players[4] && (
-            <Player subId={subId} player={players[4]} gameBoard={gameBoard} />
+            <Player
+              subId={subId}
+              player={players[4]}
+              gameBoard={gameBoard}
+              setGameBoard={setGameBoard}
+            />
           )}
         </div>
       </div>

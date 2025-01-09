@@ -21,7 +21,17 @@ export default function useStomp() {
     };
   };
 
-  const sendMessage = (destination, message) => {};
+  const sendMessage = (destination, board, PlayerId) => {
+    const headers = {
+      PlayerId,
+      board_id: board.id,
+    };
+    stompClient.publish({
+      destination,
+      body: JSON.stringify(board),
+      headers,
+    });
+  };
 
   const disconnect = () => {};
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
-import CardComponent from "./CardComponent";
-import { client } from "../../client";
+import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
+import CardComponent from './CardComponent';
+import { client } from '../../client';
 
 const PlayContainer = styled.div`
   display: flex;
@@ -35,7 +35,7 @@ const BettingButtonContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 25px;
-  flex-direction: ${(props) => (props.$batch === "raise" ? "column" : "row")};
+  flex-direction: ${(props) => (props.$batch === 'raise' ? 'column' : 'row')};
   width: 18vw;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.5);
@@ -71,8 +71,8 @@ const PercentWrapper = styled(AmountWrapper)`
 `;
 
 const QuarterBtn = styled.button`
-  background-color: ${(props) => (props.$quarter ? "#718093" : "#353b48")};
-  color: ${(props) => (props.$quarter ? "black" : "white")};
+  background-color: ${(props) => (props.$quarter ? '#718093' : '#353b48')};
+  color: ${(props) => (props.$quarter ? 'black' : 'white')};
   font-weight: bold;
   font-size: 18px;
   width: 50%;
@@ -81,12 +81,12 @@ const QuarterBtn = styled.button`
   border-radius: 5px;
 `;
 const HalfBtn = styled(QuarterBtn)`
-  background-color: ${(props) => (props.$half ? "#718093" : "#353b48")};
-  color: ${(props) => (props.$half ? "black" : "white")};
+  background-color: ${(props) => (props.$half ? '#718093' : '#353b48')};
+  color: ${(props) => (props.$half ? 'black' : 'white')};
 `;
 const FullBtn = styled(QuarterBtn)`
-  background-color: ${(props) => (props.$full ? "#718093" : "#353b48")};
-  color: ${(props) => (props.$full ? "black" : "white")};
+  background-color: ${(props) => (props.$full ? '#718093' : '#353b48')};
+  color: ${(props) => (props.$full ? 'black' : 'white')};
 `;
 
 const BettingButton = styled.button`
@@ -99,16 +99,16 @@ const BettingButton = styled.button`
   border-radius: 5px;
   margin-top: 10px;
   ${(props) => {
-    if (props.status === "fold") {
-      return "color : #f5f6fa;";
-    } else if (props.status === "check") {
-      return "color : #4cd137;";
-    } else if (props.status === "raise") {
-      return "color :#fbc531; ";
-    } else if (props.status === "call") {
-      return "color :#00a8ff;";
-    } else if (props.status === "allin") {
-      return "color:#e84118;";
+    if (props.status === 'fold') {
+      return 'color : #f5f6fa;';
+    } else if (props.status === 'check') {
+      return 'color : #4cd137;';
+    } else if (props.status === 'raise') {
+      return 'color :#fbc531; ';
+    } else if (props.status === 'call') {
+      return 'color :#00a8ff;';
+    } else if (props.status === 'allin') {
+      return 'color:#e84118;';
     }
   }}
 `;
@@ -193,6 +193,11 @@ function Player({
       return updatedBoard;
     });
   };
+  const check = (bettingSize, phaseCallSize, player) => {
+    if (bettingSize === phaseCallSize) {
+      publishBoardAction(board, player.id, 'check');
+    }
+  };
 
   const call = (bettingSize, phaseCallSize, money, player) => {
     if (bettingSize - phaseCallSize <= money) {
@@ -213,7 +218,7 @@ function Player({
           };
         },
         player.id,
-        "call"
+        'call'
       );
     }
   };
@@ -235,15 +240,11 @@ function Player({
           };
         },
         player.id,
-        "fold"
+        'fold'
       );
     }
   };
-  const check = (bettingSize, phaseCallSize, player) => {
-    if (bettingSize === phaseCallSize) {
-      publishBoardAction(board, player.id, "check");
-    }
-  };
+
   const raise = (money, phaseCallSize, bettingSize, player) => {
     const calculatePhaseCallSize = (percentage) => {
       const sum = board.players.reduce(
@@ -277,7 +278,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       } else {
         updateBoard(
@@ -298,7 +299,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       }
     } else if (isHalf) {
@@ -324,7 +325,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       } else {
         updateBoard(
@@ -345,7 +346,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       }
     } else if (isFull) {
@@ -373,7 +374,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       } else {
         updateBoard(
@@ -394,7 +395,7 @@ function Player({
             };
           },
           player.id,
-          "raise"
+          'raise'
         );
       }
     } else {
@@ -423,7 +424,7 @@ function Player({
             };
           },
           player.id,
-          amount === money + phaseCallSize ? "allInRaise" : "raise",
+          amount === money + phaseCallSize ? 'allInRaise' : 'raise',
           money
         );
       }
@@ -454,7 +455,7 @@ function Player({
           };
         },
         player.id,
-        "allInCall"
+        'allInCall'
       );
     }
   };
@@ -489,11 +490,11 @@ function Player({
         };
       },
       player.id,
-      "fold"
+      'fold'
     );
     setTimeout(() => {
       client.publish({
-        destination: "/pub/board/exit",
+        destination: '/pub/board/exit',
         body: JSON.stringify(board),
         headers: {
           PlayerId: player.id,
@@ -502,7 +503,7 @@ function Player({
       });
 
       client.disconnectHeaders = {
-        disconnect_option: "exit",
+        disconnect_option: 'exit',
       };
       client.deactivate();
       client.onDisconnect = () => {
@@ -554,7 +555,7 @@ function Player({
       return (
         <>
           {phaseStatus >= 1 && phaseStatus <= 4 ? (
-            <BettingButtonContainer $batch="raise">
+            <BettingButtonContainer $batch='raise'>
               <AddInformBetting>
                 <PercentWrapper>
                   <QuarterBtn
@@ -583,34 +584,34 @@ function Player({
                     }
                     max={player.money + player.phaseCallSize}
                     value={amount}
-                    type="range"
+                    type='range'
                     step={100}
                     style={{
-                      width: "80%",
-                      height: "20px",
-                      cursor: "pointer",
-                      appearance: "none",
-                      borderRadius: "5px",
-                      outline: "none",
+                      width: '80%',
+                      height: '20px',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      borderRadius: '5px',
+                      outline: 'none',
                     }}
                   />
                 </RaiseInputContainer>
               </AddInformBetting>
               <RaiseContainer>
                 <BettingButton
-                  status="check"
+                  status='check'
                   onClick={() => check(bettingSize, phaseCallSize, player)}
                 >
                   체크
                 </BettingButton>
 
                 <BettingButton
-                  status={amount === player.money ? "allin" : "raise"}
+                  status={amount === player.money ? 'allin' : 'raise'}
                   onClick={() =>
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
-                  {amount === player.money ? "올인" : "레이즈"}
+                  {amount === player.money ? '올인' : '레이즈'}
                 </BettingButton>
               </RaiseContainer>
             </BettingButtonContainer>
@@ -627,13 +628,13 @@ function Player({
           {phaseStatus >= 1 && phaseStatus <= 4 ? (
             <BettingButtonContainer>
               <BettingButton
-                status="fold"
+                status='fold'
                 onClick={() => fold(bettingSize, player)}
               >
                 폴드
               </BettingButton>
               <BettingButton
-                status="allin"
+                status='allin'
                 onClick={() => allIn(bettingSize, phaseCallSize, money, player)}
               >
                 올인
@@ -646,7 +647,7 @@ function Player({
       return (
         <>
           {phaseStatus !== 0 && phaseStatus >= 1 && phaseStatus <= 4 ? (
-            <BettingButtonContainer $batch="raise">
+            <BettingButtonContainer $batch='raise'>
               <AddInformBetting>
                 <PercentWrapper>
                   <QuarterBtn
@@ -675,28 +676,28 @@ function Player({
                     }
                     max={player.money + player.phaseCallSize}
                     value={amount}
-                    type="range"
+                    type='range'
                     step={100}
                     style={{
-                      width: "80%",
-                      height: "20px",
-                      cursor: "pointer",
-                      appearance: "none",
-                      borderRadius: "5px",
-                      outline: "none",
+                      width: '80%',
+                      height: '20px',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      borderRadius: '5px',
+                      outline: 'none',
                     }}
                   />
                 </RaiseInputContainer>
               </AddInformBetting>
               <RaiseContainer>
                 <BettingButton
-                  status="fold"
+                  status='fold'
                   onClick={() => fold(bettingSize, player)}
                 >
                   폴드
                 </BettingButton>
                 <BettingButton
-                  status="call"
+                  status='call'
                   onClick={() =>
                     call(bettingSize, phaseCallSize, money, player)
                   }
@@ -705,14 +706,14 @@ function Player({
                 </BettingButton>
 
                 <BettingButton
-                  status="raise"
+                  status='raise'
                   onClick={() =>
                     raise(money, phaseCallSize, bettingSize, player)
                   }
                 >
                   {amount === player.money + player.phaseCallSize
-                    ? "올인"
-                    : "레이즈"}
+                    ? '올인'
+                    : '레이즈'}
                 </BettingButton>
               </RaiseContainer>
             </BettingButtonContainer>
@@ -733,9 +734,9 @@ function Player({
           <PlayerProfileInfo></PlayerProfileInfo>
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             <CardComponent
