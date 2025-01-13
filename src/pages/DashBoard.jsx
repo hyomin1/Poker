@@ -4,6 +4,9 @@ import ProfileImage from '../components/ProfileImage';
 import useUser from '../hooks/useUser';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
+import { useEffect } from 'react';
+import useAuthStore from '../stores/useAuthStore';
+import useBoard from '../hooks/useBoard';
 
 export default function DashBoard() {
   const {
@@ -11,11 +14,27 @@ export default function DashBoard() {
     imageQuery: { isLoading: imgLoading, error: imgError, data: image },
     updateImage,
   } = useUser();
+  const { userId, password, subId } = useAuthStore();
+  const {
+    boardContextQuery: { isLoading, error, data: boardContext },
+  } = useBoard();
 
-  if (userLoading || imgLoading) {
+  useEffect(() => {
+    if (boardContext?.length > 0) {
+      boardContext.forEach((board) => {
+        const url = `/board/${board.id}`;
+        const game = window.open('about:blank', '_blank');
+        if (game) {
+          game.name = JSON.stringify({ userId, password, subId });
+          game.location = url;
+        }
+      });
+    }
+  }, [boardContext]);
+  if (userLoading || imgLoading || isLoading) {
     return <Loading />;
   }
-  if (userError || imgError) {
+  if (userError || imgError || error) {
     return <Error />;
   }
 

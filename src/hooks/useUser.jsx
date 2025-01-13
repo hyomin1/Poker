@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUser, getUserImage, updateUserImage } from '../api/user';
-import useAuthStore from '../stores/useAuthStroe';
+import useAuthStore from '../stores/useAuthStore';
 
 export default function useUser() {
   const queryClient = useQueryClient();

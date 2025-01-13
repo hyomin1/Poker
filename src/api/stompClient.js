@@ -7,7 +7,7 @@ export const createStompClient = ({ userId, password }) => {
     appendMissingNULLonIncoming: true,
 
     debug: function (str) {
-      console.log(str);
+      // console.log(str);
     },
     connectHeaders: {
       userId,

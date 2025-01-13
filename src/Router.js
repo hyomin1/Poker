@@ -3,13 +3,13 @@ import App from './App';
 import Game from './game/Game';
 import GameRoom from './game/GameRoom';
 import UserProfile from './user/UserProfile';
-import HandHistory from './handHistory/HandHistory';
 import Hud from './user/Hud';
 import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
 import DashBoard from './pages/DashBoard';
 import Lobby from './pages/Lobby';
 import Board from './pages/Board';
+import HandHistory from './pages/HandHistory';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -37,6 +37,10 @@ const router = createBrowserRouter([
         element: <Board />,
       },
       {
+        path: '/handHistory',
+        element: <HandHistory />,
+      },
+      {
         path: '/game',
         element: <Game />,
       },
@@ -48,10 +52,7 @@ const router = createBrowserRouter([
         path: '/profile',
         element: <UserProfile />,
       },
-      {
-        path: '/handHistory',
-        element: <HandHistory />,
-      },
+
       {
         path: '/hud',
         element: <Hud />,

@@ -2,43 +2,22 @@ import useBoard from '../hooks/useBoard';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
 import Rooms from '../components/Rooms';
-import { useEffect } from 'react';
-import useAuthStore from '../stores/useAuthStroe';
+
+import { Link } from 'react-router-dom';
 
 export default function Lobby() {
-  const { userId, password, subId } = useAuthStore();
+  const { boardQueries, quickJoinMutation, enterGameMutation } = useBoard();
 
-  const {
-    boardQueries,
-    boardContextQuery: { isLoading, error, data: boardContext },
-    quickJoinMutation,
-    enterGameMutation,
-  } = useBoard();
-
-  useEffect(() => {
-    if (boardContext?.length > 0) {
-      boardContext.forEach((board) => {
-        const url = `/board/${board.id}`;
-        const game = window.open('about:blank', '_blank');
-        if (game) {
-          game.name = JSON.stringify({ userId, password, subId });
-          game.location = url;
-        }
-      });
-    }
-  }, [boardContext]);
-  if (isLoading) {
-    return <Loading />;
-  }
-  if (error) {
-    <Error />;
-  }
   return (
     <div className='min-h-screen p-6 text-white bg-gray-900'>
       <div className='mx-auto max-w-7xl'>
-        <h1 className='mb-8 text-3xl font-bold text-center text-transparent bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text'>
-          포커 로비
-        </h1>
+        <div>
+          <h1 className='mb-8 text-3xl font-bold text-center text-transparent bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text'>
+            포커 로비
+          </h1>
+          <Link to={'/handHistory'}>핸드히스토리</Link>
+        </div>
+
         <div className='grid grid-cols-2 gap-6 h-[calc(100vh-160px)]'>
           {boardQueries.map(
             ({ data: boards, isLoading, error, refetch }, index) => (

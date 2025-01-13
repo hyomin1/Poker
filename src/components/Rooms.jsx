@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BuyInModal } from './BuyInModal';
-import useAuthStore from '../stores/useAuthStroe';
+import useAuthStore from '../stores/useAuthStore';
 
 import Room from './Room';
 import { BLINDS } from '../constants/boardConstants';

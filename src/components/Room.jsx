@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BuyInModal } from './BuyInModal';
-import useAuthStore from '../stores/useAuthStroe';
+import useAuthStore from '../stores/useAuthStore';
 
 export default function Room({ board, enterGameMutation }) {
   const { userId, password, subId } = useAuthStore();

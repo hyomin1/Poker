@@ -5,10 +5,16 @@ import Loading from '../components/Loading';
 import Error from '../components/Error';
 import useStomp from '../hooks/useStomp';
 import Pot from '../components/Pot';
+import VictoryMessage from '../components/VictoryMessage';
 import CommunityCards from '../components/CommunityCards';
 import Player from '../components/Player';
-import useAuthStore from '../stores/useAuthStroe';
-import { MAX_COMMUNITY_CARDS, MAX_PLAYER } from '../constants/boardConstants';
+import useAuthStore from '../stores/useAuthStore';
+import {
+  GAME_START,
+  MAX_COMMUNITY_CARDS,
+  MAX_PLAYER,
+  SHOW_DOWN,
+} from '../constants/boardConstants';
 
 export default function Board() {
   const { boardId } = useParams();
@@ -23,10 +29,19 @@ export default function Board() {
     useStomp();
 
   const [gameBoard, setGameBoard] = useState(null);
-
+  const [winners, setWinners] = useState([]);
   const handleMessage = (message) => {
     const { messageType, data } = JSON.parse(message.body);
-    console.log(data);
+
+    console.log(messageType);
+    if (messageType === SHOW_DOWN) {
+      const winnerPlayerList = data.players
+        .filter((player) => player.gameResult?.winner)
+        .sort((a, b) => b.gameResult.handValue - a.gameResult.handValue);
+      setWinners([...winnerPlayerList]);
+    } else if (messageType === GAME_START) {
+      setWinners([]);
+    }
 
     setGameBoard(data);
     //console.log(data);
@@ -54,12 +69,11 @@ export default function Board() {
   }, []);
 
   useEffect(() => {
-    // 웹소켓 연결
     if (!window.name) {
       return;
     }
     const { userId, password, subId } = JSON.parse(window.name);
-
+    // 웹소켓 연결
     if (userId && password) {
       connect({ userId, password });
     }
@@ -148,6 +162,7 @@ export default function Board() {
         <p>{gameBoard.totalPlayer}/6</p>
         <button onClick={onExit}>나가기</button>
       </div>
+      {winners?.length > 0 && <VictoryMessage winners={winners} />}
 
       <div
         className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
