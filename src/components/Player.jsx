@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import DealerButton from './DealerButton';
 import ActionButton from './ActionButton';
-import Chip from './Chip';
 import useStomp from '../hooks/useStomp';
 import {
   CHECK,
@@ -17,6 +16,10 @@ import CardBack from './CardBack';
 import HudModal from './HudModal';
 import useHud from '../hooks/useHud';
 import { createPortal } from 'react-dom';
+import useUser from '../hooks/useUser';
+import Loading from './Loading';
+import Error from './Error';
+import Profile from './Profile';
 
 export default function Player({
   subId,
@@ -28,10 +31,18 @@ export default function Player({
   const { sendMessage } = useStomp();
   const [amount, setAmount] = useState(0);
   const [timer, setTimer] = useState(TIME);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const open = () => setIsModalOpen(true);
+  const close = () => setIsModalOpen(false);
 
   const { position, userId, phaseCallSize, money, id, status } = player;
   const { btn, actionPos, phaseStatus, blind, bettingSize, lastActionTime } =
     gameBoard;
+  const {
+    imageQuery: { data: image, isLoading, error },
+  } = useUser();
+  const { hudQuery } = useHud(userId);
   const jokBo = phaseStatus === 6 ? winners[0].gameResult.jokBo : [];
 
   const isPlaying = phaseStatus >= 1 && phaseStatus <= 4; // 게임중인지 확인
@@ -40,9 +51,6 @@ export default function Player({
   const isAction = position === actionPos && subId === userId; // 현재 배팅 턴
   const isTimer = position === actionPos && isPlaying;
   const chip = (phaseCallSize / blind).toFixed(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { hudQuery } = useHud(userId);
 
   const isPhase = phaseStatus !== 0;
   const checkRaise = isPhase && bettingSize === phaseCallSize;
@@ -195,60 +203,27 @@ export default function Player({
     return circumference - progress;
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return <Error />;
+  }
+
   return (
     <div className='relative flex flex-col items-center gap-2'>
       {/* 플레이어 정보 영역 */}
       <div className='flex flex-col items-center gap-2'>
         {/* 아바타와 칩 */}
-        <div className='relative '>
-          {isTimer && isPlaying && (
-            <svg className='absolute -top-1 -left-1' width='84' height='84'>
-              <circle
-                cx='42'
-                cy='42'
-                r='40'
-                fill='none'
-                stroke='#ddd'
-                strokeWidth='4'
-              />
-              <circle
-                cx='42'
-                cy='42'
-                r='40'
-                fill='none'
-                stroke={timer <= 5 ? '#ef4444' : '#3b82f6'}
-                strokeWidth='4'
-                strokeDasharray={`${2 * Math.PI * 40}`}
-                strokeDashoffset={calculateProgress()}
-                transform='rotate(-90 42 42)'
-                className='transition-all duration-1000 ease-linear'
-              />
-            </svg>
-          )}
-          <div
-            onClick={() => setIsModalOpen(true)}
-            className='flex items-center justify-center w-20 h-20 bg-gray-700 rounded-full shadow-lg'
-          >
-            <div className='w-16 h-16 bg-gray-600 border-2 border-gray-500 rounded-full' />
-          </div>
-          {isTimer && (
-            <div className='absolute transform -translate-x-1/2 -top-8 left-1/2'>
-              <span
-                className={`font-bold ${
-                  timer <= 5 ? 'text-red-500' : 'text-blue-500'
-                }`}
-              >
-                {timer}s
-              </span>
-            </div>
-          )}
-          {/* 칩 표시 - 아바타 우측 상단에 위치 */}
-          {isPlaying && (
-            <div className='absolute -top-2 -right-4'>
-              <Chip amount={chip} />
-            </div>
-          )}
-        </div>
+        <Profile
+          isTimer={isTimer}
+          isPlaying={isPlaying}
+          timer={timer}
+          calculateProgress={calculateProgress}
+          open={open}
+          chip={chip}
+          image={image}
+        />
 
         {/* 플레이어 이름 */}
         <div className='absolute w-full text-center -bottom-6'>
@@ -337,10 +312,7 @@ export default function Player({
 
       {isModalOpen &&
         createPortal(
-          <HudModal
-            onClose={() => setIsModalOpen(false)}
-            hudQuery={hudQuery}
-          />,
+          <HudModal onClose={close} hudQuery={hudQuery} />,
           document.body
         )}
     </div>

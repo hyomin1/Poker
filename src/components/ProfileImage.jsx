@@ -1,7 +1,6 @@
 import React from 'react';
 
 export default function ProfileImage({ image, updateImage }) {
-  const defaultImg = '/images/defaultProfile.png';
   const onChangeImage = (e) => {
     const formData = new FormData();
     formData.append('file', e.currentTarget.files[0]);
@@ -11,7 +10,7 @@ export default function ProfileImage({ image, updateImage }) {
   return (
     <div className='relative group'>
       <img
-        src={image && image.size > 0 ? URL.createObjectURL(image) : defaultImg}
+        src={image}
         alt='profile'
         className='object-cover w-32 h-32 border-4 border-white rounded-full shadow-lg'
       />

@@ -20,7 +20,10 @@ export default function DashBoard() {
   } = useBoard();
 
   useEffect(() => {
-    if (boardContext?.length > 0) {
+    if (
+      boardContext?.length > 0 &&
+      window.confirm('진행중이던 게임이 있습니다. 이동하시겠습니까?')
+    ) {
       boardContext.forEach((board) => {
         const url = `/board/${board.id}`;
         const game = window.open('about:blank', '_blank');
