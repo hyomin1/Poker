@@ -34,7 +34,6 @@ export default function Board() {
   const handleMessage = (message) => {
     const { messageType, data } = JSON.parse(message.body);
 
-    console.log(messageType);
     if (messageType === SHOW_DOWN || messageType === GAME_END) {
       const winnerPlayerList = data.players
         .filter((player) => player.gameResult?.winner)
@@ -45,7 +44,6 @@ export default function Board() {
     }
 
     setGameBoard(data);
-    //console.log(data);
   };
 
   const onExit = () => {

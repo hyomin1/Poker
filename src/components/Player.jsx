@@ -11,6 +11,7 @@ import {
   RAISE,
   ALL_IN_RAISE,
   ALL_IN_CALL,
+  TIME,
 } from '../constants/boardConstants';
 import CardBack from './CardBack';
 import HudModal from './HudModal';
@@ -26,13 +27,18 @@ export default function Player({
 }) {
   const { sendMessage } = useStomp();
   const [amount, setAmount] = useState(0);
+  const [timer, setTimer] = useState(TIME);
+
   const { position, userId, phaseCallSize, money, id, status } = player;
-  const { btn, actionPos, phaseStatus, blind, bettingSize } = gameBoard;
+  const { btn, actionPos, phaseStatus, blind, bettingSize, lastActionTime } =
+    gameBoard;
   const jokBo = phaseStatus === 6 ? winners[0].gameResult.jokBo : [];
+
   const isPlaying = phaseStatus >= 1 && phaseStatus <= 4; // 게임중인지 확인
   const isDealer = position === btn; // 딜러 포지션
   const isMyCard = subId === userId && isPlaying; // 내 카드
-  const isTurn = player.position === actionPos && subId === userId; // 현재 턴
+  const isAction = position === actionPos && subId === userId; // 현재 배팅 턴
+  const isTimer = position === actionPos && isPlaying;
   const chip = (phaseCallSize / blind).toFixed(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -52,6 +58,37 @@ export default function Player({
       setAmount(bettingSize * 2);
     }
   }, [blind, bettingSize]);
+
+  useEffect(() => {
+    if (!lastActionTime) {
+      return;
+    }
+    const lastActionDate = new Date(lastActionTime);
+    const currentTime = new Date();
+    const elapsedTime = Math.floor((currentTime - lastActionDate) / 1000); // 경과된 시간 계산
+    const remainingTime = Math.max(TIME - elapsedTime, 0); // 남은 시간 계산
+    setTimer(remainingTime);
+  }, [lastActionTime]);
+
+  useEffect(() => {
+    // 타이머
+    let intervalId;
+    if (isTimer && isPlaying) {
+      intervalId = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalId);
+            fold();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setTimer(TIME);
+    }
+    return () => clearInterval(intervalId);
+  }, [isTimer, isPlaying]);
 
   const onChangeAmount = (e) => {
     setAmount(parseInt(e.target.value));
@@ -151,6 +188,12 @@ export default function Player({
       });
     }
   };
+  const calculateProgress = () => {
+    const radius = 40;
+    const circumference = 2 * Math.PI * radius;
+    const progress = (timer / TIME) * circumference;
+    return circumference - progress;
+  };
 
   return (
     <div className='relative flex flex-col items-center gap-2'>
@@ -158,12 +201,47 @@ export default function Player({
       <div className='flex flex-col items-center gap-2'>
         {/* 아바타와 칩 */}
         <div className='relative '>
+          {isTimer && isPlaying && (
+            <svg className='absolute -top-1 -left-1' width='84' height='84'>
+              <circle
+                cx='42'
+                cy='42'
+                r='40'
+                fill='none'
+                stroke='#ddd'
+                strokeWidth='4'
+              />
+              <circle
+                cx='42'
+                cy='42'
+                r='40'
+                fill='none'
+                stroke={timer <= 5 ? '#ef4444' : '#3b82f6'}
+                strokeWidth='4'
+                strokeDasharray={`${2 * Math.PI * 40}`}
+                strokeDashoffset={calculateProgress()}
+                transform='rotate(-90 42 42)'
+                className='transition-all duration-1000 ease-linear'
+              />
+            </svg>
+          )}
           <div
             onClick={() => setIsModalOpen(true)}
             className='flex items-center justify-center w-20 h-20 bg-gray-700 rounded-full shadow-lg'
           >
             <div className='w-16 h-16 bg-gray-600 border-2 border-gray-500 rounded-full' />
           </div>
+          {isTimer && (
+            <div className='absolute transform -translate-x-1/2 -top-8 left-1/2'>
+              <span
+                className={`font-bold ${
+                  timer <= 5 ? 'text-red-500' : 'text-blue-500'
+                }`}
+              >
+                {timer}s
+              </span>
+            </div>
+          )}
           {/* 칩 표시 - 아바타 우측 상단에 위치 */}
           {isPlaying && (
             <div className='absolute -top-2 -right-4'>
@@ -211,7 +289,7 @@ export default function Player({
       )}
 
       {/* 액션 버튼 */}
-      {isTurn && isPlaying && (
+      {isAction && isPlaying && (
         <div className='absolute bottom-0 flex gap-4 p-6 mt-4 transform -translate-x-1/2 translate-y-full bg-black left-1/2 bg-opacity-30 rounded-xl backdrop-blur-sm'>
           {checkRaise && (
             <>
@@ -256,6 +334,7 @@ export default function Player({
           )}
         </div>
       )}
+
       {isModalOpen &&
         createPortal(
           <HudModal
