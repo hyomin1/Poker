@@ -1,6 +1,8 @@
 import React from 'react';
 
 export default function VictoryMessage({ winners }) {
+  console.log(winners);
+
   return (
     <div className='max-w-2xl p-4 mx-auto space-y-4'>
       <h2 className='flex items-center justify-center gap-2 mb-6 text-2xl font-bold text-center'>
@@ -8,9 +10,9 @@ export default function VictoryMessage({ winners }) {
       </h2>
 
       <div className='grid gap-4'>
-        {winners.map((winner, index) => (
+        {winners.map((winner) => (
           <div
-            key={`${winner.playerName}-${index}`}
+            key={winner.userId}
             className='overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg'
           >
             <div className='p-6'>

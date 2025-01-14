@@ -10,6 +10,7 @@ import CommunityCards from '../components/CommunityCards';
 import Player from '../components/Player';
 import useAuthStore from '../stores/useAuthStore';
 import {
+  GAME_END,
   GAME_START,
   MAX_COMMUNITY_CARDS,
   MAX_PLAYER,
@@ -34,7 +35,7 @@ export default function Board() {
     const { messageType, data } = JSON.parse(message.body);
 
     console.log(messageType);
-    if (messageType === SHOW_DOWN) {
+    if (messageType === SHOW_DOWN || messageType === GAME_END) {
       const winnerPlayerList = data.players
         .filter((player) => player.gameResult?.winner)
         .sort((a, b) => b.gameResult.handValue - a.gameResult.handValue);
@@ -177,6 +178,7 @@ export default function Board() {
             <CommunityCards
               communityCards={communityCards}
               gameBoard={gameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -190,6 +192,7 @@ export default function Board() {
               player={mainPlayer}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -202,6 +205,7 @@ export default function Board() {
               player={players[2]}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -214,6 +218,7 @@ export default function Board() {
               player={players[1]}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -226,6 +231,7 @@ export default function Board() {
               player={players[0]}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -238,6 +244,7 @@ export default function Board() {
               player={players[3]}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>
@@ -250,6 +257,7 @@ export default function Board() {
               player={players[4]}
               gameBoard={gameBoard}
               setGameBoard={setGameBoard}
+              winners={winners}
             />
           )}
         </div>

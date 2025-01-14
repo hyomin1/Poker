@@ -12,13 +12,20 @@ import {
   ALL_IN_RAISE,
   ALL_IN_CALL,
 } from '../constants/boardConstants';
+import CardBack from './CardBack';
 
-export default function Player({ subId, player, gameBoard, setGameBoard }) {
+export default function Player({
+  subId,
+  player,
+  gameBoard,
+  setGameBoard,
+  winners,
+}) {
   const { sendMessage } = useStomp();
   const [amount, setAmount] = useState(0);
-  const { position, userId, phaseCallSize, money, id } = player;
+  const { position, userId, phaseCallSize, money, id, status } = player;
   const { btn, actionPos, phaseStatus, blind, bettingSize } = gameBoard;
-
+  const jokBo = phaseStatus === 6 ? winners[0].gameResult.jokBo : [];
   const isPlaying = phaseStatus >= 1 && phaseStatus <= 4; // 게임중인지 확인
   const isDealer = position === btn; // 딜러 포지션
   const isMyCard = subId === userId && isPlaying; // 내 카드
@@ -164,11 +171,26 @@ export default function Player({ subId, player, gameBoard, setGameBoard }) {
         </div>
       </div>
 
-      {/* 카드 영역 */}
-      {isMyCard && (
+      {/* 카드 영역 (내 카드) */}
+      {isMyCard && status !== 3 && phaseStatus !== 6 && (
         <div className='flex gap-2 mt-2'>
           <Card card={player.card1} />
           <Card card={player.card2} />
+        </div>
+      )}
+
+      {/* 카드 영역 (상대 카드) */}
+      {!isMyCard && status !== 3 && phaseStatus !== 6 && (
+        <div className='flex gap-2 mt-2'>
+          <CardBack card={player.card1} />
+          <CardBack card={player.card2} />
+        </div>
+      )}
+      {/* 카드 영역 (카드 결과 공개) */}
+      {status !== 3 && phaseStatus === 6 && (
+        <div className='flex gap-2 mt-2'>
+          <Card card={player.card1} isJokBo={jokBo.includes(player.card1)} />
+          <Card card={player.card2} isJokBo={jokBo.includes(player.card2)} />
         </div>
       )}
 
