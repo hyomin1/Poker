@@ -13,6 +13,9 @@ import {
   ALL_IN_CALL,
 } from '../constants/boardConstants';
 import CardBack from './CardBack';
+import HudModal from './HudModal';
+import useHud from '../hooks/useHud';
+import { createPortal } from 'react-dom';
 
 export default function Player({
   subId,
@@ -31,6 +34,9 @@ export default function Player({
   const isMyCard = subId === userId && isPlaying; // 내 카드
   const isTurn = player.position === actionPos && subId === userId; // 현재 턴
   const chip = (phaseCallSize / blind).toFixed(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { hudQuery } = useHud(userId);
 
   const isPhase = phaseStatus !== 0;
   const checkRaise = isPhase && bettingSize === phaseCallSize;
@@ -151,8 +157,11 @@ export default function Player({
       {/* 플레이어 정보 영역 */}
       <div className='flex flex-col items-center gap-2'>
         {/* 아바타와 칩 */}
-        <div className='relative'>
-          <div className='flex items-center justify-center w-20 h-20 bg-gray-700 rounded-full shadow-lg'>
+        <div className='relative '>
+          <div
+            onClick={() => setIsModalOpen(true)}
+            className='flex items-center justify-center w-20 h-20 bg-gray-700 rounded-full shadow-lg'
+          >
             <div className='w-16 h-16 bg-gray-600 border-2 border-gray-500 rounded-full' />
           </div>
           {/* 칩 표시 - 아바타 우측 상단에 위치 */}
@@ -247,6 +256,14 @@ export default function Player({
           )}
         </div>
       )}
+      {isModalOpen &&
+        createPortal(
+          <HudModal
+            onClose={() => setIsModalOpen(false)}
+            hudQuery={hudQuery}
+          />,
+          document.body
+        )}
     </div>
   );
 }
