@@ -2,9 +2,11 @@ import React from 'react';
 import Card from './Card';
 import CardBack from './CardBack';
 
-export default function CommunityCards({ communityCards, gameBoard, winners }) {
-  const { phaseStatus } = gameBoard;
-
+export default function CommunityCards({
+  communityCards,
+  phaseStatus,
+  winners,
+}) {
   const jokBo = phaseStatus === 6 ? winners[0].gameResult.jokBo : [];
   return (
     <div className='flex gap-4'>

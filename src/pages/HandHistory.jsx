@@ -2,149 +2,55 @@ import React from 'react';
 import useHandHistory from '../hooks/useHandHistory';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
+import Carousel from 'react-bootstrap/Carousel';
+import HandTable from '../components/HandTable';
+import HandDetail from '../components/HandDetail';
 
 export default function HandHistory() {
   const {
-    handHistoryQuery: { isLoading, error, data: handHistory },
+    handHistoryQuery: { isLoading, error, data: handHistories },
   } = useHandHistory();
 
   if (isLoading) return <Loading />;
   if (error) return <Error />;
 
-  const getCardSymbol = (cardNum) => {
-    const suit = Math.floor(cardNum / 13);
-    const rank = cardNum % 13;
-    const suits = ['♠', '♣', '♥', '♦'];
-    const ranks = [
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '10',
-      'J',
-      'Q',
-      'K',
-      'A',
-    ];
-    return `${ranks[rank]}${suits[suit]}`;
-  };
-
-  const formatMoney = (amount) => {
-    return `$${(amount / 1000).toFixed(2)}k`;
-  };
-
-  // Generate positions for 6 seats around the table
-  const seatPositions = [
-    'top-1/4 left-1/2 -translate-x-1/2', // Top
-    'top-1/2 left-[85%] -translate-x-1/2', // Top Right
-    'bottom-1/4 left-[85%] -translate-x-1/2', // Bottom Right
-    'bottom-1/4 left-1/2 -translate-x-1/2', // Bottom
-    'bottom-1/2 left-[15%] -translate-x-1/2', // Bottom Left
-    'top-1/4 left-[15%] -translate-x-1/2', // Top Left
-  ];
-
   return (
-    <div className='p-4'>
-      <div className='max-w-4xl mx-auto'>
-        {handHistory?.map((hand) => (
-          <div key={hand.id} className='mb-8'>
-            <div className='mb-4 text-lg font-bold'>Hand #{hand.id}</div>
-            <div className='relative mb-4 h-96'>
-              {/* Poker Table */}
-              <div className='absolute inset-0 m-auto w-[90%] h-[80%] bg-green-700 rounded-[50%] border-8 border-brown-800'>
-                {/* Center Info - Community Cards & Pot */}
-                <div className='absolute text-center -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
-                  <div className='flex justify-center gap-2 mb-2'>
-                    {[
-                      hand.communityCard1,
-                      hand.communityCard2,
-                      hand.communityCard3,
-                      hand.communityCard4,
-                      hand.communityCard5,
-                    ].map((card, i) => (
-                      <span
-                        key={i}
-                        className={`text-xl px-2 py-1 bg-white rounded ${
-                          Math.floor(card / 13) === 2 ||
-                          Math.floor(card / 13) === 3
-                            ? 'text-red-600'
-                            : 'text-gray-800'
-                        }`}
-                      >
-                        {getCardSymbol(card)}
-                      </span>
-                    ))}
+    <div className='flex items-center justify-center w-full min-h-screen p-4 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 md:p-8'>
+      <div className='w-full space-y-8 max-w-7xl'>
+        <div className='text-center'>
+          <h1 className='mb-2 text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 md:text-5xl'>
+            핸드 히스토리
+          </h1>
+          <p className='text-gray-400'>게임 진행 내역을 확인하세요</p>
+        </div>
+
+        <div className='relative rounded-3xl bg-gray-800/30 p-4 backdrop-blur-lg ring-1 ring-white/10 shadow-[0_0_15px_rgba(0,0,0,0.1)] md:p-6'>
+          <Carousel
+            className='w-full overflow-hidden rounded-2xl'
+            indicators={true}
+            controls={true}
+            interval={null}
+          >
+            {handHistories.map((handHistory) => (
+              <Carousel.Item
+                key={handHistory.id}
+                className='h-full p-4 bg-gradient-to-br from-gray-900/90 to-gray-800/90'
+              >
+                <div className='flex flex-col max-w-5xl mx-auto'>
+                  <div className='aspect-[21/9] max-h-[400px]'>
+                    <HandTable handHistory={handHistory} />
                   </div>
-                  <div className='font-bold text-white'>
-                    Pot: ${hand.potAmountRiver}
+
+                  <div className='p-6 mt-8 transition-all duration-300 shadow-lg rounded-2xl bg-gray-800/40 backdrop-blur-sm ring-1 ring-white/10 hover:ring-emerald-500/30'>
+                    <HandDetail handHistory={handHistory} />
                   </div>
                 </div>
+              </Carousel.Item>
+            ))}
+          </Carousel>
 
-                {/* Players */}
-                {hand.userList.map((user, index) => {
-                  const position = hand.posList[index];
-                  return (
-                    <div
-                      key={user.id}
-                      className={`absolute ${seatPositions[position]} transform text-center`}
-                    >
-                      <div className='p-2 mb-2 text-white bg-gray-800 rounded-lg'>
-                        <div>{user.userName}</div>
-                        <div className='text-sm'>{formatMoney(user.money)}</div>
-                      </div>
-                      {/* Player Cards */}
-                      <div className='flex justify-center gap-1'>
-                        {hand.cardList
-                          .slice(index * 2, index * 2 + 2)
-                          .map((card, i) => (
-                            <span
-                              key={i}
-                              className={`px-2 py-1 bg-white rounded ${
-                                Math.floor(card / 13) === 2 ||
-                                Math.floor(card / 13) === 3
-                                  ? 'text-red-600'
-                                  : 'text-gray-800'
-                              }`}
-                            >
-                              {getCardSymbol(card)}
-                            </span>
-                          ))}
-                      </div>
-                      {position === hand.btnPosition && (
-                        <div className='inline-block px-2 mt-1 text-sm bg-white rounded-full'>
-                          BTN
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Actions List */}
-            <div className='p-4 bg-gray-100 rounded'>
-              <div className='space-y-1 text-sm'>
-                {hand.actionList.map((action) => (
-                  <div key={action.id}>
-                    <span className='font-medium'>
-                      {
-                        ['Preflop', 'Flop', 'Turn', 'River'][
-                          action.phaseStatus - 1
-                        ]
-                      }
-                      :
-                    </span>{' '}
-                    Player {action.userId} - {action.detail}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
+          <div className='absolute w-1/2 -translate-x-1/2 -bottom-2 left-1/2 h-1/2 blur-3xl bg-gradient-to-r from-emerald-500/20 to-blue-500/20' />
+        </div>
       </div>
     </div>
   );

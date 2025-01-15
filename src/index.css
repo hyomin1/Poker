@@ -15,14 +15,10 @@ body {
 }
 
 #root {
-  @apply h-full p-4 w-full box-border;
+  @apply box-border w-full h-full p-4;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-a {
-  @apply no-underline text-inherit;
 }

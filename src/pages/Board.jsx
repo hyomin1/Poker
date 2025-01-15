@@ -16,6 +16,7 @@ import {
   MAX_PLAYER,
   SHOW_DOWN,
 } from '../constants/boardConstants';
+import GameStatusHeader from '../components/GameStatusHeader';
 
 export default function Board() {
   const { boardId } = useParams();
@@ -156,12 +157,14 @@ export default function Board() {
   return (
     <div className='relative w-full h-screen overflow-hidden bg-gradient-to-b from-green-800 to-green-900'>
       {/* 메인 테이블 */}
-      {gameBoard.phaseStatus === 0 && <p>대기중</p>}
-      <div className='flex items-center justify-between'>
-        <p>{gameBoard.totalPlayer}/6</p>
-        <button onClick={onExit}>나가기</button>
-      </div>
-      {winners?.length > 0 && <VictoryMessage winners={winners} />}
+      <GameStatusHeader
+        playerCount={gameBoard.totalPlayer}
+        onExit={onExit}
+        isWaiting={gameBoard.phaseStatus === 0}
+      />
+      {winners?.length > 0 && gameBoard.phaseStatus >= 5 && (
+        <VictoryMessage winners={winners} />
+      )}
 
       <div
         className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -175,7 +178,7 @@ export default function Board() {
           {gameBoard.phaseStatus > 0 && (
             <CommunityCards
               communityCards={communityCards}
-              gameBoard={gameBoard}
+              phaseStatus={gameBoard.phaseStatus}
               winners={winners}
             />
           )}

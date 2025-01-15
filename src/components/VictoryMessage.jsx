@@ -1,47 +1,81 @@
-import React from 'react';
-
 export default function VictoryMessage({ winners }) {
-  console.log(winners);
-
   return (
-    <div className='max-w-2xl p-4 mx-auto space-y-4'>
-      <h2 className='flex items-center justify-center gap-2 mb-6 text-2xl font-bold text-center'>
-        게임 결과
-      </h2>
+    <div className='fixed inset-x-0 top-0 z-50 p-4 '>
+      <div className='w-full max-w-2xl mx-auto transform scale-100 animate-fade-in'>
+        {/* Header */}
+        <div className='mb-4 text-center'>
+          <h2 className='text-3xl font-bold text-transparent bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text animate-pulse'>
+            🏆 게임 결과 🏆
+          </h2>
+        </div>
 
-      <div className='grid gap-4'>
-        {winners.map((winner) => (
-          <div
-            key={winner.userId}
-            className='overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg'
-          >
-            <div className='p-6'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-2'>
-                  {/* 플레이어 이름 */}
-                  <h3 className='text-xl font-semibold text-blue-600'>
-                    {winner.playerName}
-                  </h3>
+        {/* Winners List */}
+        <div className='space-y-3'>
+          {winners.map((winner, index) => (
+            <div
+              key={winner.userId}
+              className='bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl overflow-hidden border border-slate-700/50 shadow-[0_0_15px_rgba(255,215,0,0.3)] animate-slide-up'
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <div className='p-4'>
+                <div className='flex items-center justify-between gap-4'>
+                  <div className='space-y-2'>
+                    <h3 className='text-xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text'>
+                      {winner.playerName}
+                    </h3>
 
-                  {/* 핸드 콘텍스트 */}
-                  <p className='font-medium text-gray-600'>
-                    {winner.gameResult.handContext}
-                  </p>
-                </div>
+                    <p className='text-base font-medium text-slate-300'>
+                      {winner.gameResult.handContext}
+                    </p>
+                  </div>
 
-                {/* 획득 금액 */}
-                <div className='flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full'>
-                  <span className='font-bold text-green-700'>
-                    {typeof winner.gameResult.earnedMoney === 'number'
-                      ? winner.gameResult.earnedMoney.toLocaleString()
-                      : winner.gameResult.earnedMoney}
-                  </span>
+                  <div className='px-4 py-2 border bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 rounded-xl border-emerald-500/30'>
+                    <span className='text-lg font-bold text-emerald-400'>
+                      +
+                      {typeof winner.gameResult.earnedMoney === 'number'
+                        ? winner.gameResult.earnedMoney.toLocaleString()
+                        : winner.gameResult.earnedMoney}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out forwards;
+        }
+
+        .animate-slide-up {
+          opacity: 0;
+          animation: slide-up 0.5s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
