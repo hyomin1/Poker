@@ -51,7 +51,7 @@ export default function UserForm({ text = '회원가입' }) {
         계정이 {isLogin ? '없다면 회원가입' : '있다면 로그인'}을 해주세요{' '}
         <Link
           to={isLogin ? '/register' : '/'}
-          className='font-semibold text-purple-600 transition-colors hover:text-purple-800'
+          className='font-semibold text-purple-600 no-underline transition-colors hover:text-purple-800'
         >
           {isLogin ? '회원가입' : '로그인'}으로 가기
         </Link>
