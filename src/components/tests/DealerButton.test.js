@@ -9,7 +9,7 @@ describe('DealerButton', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('버튼에 D가 표시된다.cer', () => {
+  it('버튼에 D가 표시된다.', () => {
     render(<DealerButton />);
 
     const button = screen.getByRole('button');

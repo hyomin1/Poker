@@ -15,6 +15,7 @@ export default function HandDetail({ handHistory }) {
     const index = (position - btnPosition + 6) % 6;
     return POSITIONS[index];
   };
+
   const PhaseHeader = ({ phase, amount }) => (
     <div className='flex items-center justify-between pb-2 mb-3 border-b border-gray-700'>
       <h3 className='text-lg font-semibold text-white'>{phase}</h3>

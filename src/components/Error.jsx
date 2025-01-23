@@ -1,6 +1,9 @@
 import React from 'react';
 
 export default function Error() {
+  const refresh = () => {
+    window.location.reload();
+  };
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50'>
       <div className='w-full max-w-md p-8 bg-white rounded-lg shadow-lg'>
@@ -13,7 +16,7 @@ export default function Error() {
           </h2>
           <p className='mb-4 text-gray-600'>잠시 후 다시 시도해주세요.</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => refresh()}
             className='px-4 py-2 text-white transition-colors bg-purple-600 rounded-lg hover:bg-purple-700'
           >
             새로고침
