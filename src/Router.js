@@ -1,7 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import Game from './game/Game';
-import GameRoom from './game/GameRoom';
 import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
 import DashBoard from './pages/DashBoard';
@@ -37,14 +35,6 @@ const router = createBrowserRouter([
       {
         path: '/handHistory',
         element: <HandHistory />,
-      },
-      {
-        path: '/game',
-        element: <Game />,
-      },
-      {
-        path: '/gameRoom',
-        element: <GameRoom />,
       },
     ],
   },
